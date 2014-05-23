@@ -1,0 +1,37 @@
+<div class="piece AdminMessage">
+
+
+<div class="pieceBody">
+<%= render :partial => 'search' %>
+
+<table class="index">
+  <tbody>
+    <tr>
+      <th>詳細</th>
+      <th>機能名</th>
+      <th style="width: 150px; text-align: center;">対象権限  </th>
+      <th style="width: 60px; text-align: center;">優先順位</th>
+      <th style="width: 60px; text-align: center;">種別</th>
+      <th>ユーザ/グループ</th>
+      <th style="width: 60px; text-align: center;">許可</th>
+    </tr>
+    <% for item in @items %>
+    <tr class="<%= cycle '', 'cycle' %>">
+      <td class="showLink"><%= link_to '詳細', "#{url_for({:action=>:show, :id=>item.id})}?#{@qs}" %></td>
+      <td><%= safe{item.role_name.display_name} %></td>
+      <td style="text-align: center;"><%= item.priv_user.display_name %></td>
+      <td style="text-align: center;"><%= item.idx %></td>
+      <td style="text-align: center;"><%= item.class_id_label %></td>
+      <td><%= item.uid_label %></td>
+      <td style="text-align: center;"><%= item.priv_label %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br/>
+<%= paginate @items %>
+<br/>
+
+</div>
+</div>

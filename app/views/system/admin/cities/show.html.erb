@@ -1,0 +1,30 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:pref_id) %></th>
+    <td><%= safe{@item.pref.name} %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:zone_rid) %></th>
+    <td><%= safe{@item.zone.name} %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:county_rid) %></th>
+    <td><%= safe{@item.county.name} %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:code) %></th>
+    <td><%= @item.code %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:name) %></th>
+    <td><%= @item.name %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:g) %></th>
+    <td><%= render :partial => 'system/admin/common/view_map' %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'system/admin/common/operator' %>
+
+<%= button_to '戻る', {:action => :index}, :method => :get %>

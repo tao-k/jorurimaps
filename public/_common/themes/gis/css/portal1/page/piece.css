@@ -1,0 +1,139 @@
+@charset "UTF-8";
+@import "/_common/themes/gis/css/portal1/base/init.css";
+@import "/_common/themes/gis/css/portal1/base/style.css";
+
+/*------------------------------------------------
+ breadCrumbs
+------------------------------------------------*/
+#breadCrumbs {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 15px 30px;
+  font-size: 90%;
+}
+* html #breadCrumbs {
+  width:expression(document.documentElement.clientWidth < 742? "740px" : document.documentElement.clientWidth > 1142? "1140px" : "auto");
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+
+/*----- about -----*/
+#about h2 {
+  margin-bottom: 10px;
+  border: solid 1px #999;
+  border-radius: 4px;
+  font-size: 120%;
+  font-weight: bold;
+}
+#about h2 a {
+  display: block;
+  padding: 15px 50px 30px 13px;
+  background-image: url("../../../images/ic_sm/tl_ic-information.png");
+  background-position: 145px 8px;
+  background-repeat: no-repeat;
+}
+
+/*----- qrCode -----*/
+#qrCode {
+  margin-bottom: 10px;
+  border: solid 1px #999;
+  border-radius: 4px;
+  background-image: url("../../../images/ic_sm/tl_ic-smartphone.png");
+  background-position: 145px 10px;
+  background-repeat: no-repeat;
+}
+#qrCode .pieceHeader h2 {
+  padding: 15px 45px 15px 13px;
+  font-size: 120%;
+  font-weight: bold;
+}
+#qrCode .pieceBody {
+  padding-bottom: 15px;
+  text-align: center;
+}
+#qrCode .pieceBody p {
+  padding: 0 15px;
+  font-size: 95%;
+  text-align: left;
+}
+#qrCode img {
+  vertical-align: middle;
+}
+
+/*----- relation -----*/
+#relation {
+  margin-bottom: 10px;
+  border: solid 1px #999;
+  border-radius: 4px;
+  background-image: url("../../../images/ic_sm/tl_ic-link.png");
+  background-position: 145px 10px;
+  background-repeat: no-repeat;
+}
+#relation .pieceHeader h2 {
+  padding: 15px 45px 0 13px;
+  font-size: 120%;
+  font-weight: bold;
+}
+#relation .pieceBody {
+  padding: 10px;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#relation ul li {
+  margin-bottom: 5px;
+  padding-left: 8px;
+}
+
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+@media only screen and (max-width: 799px) {
+
+/*------------------------------------------------
+ breadCrumbs
+------------------------------------------------*/
+#breadCrumbs {
+  display: none;
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+
+/*----- about -----*/
+#about h2 {
+  margin-bottom: 0;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+}
+#about h2 a {
+  padding: 20px 50px 20px 13px;
+  background-position: 98% center;
+}
+
+/*----- qrCode -----*/
+#qrCode {
+  display: none;
+}
+
+/*----- relation -----*/
+#relation {
+  margin-bottom: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  background-position: 98% 15px;
+}
+#relation .pieceHeader h2 {
+  margin-bottom: 20px;
+  padding: 20px 45px 0 13px;
+}
+#relation ul li {
+  margin-bottom: 20px;
+}
+}

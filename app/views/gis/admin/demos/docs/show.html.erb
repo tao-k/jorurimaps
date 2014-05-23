@@ -1,0 +1,26 @@
+<!-- contentArticleDoc -->
+<div id="contentArticleDoc">
+  <div class="header">
+    <h1><%=@item.title%></h1>
+    <div class="publishedAt"><%=safe{@item.published_at.strftime("%Y-%m-%d")}%></div>
+  </div>
+
+  <div class="body">
+
+  <%=safe{@item.body.html_safe}%>
+  </div>
+
+
+  <%if @item.inquiry_group_id%>
+  <div class="inquiry">
+    <h2>お問い合わせ</h2>
+    <div class="section"><%=safe{@item.inquiry_department}%></div>
+    <%if @item.charge%><div class="charge"><%=@item.charge%></div><%end%>
+    <%if @item.tel%><div class="tel"><span class="label">電話</span>：<%=@item.tel%></div><%end%>
+    <%if @item.fax%><div class="fax"><span class="label">ファクシミリ</span>：<%=@item.fax%></div><%end%>
+    <%if @item.mail_to%><div class="email"><span class="label">E-Mail</span>：<a href="mailto:<%=@item.mail_to%>"><%=@item.mail_to%></a></div><%end%>
+  </div>
+ <%end%>
+  <div class="back"><a href="javascript:history.back()">戻る</a></div>
+</div>
+<!-- /contentArticleDoc -->

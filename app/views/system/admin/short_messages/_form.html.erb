@@ -1,0 +1,21 @@
+<%= init_tiny_mce %>
+
+<table class="show">
+  <tr>
+    <th>公開開始日時<%= required %></th>
+    <td><%= f.calendar_date_select :release_at, :time => true, :value => safe{@item.published_at.strftime("%Y-%m-%d %H:%M")} %></td>
+  </tr>
+  <tr>
+    <th>公開終了日<%= required %></th>
+    <td><%= f.calendar_date_select :end_at, :time => true, :value => safe{@item.published_at.strftime("%Y-%m-%d %H:%M")} %></td>
+  </tr>
+  <tr>
+    <th>並び順<%= required %></th>
+    <td><%= f.number_field :sort_no, :class => 'int', :min => 0, :max => 65536, :step => 1, :value => @item.sort_no, :style => 'width: 200px;' %></td>
+  </tr>
+  <tr>
+    <th colspan="2">メッセージ<%= required %></th>
+  </tr><tr>
+    <td colspan="2"><%= f.text_area :body, :class => 'string body mceEditor' %></td>
+  </tr>
+</table>

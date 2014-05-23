@@ -1,0 +1,68 @@
+<div class="drawFeatureTool">
+<h2>作図</h2>
+<input name="drawType" value="cansel" id="canselToggle"class="toggleDrawControl" type="radio" checked="checked">
+<label for="canselToggle">作図しない</label><br />
+<input name="drawType" value="point" id="pointToggle"class="toggleDrawControl" type="radio">
+<label for="pointToggle">点</label><br />
+<input name="drawType" value="line" id="lineToggle"class="toggleDrawControl" type="radio">
+<label for="lineToggle">線</label><br />
+<input name="drawType" value="polygon" id="polygonToggle" class="toggleDrawControl" type="radio">
+<label for="polygonToggle">図形</label><br />
+<input name="drawType" value="drag" id="dragToggle"class="toggleDrawControl" type="radio">
+<label for="dragToggle">円（ドラッグで作成）</label><br />
+<input name="drawType" value="click" id="clickToggle" class="toggleDrawControl" type="radio">
+<label for="clickToggle">円（半径，円の数指定可：クリックで作成）</label><br />
+<input name="drawType" value="edit" id="editToggle" class="toggleDrawControl" type="radio">
+<label for="editToggle">編集</label><br />
+<input name="drawType" value="delete" id="deleteToggle" class="toggleDrawControl" type="radio">
+<label for="deleteToggle">削除</label><br />
+<div id="strokeColorControl" style="display: none;">
+<span id="strokeExplain">色を選択し、地図上の任意の点をクリックして図形を作図してください。</span><br />
+<%=link_to "線色", "#", :id=>"strokeColorBtn"%><span id="selected" style="color: #ff0000;">■</span>
+</div>
+
+<div id="fillColorControl" style="display: none;">
+<%=link_to "塗色", "#", :id=>"fillColorBtn"%><span id="selectedFill" style="color: #000000;">□</span>
+<br />
+</div>
+<div id="markerControl" style="display: none;">
+下記のリストからマーカーを選択し、地図上の任意の点をクリックして設置してください。<br />
+<%icon_select.each_with_index do |icon, i|
+checked = false
+checked = true if i == 0
+%>
+<%=radio_button_tag("mapIcon[]", "marker#{icon.id}", checked, {:id=>"icon#{icon.id}", :class=>"selectMarker"})%>
+<label for="<%="icon#{icon.id}"%>"><%=image_tag(icon.file_uri)%></label>
+<%end%>
+
+<br />
+</div>
+<div id="radiusControl" style="display: none;">
+  <span class="labelText">半径<input class="labelText IMEoff" id="circleRadius" name="radius" type="text" value="3" />km</span><br />
+  <span class="labelText">円の数<input class="labelText IMEoff" id="circleNum" name="ring_num" type="text" value="3" />個</span><br />
+</div>
+
+<br />
+<button id="deleteAll">作成した図形をすべて削除</button><br />
+<br />
+<input class="featureLayer" id="vector" name="feature_layer" type="checkbox" value="vector" checked="checked"/>
+<label for="vector">作図レイヤー</label><button id="exportBtn">KML出力</button><br />
+<br />
+<hr>
+<h2>ファイルインポート</h2>
+<div id="selectType">
+<%=radio_button_tag("import[]", "kml", true, {:id=>"import_kml", :class=>"fileImport"})%>
+<label for="import_kml">KML</label>
+<%=radio_button_tag("import[]", "gpx", false, {:id=>"import_gpx", :class=>"fileImport"})%>
+<label for="import_gpx">GPX</label>
+</div>
+<%= form_for :item, :url => url_for({:action => :import}), :html => {:multipart => true, :id=>"importForm"}, :remote => true do |f|%>
+
+<%= f.file_field :file%>
+<%=f.submit :value=>"送信"%>
+<% end %>
+<br />
+  <div id="vectorLayerSelect">
+
+  </div>
+</div>

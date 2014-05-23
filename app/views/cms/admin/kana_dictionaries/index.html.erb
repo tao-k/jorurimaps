@@ -1,0 +1,19 @@
+<table class="index">
+
+  <tr>
+    <th>詳細</th>
+    <th style="width: 60px;">ID</th>
+    <th style="width: ;">名称</th>
+  </tr>
+
+  <% @items.each do |item| %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item) %></td>
+    <td><%=h item.id %></td>
+    <td><%=h item.name %></td>
+  </tr>
+  <% end %>
+
+</table>
+
+<%= paginate @items %>

@@ -1,0 +1,12 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:account) %></th>
+    <td><%= @item.account %></td>
+  </tr><tr>
+    <th><%= @item.locale(:name) %></th>
+    <td><%= @item.name %></td>
+  </tr><tr>
+    <th><%= @item.locale(:role_id) %></th>
+    <td><%= f.select :role_id, options_for_select(@item.role_options, @item.role_id), :include_blank => true %></td>
+  </tr>
+</table>

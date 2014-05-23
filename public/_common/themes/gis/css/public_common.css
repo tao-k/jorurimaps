@@ -1,0 +1,871 @@
+@charset "UTF-8";
+
+/* header
+-----------------------------------------------------*/
+
+
+/* footer
+-----------------------------------------------------*/
+#footer {
+  clear: both;
+  width: 100%;
+  padding: 30px 0px 0px;
+}
+#footerBody {
+  padding-top: 3px;
+  background: #011c75;
+}
+#footerBody .copyright {
+  position: relative;
+  width: 100%;
+  padding: 5px 0px;
+  border-top: 1px solid #fff;
+  color: #fff;
+  text-align: center;
+}
+#footerBody .copyright a.siteinfo {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  color: #000;
+}
+#footerBody .copyright a:visited {
+  color: #000;
+}
+
+/* banner
+-----------------------------------------------------*/
+#banner {
+  clear: both;
+  margin-top: 8px;
+  cursor: default;
+}
+#banner .headerMenu  {
+  overflow: hidden;
+}
+#banner .headerMenu ul {
+  height: 1%;
+  background-color: #E7E7E7;
+  border-top: 1px solid #828F9D;
+}
+#banner .headerMenu ul:after {
+  display: block;
+  visibility: hidden;
+  clear: both;
+  height: 0;
+  content: ".";
+}
+#banner .headerMenu li {
+  float: left;
+  height: 1%;
+  text-align: center;
+  font-size: 1.2em;
+  white-space: nowrap;
+  zoom: 1;
+}
+#banner .headerMenu li a {
+  display: block;
+  padding-top: 1px;
+  width: 183px;
+  background-color: #E7E7E7;
+  border-right: solid 1px #828F9D;
+  color: #000;
+  font-size: 1.1em;
+  font-weight: bold;
+  line-height: 43px;
+  zoom: 1;
+}
+#banner .headerMenu li h1 {
+  padding-left: 5px;
+  line-height: 30px;
+}
+#banner .headerMenu li a.current,
+#banner .headerMenu li a.current:hover {
+  background-color: #F00;
+  background-image: url(/_common/themes/gis/files/header/menu-repeat.gif);
+  background-position: left top;
+  background-repeat: repeat-x;
+  color: #FFF;
+  text-decoration: none;
+}
+
+/* navi
+-----------------------------------------------------*/
+#navi .navi {
+  padding: 5px 0px 5px 13px;
+  background-color: #EEE;
+  border-top: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
+}
+#navi {
+  border-top: solid 5px #D90000;
+}
+
+/* navi2
+-----------------------------------------------------*/
+#navi2 .menu {
+  clear: both;
+  margin: 15px 0 15px 15px;
+  padding-left: 5px;
+  font-size: 1.3em;
+}
+#navi2 .menu span {
+  padding: 2px 10px;
+  border-right: 1px solid #999;
+  line-height: 2;
+}
+#navi2 .menu span.left {
+  border-left: 1px solid #999;
+}
+#navi2 .menu a {
+  padding: 4px 10px;
+  color: #0033CC;
+  text-decoration: underline;
+}
+#navi2 .menu a.current {
+  background-color: #001177;
+  color: #FFF;
+  text-decoration: none;
+}
+#navi2 .tabMenu {
+  height: 25px;
+  border-bottom: 1px solid #CCC;
+  margin: 10px 0;
+}
+#navi2 .tabMenu a {
+  display: inline-block;
+  width: 117px;
+  border: 1px solid #CCC;
+  border-bottom: none;
+  background-color: #EEE;
+  margin-left: 5px;
+  font-size: 12px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 24px;
+  overflow: hidden;
+}
+*html #navi2 .tabMenu a {
+  width: 110px;
+  margin-left: 3px;
+  font-size: 11px;
+}
+#navi2 .tabMenu a.current {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+}
+
+/* contentHeader
+-----------------------------------------------------*/
+#contentHeader .titleLine {
+  clear: both;
+  position: relative;
+  margin: 10px 0px;
+  padding: 0 0 3px 5px;
+  border-bottom: 1px solid #B1BEE3;
+  border-left: 5px solid #B1BEE3;
+}
+#contentHeader .titleLine .title {
+  font-size: 1.2em;
+  color: #1E3B8C;
+}
+#contentHeader .actionMenu {
+  margin-left: 10px;
+}
+#contentHeader .actionMenu a {
+  display: inline-block;
+  padding: 2px 10px;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px 2px 2px 1px;
+  background-color: #eee;
+  text-align: center;
+  text-decoration: none;
+}
+#contentHeader .actionMenu .button_to {
+  display: inline-block;
+}
+
+/* table index
+-----------------------------------------------------*/
+table.index {
+  width: 100%;
+  margin-bottom: 10px;
+  border-left: solid 2px #FFF;
+  border-right: solid 2px #FFF;
+}
+table.index th {
+  padding: 6px 7px;
+  background-color: #E3EFFF;
+  border: 1px solid #CCCCCC;
+  text-align: left;
+}
+table.index tr.subIndex th {
+  padding: 5px 0 5px 7px;
+  background-color: #C6D1E8;
+  font-weight: bold;
+  color: #000;
+}
+table.index td {
+  padding: 6px 7px;
+  border: 1px solid #CCCCCC;
+}
+table.index td.noneLeft {
+  border-left: none;
+}
+table.index td.noneRight {
+  border-right: none;
+}
+table.index td.noneTop {
+  border-top: none;
+}
+tr.cycle td {
+  background-color: #F7FBFF;
+}
+table.index .st_at {
+  border-right: 1px solid #ccc;
+}
+table.index ._name {
+  border-right: 1px solid #ccc;
+}
+table.index ._participant_nums_inner {
+  border-right: 1px solid #ccc;
+}
+table.index ._participant_nums_outer {
+  border-right: 1px solid #ccc;
+}
+table.index ._owner {
+  border-right: 1px solid #ccc;
+}
+table.index ._subscriber {
+  border-right: 1px solid #ccc;
+}
+table.index td.integer {
+  text-align: right;
+}
+table.index td.decimal {
+  text-align: right;
+}
+table.index td.float {
+  text-align: right;
+}
+table.index img.thumbnail {
+  width: 49px;
+  height: 44px;
+}
+table.index colgroup.action {
+  white-space: nowrap;
+}
+td.title span.new,
+td.docTitle span.new {
+  display: inline-block;
+  height: 0;
+  width: 23px;
+  margin-left: 3px;
+  padding-top: 12px;
+  background-image: url("/_common/themes/gw/files/icon/ic-new.gif");
+  background-repeat: no-repeat;
+  overflow: hidden;
+  vertical-align: middle;
+}
+tr.highlight td {
+  background-color: #ffb;
+}
+tr.subtitle th {
+  background: #dfd;
+}
+
+/* table show
+-----------------------------------------------------*/
+table.show {
+  width: 100%;
+  margin: 0 0 10px;
+  border: solid 2px #C6D1E8;
+}
+table.show th {
+  width: 135px;
+  padding: 6px 7px;
+  border: 1px solid #C6D1E8;
+  background-color: #E3EFFF;
+  font-weight: lighter;
+  text-align: left;
+  vertical-align: top;
+}
+table.show th.titleTop {
+  width: auto;
+}
+table.show td {
+  padding: 6px 7px;
+  border: solid 1px #C6D1E8;
+}
+table.show td.mceEditor {
+  padding:0px;
+}
+
+/* table list(添付ファイル欄を開いたテーブル)(使われてる？)
+-----------------------------------------------------*/
+table.list {
+  width: 100%;
+  margin-top: 20px;
+  border-left: solid 2px #FFF;
+  border-right: solid 2px #FFF;
+}
+* html table.list {
+  width: 720px;
+}
+table.list th {
+  padding: 6px 7px;
+  background-color: #E3EFFF;
+  color: #000;
+  font-weight: lighter;
+  text-align: left;
+}
+table.list td {
+  padding: 6px 7px;
+  border: 1px solid #ccc;
+}
+table.list tr.cycle td {
+  background-color: #000;
+}
+
+/* table form
+-----------------------------------------------------*/
+table.form {
+  width: 100%;
+  margin: 15px 0px;
+}
+table.form th {
+  width: 200px;
+  padding: 6px 7px;
+  border: 1px solid #bbb;
+  background-color: #e4e4e4;
+  color: #000;
+  font-weight: lighter;
+  text-align: left;
+}
+table.form td {
+  padding: 6px 7px;
+  border: 1px solid #ccc;
+}
+
+/* table form
+-----------------------------------------------------*/
+#contentBody table.noBorderTable td {
+  border: none;
+}
+
+/* table 幅設定
+-----------------------------------------------------*/
+table.baseBox {
+  width: 800px;
+  margin: 10px auto;
+}
+table.wideBox {
+  width: 98%;
+  margin: 10px auto;
+}
+
+/* tab
+-----------------------------------------------------*/
+#contentBody table.tabtable {
+  width: 100%;
+}
+#contentBody td.tab {
+  width: 90px;
+  padding: 3px;
+  border: 1px solid #CCC;
+  background-color: #f1f0f5;
+  text-align: center;
+}
+#contentBody .tabBox td.current {
+  background-color: #fff;
+  border-bottom: none;
+}
+#contentBody .tabBox td.spaceLeft {
+  width: 10px;
+  border-bottom: 1px solid #CCC;
+}
+#contentBody .tabBox td.spaceCenter {
+  width: 10px;
+  border-bottom: 1px solid #CCC;
+}
+#contentBody .tabBox td.spaceRight {
+  padding-left: 20px;
+  border-bottom: 1px solid #CCC;
+}
+
+/* ヘルプアイコン
+-----------------------------------------------------*/
+.help a {
+  background-image: url("/_common/themes/gw/files/icon/ic-help.gif");
+  background-repeat: no-repeat;
+  background-position: left top;
+  clear: both;
+  display: inline-block;
+  height: 0;
+  margin-left: 5px;
+  overflow: hidden;
+  width: 15px;
+  height: 15px;
+  text-indent: -9999px;
+}
+
+/* メッセージ
+-----------------------------------------------------*/
+.required {
+  color: red;
+}
+form .required {
+  margin-bottom: 5px;
+  display: inline-block;
+}
+form table .required {
+  margin-bottom: 0;
+  display: inline;
+}
+.notice {
+  color: #080;
+}
+.setting .notice {
+  padding-bottom: 0;
+  padding-left: 25px;
+}
+
+/* 作成・編集ページ　見出し
+-----------------------------------------------------*/
+.formTitle {
+  height: 34px;
+  padding-left: 35px;
+  padding-top: 20px;
+  background-position: 0 15px;
+  font-size: 150%;
+  font-weight: bold;
+}
+.formTitle.new,
+.formTitle.docAdmin {
+  background-image: url(/_common/themes/gw/files/ic_add_big.gif);
+  background-repeat: no-repeat;
+}
+.formTitle.edit {
+  background-image: url(/_common/themes/gw/files/ic_edit_big.gif);
+}
+.formTitle.quote {
+  background-image: url("/_common/themes/gw/files/ic_cita_big.gif");
+  background-repeat: no-repeat;
+}
+.formTitle.editRepeat {
+  background-image: url("/_common/themes/gw/files/ic_edit_big.gif");
+  background-repeat: no-repeat;
+}
+
+/* 入力ページ　エラー表示
+-----------------------------------------------------*/
+#errorExplanation {
+  width: 500px;
+  margin: 10px 0 15px 10px;
+  border: 2px solid #f00;
+}
+#errorExplanation h2 {
+  padding: 5px 10px;
+  background-color: #c00;
+  color: #ffffff;
+  font-size: 100%;
+}
+#errorExplanation p {
+  padding: 5px 10px;
+  color: #333;
+  font-weight: bold;
+}
+#errorExplanation ul {
+  padding: 0px 0px 10px 0px;
+  list-style-type: square;
+}
+#errorExplanation ul li {
+  margin-left: 30px;
+  padding-left: 0px;
+  font-size: 12px;
+}
+.field_with_errors {
+  display: inline-block;
+  padding: 1px;
+  border: 1px solid #f00;
+}
+*:first-child+html .field_with_errors {
+  display: inline;
+}
+*html .field_with_errors {
+  display: inline;
+}
+.simpleErrorExplanation {
+  list-style-type: square;
+  color: #f00;
+}
+.simpleErrorExplanation li {
+  margin-left: 20px;
+}
+
+/* カレンダーボタン
+-----------------------------------------------------*/
+.calendar_date_select_popup_icon {
+  margin-top: -2px;
+  vertical-align: middle;
+}
+
+/* テキストボタン
+-----------------------------------------------------*/
+a.borderButton {
+  display: inline-block;
+  padding: 0 5px;
+  border-top: solid 1px #CCC;
+  border-left: solid 1px #CCC;
+  border-right: solid 1px #999;
+  border-bottom: solid 1px #999;
+}
+.btText {
+  padding: 2px 5px;
+  border-top: solid 1px #CCC;
+  border-right: solid 1px #999 ;
+  border-bottom: solid 1px #999 ;
+  border-left: solid 1px #CCC ;
+}
+a.btText {
+  display: inline-block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/* 編集・削除ボタン
+-----------------------------------------------------*/
+div.showMenu {
+  margin: 10px 0px 0px 0px;
+}
+.showMenu a {
+  display: inline-block;
+  width: 80px;
+  margin: 0 10px 0 0;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px 2px 2px 1px;
+  background-color: #eee;
+  color: #800;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1.7;
+}
+.showMenu a:hover {
+  border-color: #bbb;
+  text-decoration: underline;
+}
+.showMenu a:visited {
+  color: #800;
+}
+.showMenu a:link {
+  color: #800;
+}
+
+/* submit ボタン
+-----------------------------------------------------*/
+div.submitters {
+  margin: 20px 10px;
+}
+.right div.submitters {
+  text-align: center;
+}
+div.submitters input {
+  width: 100px;
+  margin: 0px 10px;
+}
+div.submitters a {
+  margin: 0px 10px;
+}
+
+/* 記事ページ　戻るボタン
+-----------------------------------------------------*/
+.btReturn {
+  clear: both;
+  margin-top: 30px;
+  padding-bottom: 25px;
+  text-align: center;
+  width: 100%;
+}
+.btReturn a {
+  display: inline-block;
+  width: auto;
+  padding: 5px 20px;
+  border: 1px solid #CCCCCC;
+  background-color: #F7FBFF;
+  text-decoration: none;
+}
+.btReturn a:hover {
+  text-decoration: none;
+}
+
+/* 外部サイトアイコン設定
+-----------------------------------------------------*/
+a.ext {
+  padding-left: 14px;
+  background-image: url(/_common/themes/gw/files/icon_external.gif);
+  background-position: left 2px;
+  text-decoration: none;
+}
+a:link.ext {
+  color: #00345C;
+}
+a:hover.ext {
+  text-decoration: underline;
+}
+
+/* helpBox
+-----------------------------------------------------*/
+.helpBox {
+  float: right;
+  margin-right: 20px;
+  margin-top: -45px;
+  background: none!important;;
+  text-align: right;
+}
+*html .helpBox {
+  margin-right: 10px;
+}
+
+/* pageNation
+-----------------------------------------------------*/
+.pagination {
+  margin: 20px 0px;
+  text-align: center;
+  color: #999;
+}
+.pagination a,
+.pagination em,
+.pagination span.disabled,
+.pagination span.current {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 5px;
+  padding: 4px 7px;
+  border: 1px solid #CCC;
+  text-decoration: none;
+}
+.pagination a:hover {
+  background-color: #eee;
+}
+.pagination span.disabled {
+  color: #888;
+}
+.pagination em.current,
+.pagination span.current {
+  background-color: #EEE;
+  font-style: normal;
+  font-weight: bold;
+  color: #000;
+}
+.pagination span.separator {
+  display: none;
+}
+
+/* 検索・セレクトボックス
+-----------------------------------------------------*/
+form.search {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #eee;
+}
+form.search th,
+form.search td {
+  padding: 0 5px 0 0;
+}
+form.search td.submitters input {
+  width: 60px;
+  font-size: 80%;
+}
+
+/* TinyMCE
+-----------------------------------------------------*/
+table.show td textarea.mceEditor {
+  width: 100%;
+  height: 500px;
+}
+#contentBody table.mceToolbar,
+#contentBody #item_body_tbl td {
+  background-color: #FFFFFF;
+}
+#contentBody td.mceToolbar {
+  padding-bottom: 5px;
+}
+#contentBody span.mceEditor {
+  display: block;
+  padding: 10px 6px 6px;
+}
+.mceEditor .defaultSkin table.mceLayout {
+  background-color: #ffffff;
+  border: none;
+}
+.mceEditor .defaultSkin table.mceLayout tr.mceFirst td {
+  padding: 0;
+  border: none;
+  background-color: #ffffff;
+}
+.defaultSkin span.mceIcon, .defaultSkin img.mceIcon {
+  background-color: #F0F0F0;
+}
+.mceEditor .defaultSkin .mceListBox .mceOpen {
+  background-color: #F0F0F0;
+}
+.bbsUserformBody ol,
+.docsInnerBox .show ol,
+.bbsUserformBody ol,
+.docformBody ol,
+.answerText ol {
+  margin-left: 20px;
+}
+.bbsUserformBody ul,
+.docsInnerBox .show ul,
+.bbsUserformBody ul,
+.docformBody ul,
+.answerText ul {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+/* 位置設定クラス
+--------------------------------------------*/
+.centerText,
+table.show th.centerText {
+  text-align: center;
+}
+.rightText,
+table.show th.rightText {
+  text-align: right;
+}
+.leftText,
+table.show th.leftText {
+  text-align: left;
+}
+.rightSide{
+  float:right;
+}
+.editingBox .rightSide{
+  margin-right:21px;
+}
+
+/* グレーアウト設定
+-----------------------------------------------------*/
+.headerMenu li.grayout, #page-tabMain-7 .box .menu li {
+  height: 1%;
+}
+.headerMenu li.grayout a, .headerMenu li.grayout a:hover, .headerMenu li.grayout a:visited,
+li.grayout a, li.grayout a:hover, li.grayout a:visited,
+li.grayout a.mock, li.grayout a.mock:hover, li.grayout a.mock:visited,
+a.grayout, a.grayout:hover, a.grayout:visited, span.grayout {
+  color: #999999;
+  text-decoration: none;
+  cursor: default;
+}
+
+/* ime-mode
+-----------------------------------------------------*/
+#imeon {
+  ime-mode: active;
+}
+#imeoff {
+  ime-mode: inactive;
+}
+#imedisabled {
+  ime-mode: disabled;
+}
+.IMEoff {
+  ime-mode: disabled;
+}
+
+/* Siteinfo
+-----------------------------------------------------*/
+#siteinfoContent {
+  margin-top: 30px;
+}
+
+/* 一覧・履歴一覧表示
+-----------------------------------------------------*/
+.link_show {
+  width: 40px;
+}
+.basic_damage_show {
+  width: 65px;
+}
+
+.show_time {
+  width: 140px;
+}
+.history_updated_user {
+  width: 270px;
+}
+
+/* 庁舎被害
+-----------------------------------------------------*/
+
+.none_state {
+  background-color: #fff;
+}
+.immense_state {
+  background-color: #ffaaaa;
+}
+.nodata_state {
+  background-color: #dddddd;
+}
+.partial_state {
+  background-color: #ffffaa;
+}
+
+/* 避難勧告
+-----------------------------------------------------*/
+
+td.abri_area {
+  width: 190px;
+}
+
+/* medical
+-----------------------------------------------------*/
+#page-medical-maintenances-masters .menu li,
+#page-medical-maintenances-seconds .menu li {
+  height: 1%;
+  padding: 3px 0 5px 10px;
+}
+#page-medical-maintenances-masters .menu li a,
+#page-medical-maintenances-seconds .menu li a {
+  border: medium none;
+  padding-left: 0;
+  padding-right: 15px;
+}
+
+
+/* csv sample
+-----------------------------------------------------*/
+h1.csv {
+  margin: 20px 0 5px;
+  color: #008000;
+  font-weight: lighter;
+}
+
+table.csv {
+  margin-bottom: 10px;
+  border-left: solid 2px #FFF;
+  border-right: solid 2px #FFF;
+}
+table.csv th {
+  padding: 3px;
+  background-color: #ddd;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+table.csv td {
+  padding: 3px;
+  border: 1px solid #CCCCCC;
+}
+
+ul.csv {
+  margin-left: 25px;
+}
+ul.csv li {
+  margin: 4px 0;
+  list-style-type: disc;
+}

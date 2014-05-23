@@ -1,0 +1,325 @@
+
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:view_select) %></th>
+    <td>
+
+<%= content_for :header do %>
+<style>
+#canvas .olControlAttribution {
+  font-size:13px;
+  bottom:3px;
+}
+</style>
+<% end %>
+
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(function() {
+    var options = {
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection: new OpenLayers.Projection("EPSG:4326"),
+      units: "m",
+      numZoomLevels: 20,
+      maxResolution: 156543.0339,
+      controls : [
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.ScaleLine(),
+        new OpenLayers.Control.ArgParser(),
+        new OpenLayers.Control.Attribution()
+      ]
+    };
+<%
+ wms_url = Application.config(:wms_gateway_url, "localhost")
+ vector_layer_list = []
+%>
+var map = new OpenLayers.Map("canvas", options);
+Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+var myproj =new OpenLayers.Projection("EPSG:4326");
+
+  /* mapサーバ */
+  var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+var Rule = OpenLayers.Rule;
+var Filter = OpenLayers.Filter;
+var kindFilters = new Object();
+var kind_filter_xmls = new Object();
+var kindLayerFilters = new Object();
+var layerStyles = new Object();
+var overlays = new Object();
+var selectControls = new Object();
+var portalLayers = new Array();
+
+var baseLayers= new Object();
+
+
+    var markers = new OpenLayers.Layer.Markers("Markers");
+    map.addLayer(markers);
+    initBaseLayer(map);
+    map.events.register("moveend", map, mapMoveListener);
+
+    setCenter();
+
+    initWMSLayer();
+    //初期レイヤー設定
+    <%@visible_layers.each do |layer|
+    next if layer == "vector"-%>
+
+    overlays['<%=layer%>'].setVisibility(true);
+    <%end unless @visible_layers.blank?-%>
+    setUrl();
+
+    <% if @conf_item && @conf_item.lng.present? && @conf_item.lat.present? %>
+    setMarker(<%= @conf_item.lng %>, <%= @conf_item.lat %>);
+    <% end %>
+
+    map.events.register('click', map, function(e) {
+      var lonlat = map.getLonLatFromViewPortPx(e.xy).transform(
+        new OpenLayers.Projection("EPSG:900913"),
+        new OpenLayers.Projection("EPSG:4326")
+      );
+      setMarker(lonlat.lon, lonlat.lat);
+      $('#item_lng').val(lonlat.lon);
+      $('#item_lat').val(lonlat.lat);
+      var centerLonLat = new OpenLayers.LonLat(lonlat.lon, lonlat.lat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+      map.setCenter(centerLonLat ,map.getZoom());
+      $('#item_zoom').val(map.getZoom());
+    });
+
+  <%= render :partial =>  '/gis/public/portals/base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
+
+    function setCenter() {
+      <%if @conf_item%>
+      var centerLon = <%= @conf_item.lng.presence || Gis.defalut_position[:lng] %>;
+      var centerLat = <%= @conf_item.lat.presence || Gis.defalut_position[:lat] %>;
+      var zoom = <%= @conf_item.zoom.presence || 7 %>;
+      <%else%>
+      var centerLon = <%=Gis.defalut_position[:lng]%>;
+      var centerLat = <%=Gis.defalut_position[:lat]%>;
+      var zoom = 7;
+      <%end%>
+      var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+      map.setCenter(centerLonLat, zoom);
+      setMarker(centerLon, centerLat);
+    }
+
+    function moveToCenter(lon, lat){}
+    function setMarker(lon, lat) {
+      var marker = new OpenLayers.Marker(
+        new OpenLayers.LonLat(lon, lat).transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          new OpenLayers.Projection("EPSG:900913")
+        )
+      );
+      markers.clearMarkers(marker);
+      markers.addMarker(marker);
+    }
+
+  function mapMoveListener(evt){
+    $('#item_zoom').val(map.getZoom());
+      setUrl();
+  }
+
+
+   $("#item_area_code").change(function(e) {
+     var area_code = $("#item_area_code").val();
+     $.ajax({
+        type: 'GET',
+        url:  '<%= url_for(:action => :get_center) -%>?area_code=' + area_code,
+        success: function(request) {
+          if (request!="NG"){
+            var point = request.split(",");
+            var centerLonLat = new OpenLayers.LonLat(point[1], point[0]).transform(
+              new OpenLayers.Projection("EPSG:4326"),
+              new OpenLayers.Projection("EPSG:900913")
+            );
+            map.setCenter(centerLonLat, 13);
+          }
+        }
+    });
+  });
+    $('#itemForm').submit(function(e) {
+      if ($('#item_lng').val() == '' || $('#item_lat').val() == '') {
+        alert('登録する位置をクリックしてください。');
+        $('#button_to_index').removeAttr("disabled");
+        $('form').find(":submit").removeAttr("disabled");
+        e.preventDefault();
+      }
+    });
+
+$(document).on("change", ".baseLayer", function(e){
+  var radioBtnSet = $(".baseLayer");
+  var value;
+   for(var i = 0; i < radioBtnSet.length; i++){
+       inputCheck = radioBtnSet[i];
+      inputId = inputCheck.id;
+      value = $("#" + inputId).prop('checked');
+     if(value==true){
+       map.setBaseLayer(baseLayers[inputId]);
+       }else{
+       }
+   }
+  setUrl();
+});
+
+
+$(document).on("change", ".featureLayer", function(e){
+  var id = $(this).attr("id");
+  var overlayId = $("#"+id).val();
+  var value = $("#"+id).prop('checked');
+  if(overlays[overlayId]==null){
+    return;
+  }
+  if(value==true){
+    overlays[overlayId].setVisibility(true);
+  }else{
+    overlays[overlayId].setVisibility(false);
+  }
+  setUrl();
+
+});
+
+  $(document).on("click","#publish",function(e){
+    e.preventDefault();
+    //addUser();
+    setUrl();
+
+  });
+
+  function setUrl(){
+
+    var width = '<%=@width%>';
+    var height = '<%=@height%>';
+    var mapLinkUrl = "<%=@external_url%>";
+    var lon = $('#item_lng').val();
+    var lat = $('#item_lat').val();
+    mapLinkUrl += "?zoom=" + map.getZoom() + "&lon="+ lon + "&lat=" +  lat;
+    var displayedLayer = [];
+    for (var keyString in overlays) {
+      if (overlays[keyString].visibility == true && keyString!= "vector"){
+        displayedLayer.push(keyString);
+      }
+    }
+
+    if(displayedLayer){
+      mapLinkUrl += "&layers=" + displayedLayer.join(",");
+    }
+    for (var keyString in baseLayers){
+      if (baseLayers[keyString].visibility == true){
+        mapLinkUrl += "&baselayer=" + keyString;
+      }
+    }
+    mapLinkUrl += "&width=" + width + "&height=" +  height;
+
+    $("#extarnalUrl").val(mapLinkUrl);
+    $("#canvas").css("width", width + "px");
+    $("#canvas").css("height", height + "px");
+
+    /*
+
+    var width = $("#extarnalWidth").val();
+    var height = $("#extarnalHeight").val();
+    var centerLonLat = new OpenLayers.LonLat(lon, lat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+    $("#extarnalTag").val(iframeTag);
+      map.setCenter(centerLonLat ,map.getZoom());*/
+    var iframeTag = '<iframe src="'+ mapLinkUrl + '" name="sample" width="'+ width + '" height="'+ height +'" frameborder="0" scrolling="no"></iframe>';
+    $("#extarnalTag").val(iframeTag);
+  }
+  <%= render :partial =>  'gis/public/portals/open_layer_list'   rescue nil%>
+  <%= render :partial =>  'gis/public/portals/select_feature', :locals=>{:map_code =>@map.code}   rescue nil%>
+   })
+
+
+
+})(jQuery);
+//]]>
+</script>
+地図の中心にする位置をクリックしてください。
+<div id="canvas" style="width: <%=@width%>px; height: <%=@height%>px;"></div>
+
+<%= f.hidden_field :lng %>
+<%= f.hidden_field :lat %>
+<%= f.hidden_field :zoom %>
+    </td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:base_layer)%></th>
+    <td>
+      <%for item in base_layers(@map)
+      checked = false
+      checked = true if @baselayer && @baselayer == item.code
+      %>
+      <%=radio_button_tag(:item_base_layer, item.code , checked, :id => item.code, :class=>"baseLayer")%>
+      <label for="<%=item.code%>"><%=item.title%></label>
+      <br />
+      <%end%>
+    </td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:layers)%></th>
+    <td>
+   <%
+    last_index = nil
+    folders = get_folders_from_item(@map, "all")
+    folders.each_with_index{|folder, n|
+      last_index = n
+    %>
+      <%layers = get_layers_from_item(folder,"all")
+      layers.each_with_index{|layer, m|
+        checked = false
+        checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?
+      -%>
+        <%=check_box_tag("item_layers[]", layer.code, checked, {:id=>"#{layer.code}_#{n}", :class=>"featureLayer layerCheck-#{n}"})%>
+        <label for="<%="#{layer.code}_#{n}"%>"><%=layer.title%></label><br />
+      <%} unless layers.blank?-%>
+    <%} unless folders.blank?
+    last_index = last_index.blank? ? 0 : last_index + 1
+    %>
+    <%layers = get_layers_from_item(@map,"all")
+    if layers%>
+    <%layers.each_with_index{|layer, n|
+        checked = false
+        checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?-%>
+      <%=check_box_tag("item_layers[]", layer.code, checked, {:id=>"#{layer.code}_#{last_index}", :class=>"featureLayer layerCheck-#{last_index}"})%>
+      <label for="<%="#{layer.code}_#{last_index}"%>"><%=layer.title%></label><br />
+    <%} unless layers.blank?%>
+    <%end%>
+    </td>
+  </tr>
+  <!--<tr>
+    <th>サイズ（幅×高さ）</th>
+    <td><%#=text_field_tag :width, 400, :id=>"extarnalWidth", :style=> "width: 80px;"%> ×　
+        <%#=text_field_tag :height, 300, :id=>"extarnalHeight", :style=> "width: 80px;"%>
+     </td>
+  </tr>-->
+</table>
+<%#=button_tag "URL発行", :id=>"publish"%>
+
+<table class="show">
+  <tr>
+    <th>埋め込みURL</th>
+  </tr>
+  <td>
+    <%=text_field_tag :external_url, @external_url, :id=>"extarnalUrl", :style=> "width: 500px;"%>
+  </td>
+  <tr>
+    <th>埋め込みタグ（詳細）</th>
+  </tr>
+  <td>
+    <%=text_area_tag :external_tag, @external_tag, :id=>"extarnalTag", :style=> "width: 500px; height: 80px;"%>
+  </td>
+</table>
+

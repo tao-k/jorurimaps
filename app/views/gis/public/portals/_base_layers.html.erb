@@ -1,0 +1,47 @@
+
+/**
+ * ベースレイヤーセット
+ */
+function initBaseLayer(m, opts) {
+
+var base;
+<%for item in base_layer_items
+if item.kind =~ %r(webtis)
+  next if item.webtis_v4_code.blank?
+-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.XYZ("<%=item.title%>",
+  "http://cyberjapandata.gsi.go.jp/xyz/<%=item.webtis_v4_code%>/${z}/${x}/${y}.<%=item.webtis_v4_extname%>", {
+    attribution: "<a href='http://portal.cyberjapan.jp/help/termsofuse.html' target='_blank'>国土地理院</a>",
+    maxZoomLevel: 18
+  });
+<%elsif item.kind == "osm"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.OSM("<%=item.title%>");
+<%elsif item.kind == "gmap"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google("<%=item.title%>", {visibility: false});
+<%elsif item.kind == "gsat"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google( "<%=item.title%>", {type: google.maps.MapTypeId.SATELLITE});
+<%elsif item.kind == "g_hybrid"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google("<%=item.title%>",{type: google.maps.MapTypeId.HYBRID});
+<%elsif item.kind == "g_physcal"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google( "<%=item.title%>",{type: google.maps.MapTypeId.TERRAIN});
+<%else%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.WMS(
+      "<%=item.title%>",
+      "<%=item.url%>",
+       {format: "image/png"},
+       {isBaseLayer: true,visibility: false,layerName:"<%=item.code%>"});
+<%end-%>
+<%if base_layer_setting && base_layer_setting == item.code%>
+base = baseLayers['<%=item.code%>'];
+currentBaseLayer = '<%=item.code%>';
+<%end%>
+m.addLayer(baseLayers['<%=item.code%>']);
+<%end-%>
+if(base){
+  m.setBaseLayer(base);
+
+}
+
+ markers = new OpenLayers.Layer.Markers("Markers");
+ map.addLayer(markers);
+}

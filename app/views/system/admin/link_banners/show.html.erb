@@ -1,0 +1,20 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%=h safe{@item.web_status_show} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr><tr>
+    <th><%= @item.locale(:url) %></th>
+    <td><%= @item.url %></td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %></th>
+    <td><%= @item.sort_no %></td>
+  </tr><tr>
+    <th><%= @item.locale(:url) %>s</th>
+    <td><%= image_tag(@item.file_uri) %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'gis/admin/common/operator'%>

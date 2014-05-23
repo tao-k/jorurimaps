@@ -1,0 +1,8 @@
+<% if @count_hash.blank?%>
+<%else
+@count_hash.each do |key, value|
+  admin_group = value[:admin_group]
+%>
+<%=link_to "#{admin_group.name}（#{value[:count]}）", url_for(:action => :index, :p_group_id => admin_group.id)%><br />
+<%end%>
+<%end%>

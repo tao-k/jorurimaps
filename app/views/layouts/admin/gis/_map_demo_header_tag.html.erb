@@ -1,0 +1,34 @@
+
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+
+<title><%= Page.title || @page_title %> - <%= Site.title -%></title>
+<%= javascript_include_tag "/_common/js/jquery/jquery.js" %>
+<%= javascript_include_tag "/_common/js/jquery/jquery-ui.js" %>
+
+
+<%
+controller_js = @js ||  []
+
+js_ret=''
+controller_js.each{|x|js_ret += javascript_include_tag(x)+"\n"};
+%>
+<%=raw(js_ret)%>
+
+<%
+@css = @css || []
+css_ret=''
+@css.each{|x|css_ret+=stylesheet_link_tag(x, :media=>:all)+"\n"};
+%>
+<%=raw(css_ret)%>
+
+<%
+controller_dynamic_js = @dynamic_js ||  []
+dynamic_js_ret=''
+
+controller_dynamic_js.each{|x|
+  qs = "?lat=#{x[:lat]}&amp;lon=#{x[:lon]}&amp;zoom=#{params[:zoom]}&layers=#{params[:layers]}&portal=#{@portal}&map_id=#{@map_id}&baselayer=#{params[:baselayer]}&map_code=#{@map_code}"
+  %>
+<script src="<%=url_for({:controller=>x[:controller], :action=>x[:action]})%>.js<%=qs%>" type="text/javascript"></script>
+<%}-%>

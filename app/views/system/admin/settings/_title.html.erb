@@ -1,0 +1,7 @@
+<%
+action_title = translate_action
+%>
+<div class="titleLine">
+  <span class="title"><%= "#{@setting[:title]} #{action_title}" %></span>
+  <%= render :partial => 'action_menu' %>
+</div>

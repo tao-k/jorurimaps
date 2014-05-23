@@ -1,0 +1,31 @@
+
+ <!-- kannrenInfo -->
+<div id="kannrenInfo">
+<div class="pieceHeader">
+<div class="kannrenTitle">関連情報</div>
+<div class="rightMenu">
+  <span class="tokushima">
+    <a href="http://demo.joruri.org/bunya/<%=category%>/">ジョールリ市ホームページ<%=class_title%>情報</a>
+  </span>
+  <span class="rss">
+    <a href="http://demo.joruri.org/bunya/<%=category%>/index.rss">RSS</a>
+    <a href="http://demo.joruri.org/bunya/<%=category%>/index.atom">Atom</a>
+  </span>
+</div>
+</div>
+
+<div class="pieceBody">
+<ul>
+  <%hp_feeds = get_feed(class_title)
+
+  hp_feeds.each do |feed|%>
+  <li><%=link_to feed.title, feed.url, :target=>"_blank"%>
+  <span class="attributes">（<span class="date"><%=feed.published_at.strftime("%Y年%m月%d日")%></span><span class="separator">・</span>
+  <span class="unit"><%=feed.author%></span>）</span>
+  <span class="link"><img src="/_common/themes/gis/images/ic/ic_external_link.png" alt="" /></span>
+  </li>
+  <%end unless hp_feeds.blank?%>
+</ul>
+ </div>
+</div>
+<!-- /kannrenInfo -->

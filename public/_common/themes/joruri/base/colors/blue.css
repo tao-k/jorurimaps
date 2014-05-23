@@ -1,0 +1,449 @@
+/* basic style
+----------------------------------------------- */
+body, body div {
+  background-color: #0000bb;
+  color: #ffffff;
+}
+#container {
+  background-image: none;
+}
+a {
+  color: #ffffff;
+}
+a:visited {
+  color: #ffffff;
+}
+a:hover {
+  color: #ffffff;
+}
+.docTab .content li {
+  color: #ffffff;
+}
+h1 {
+  color: #ffffff;
+}
+#contentBody .docTab .content li {
+  color: #ffffff;
+}
+
+/* header
+--------------------------------------------------- */
+#commonHeader,
+#commonHeader .pieceContainer,
+#commonHeader .pieceBody,
+#navigationNotice {
+  background-color: #ececec;
+  color: #000000;
+}
+#header {
+  margin: 0 10px;
+  padding: 0;
+  background-color: #ececec;
+}
+#headerContainer {
+  margin: 0 5px;
+  padding: 0;
+}
+a.riyou {
+  _color: #000 !important;
+}
+
+/* google
+---------------------- */
+span.google div {
+  background-color: transparent;
+}
+
+/* banner style
+----------------------------------------------- */
+#bannerContainer, #CommonBanner, #commonBanner .menu .upperMenu, #commonBanner .lowerMenu {
+  background-color: transparent;
+}
+#commonBanner .logo {
+  background-color: transparent;
+}
+#commonBanner .menu {
+  background-color: transparent;
+}
+#commonBanner .menu .lowerMenu a {
+  color: #000;
+}
+
+/* main
+----------------------------------------------- */
+#main {
+  background-image: none;
+  background-color: #0000bb;
+}
+
+/* navi
+-----------------------------------------*/
+#navi {
+  background-image: none;
+  background-color: #0000bb;
+}
+#navi #breadCrumbs {
+  color: #ffffff;
+}
+
+/* footer style
+----------------------------------------------- */
+#footerNavi .pieceBody,
+#footerNavi a,
+#footerNavi a:visited,
+#footerNavi a:hover {
+  color: #ffffff;
+}
+#footerNavi .pieceBody {
+  border: solid 1px #ffffff;
+}
+#address span {
+  color: #ffffff;
+}
+#copyRight {
+  border-bottom: none;
+}
+#copyRight .pieceBody {
+  border-top: solid 1px #ffffff;
+  color: #ffffff;
+}
+
+/* search,setsbiSearch
+-----------------------------------------*/
+#search .pieceHeader .left {
+  background-color: transparent;
+}
+#search .pieceHeader h2 {
+  color: #ffffff;
+}
+#search .pieceBody {
+  background-color: #00b;
+  border: solid 1px #fff;
+}
+#shisetsuName .shisetsuNameHeader,
+#shisetsuCategory .shisetsuCategoryHeader,
+#shisetsuArea .shisetsuAreaHeader,
+#shisetsuAddress .shisetsuAddressHeader {
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+#shisetsuCategory .shisetsuCategoryBody ul li {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+}
+#shisetsuCategory .shisetsuCategoryBody ul li:hover,
+#shisetsuCategory .shisetsuCategoryBody ul li.checked {
+  background: #ffffff;
+  color: #0000bb;
+}
+#search .pieceFotter .pieceBody,
+#setsubiSearch .pieceFotter .pieceBody {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+}
+#searchBottom .right input {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+}
+#searchBottom .right input:hover {
+  background-color: #0000bb;
+  color: #fff;
+  text-decoration: underline;
+}
+#search .pieceFotter .left input,
+#setsubiSearch .pieceFotter .left input {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+}
+#search .pieceFotter .left input:hover,
+#setsubiSearch .pieceFotter .left input:hover {
+  background-color: #ffffff;
+  color: #0000bb;
+}
+#setsubiSearch .setsubiSearchHeader {
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+.setsubiCategoryBody ul li {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+}
+.setsubiCategoryBody ul li:hover,
+.setsubiCategoryBody ul li.checked {
+  background-color: #ffffff;
+  color: #0000bb;
+}
+
+/* reccommend
+-----------------------------------------*/
+#recommend .recommendSearchHeader h3 {
+  background-color: #0000bb;
+  color: #ffffff;
+}
+#recommendSearch .recommendSearchBody ul li {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+}
+#recommendSearch .recommendSearchBody ul li:hover {
+  background-color: #fff;
+  color: #00b;
+}
+#toroku,
+#udAbout {
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+#shisetsuRank,
+#phoneBanner {
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+#shisetsuRank .shisetsuRankHeader,
+#phoneBanner .phoneBannerHeader {
+  background: #0000bb;
+}
+
+/* result
+-----------------------------------------*/
+#result .resultHeader h2 {
+  background-color: #0000bb;
+  color: #ffffff;
+}
+#searchResult .left {
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+#resultFotter .pieceBody a {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+  color: #ffffff;
+}
+#resultFotter .pieceBody a:hover {
+  background: #ffffff;
+  color: #0000bb;
+}
+
+/* resultList
+-----------------------------------------*/
+#resultList .resultListHeader {
+  border-bottom: solid 2px #ffffff;
+}
+.resultListBody .resultContent {
+  border-bottom: solid 1px #ffffff;
+}
+#resultListFotter .pagination a {
+  background-color: #0000bb;
+}
+#resultListFotter .pagination em.current {
+  padding: 1px 8px;
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+
+/* resultMap
+-----------------------------------------*/
+#resultMap {
+  border-bottom: solid 2px #fff;
+}
+#resultMap .resultMapHeader {
+  border-bottom: solid 2px #ffffff;
+}
+#resultMap .resultMapBody {
+  border: solid 1px #ffffff;
+  background-color: #0000bb;
+}
+.resultMapBody .resultMapContent div.pieceBody {
+  border-bottom: solid 1px #ffffff;
+}
+.gmap div {
+  background-color: transparent;
+  color: #0000bb;
+}
+.gmap div a {
+  color: #0035CC;
+}
+#resultMap .resultMapCheck {
+  border-bottom: solid 2px #ffffff;
+}
+#resultMap .resultMapCheck .resultMapCheckButton {
+  border-bottom: solid 1px #ffffff;
+}
+#resultMap .resultMapCheck .resultMapCheckHeader {
+  background: #0000bb;
+  color: #ffffff;
+}
+#resultMap .resultMapCheck .resultMapCheckBody ul li {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+  color: #ffffff;
+}
+#resultMap .resultMapCheck .resultMapCheckBody  ul li:hover,
+#resultMap .resultMapCheck .resultMapCheckBody  ul li.checked {
+  background: #ffffff;
+  color: #0000bb;
+}
+.resultMapContent .listBox{
+  background-color: #0000bb;
+}
+
+
+/* shisetsu
+-----------------------------------------*/
+#shisetsu ul li {
+  border-bottom: solid 1px #ffffff;
+}
+#shisetsu .pagination em.current {
+  padding: 1px 8px;
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+
+/* shisetsuDetail
+-----------------------------------------*/
+#shisetsuDetail .pieceHeader {
+  background-image: none;
+  border-bottom: solid 2px #ffffff;
+}
+#shisetsuDetail .pieceHeader h2 {
+  color: #ffffff;
+}
+#shisetsuDetail .pieceHeader .category .left {
+  background: #0000bb;
+  border: solid 1px #ffffff;
+}
+#shisetsuDetail .pieceBody {
+  border-bottom: solid 2px #ffffff;
+}
+#shisetsuDetail table {
+  border: solid 1px #ffffff;
+}
+#shisetsuDetail table th,td {
+  border: solid 1px #ffffff;
+}
+#shisetsuDetail table td.text {
+  border-left: solid 1px #ffffff;
+}
+
+/* navi
+-----------------------------------------*/
+#navi #conceptTitle .pieceBody {
+  background-image: none;
+  border: solid 1px #ffffff;
+}
+
+/* contentArticleDoc
+--------------------*/
+#contentArticleDoc .header {
+  background-image: none;
+  border: solid 1px #ffffff;
+}
+#contentArticleDoc .header h1 {
+  background-image: none;
+}
+#contentArticleDoc .header .publishedAt {
+  background-image: none;
+}
+#contentArticleDoc .back a {
+  background-color: #0000bb;
+  border: solid 1px #ffffff;
+}
+
+/* contentPage(general)
+-----------------------------------------*/
+.contentPage h2 {
+  background-image: none;
+  border-top: none;
+  border-right: none;
+  border-left: solid 2px #ffffff;
+  border-bottom: solid 3px #ffffff;
+}
+.contentPage table th,
+.contentPage table td {
+  border: solid 1px #fff;
+}
+div#canvas div {
+  background-color: transparent;
+  color: #00b;
+}
+
+/* touroku(index.html)
+--------------------*/
+span.required {
+  color: #fff;
+}
+a.touroku {
+  background: #00b;
+  border: solid 1px #fff;
+}
+a.touroku:hover {
+  background-color: #fff;
+  color: #00b;
+}
+
+/* touroku(touroku.html)
+--------------------*/
+.column .name .title {
+  background-color: #00b;
+  border: solid 1px #fff;
+}
+.column .table  table td {
+  border: solid 1px #fff;
+}
+.column .table2 table {
+  border: solid 1px #fff;
+}
+.column .table2 table th,td {
+  border: solid 1px #fff;
+}
+.column .table2 table th {
+  background-color: #00b;
+}
+
+/* touroku(check.html)
+--------------------*/
+.check .field table th {
+  background-color: #00b;
+}
+
+/* touroku(error-message)
+--------------------*/
+.errorExplanation {
+  color: #fff;
+}
+.errorExplanation h2 {
+  background-image: none;
+  background-color: #00b;
+  border: 1px solid #fff;
+  color: #fff;
+}
+.errorExplanation {
+  color: #fff;
+}
+.errorExplanation p {
+  color: #fff;
+}
+
+/* touroku(error-message)
+--------------------*/
+.errorExplanation {
+  color: #fff;
+}
+.errorExplanation h2 {
+  background-image: none;
+  background-color: #00b;
+  border: 1px solid #fff;
+  color: #fff;
+}
+.errorExplanation {
+  color: #fff;
+}
+.errorExplanation p {
+  color: #fff;
+}
+
+/* info(info.html)
+--------------------*/
+.use .info-bg {
+  border: solid 1px #fff;
+  background-color: #00b;
+}

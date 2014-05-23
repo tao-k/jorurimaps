@@ -1,0 +1,19 @@
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th style="width: 240px;">公開日時</th>
+    <th style="width: ;">タイトル</th>
+    <th style="width: ;">更新日</th>
+  </tr>
+
+  <% for item in @items %>
+  <tr class="<%= cycle '', 'cycle' %>">
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item) %></td>
+    <td><%=h safe{item.published_at.strftime('%Y-%m-%d %H:%M')} %></td>
+    <td><%=h item.title %></td>
+    <td><%=h safe{item.updated_at.strftime('%Y-%m-%d %H:%M')} %></td>
+  </tr>
+  <% end %>
+</table>
+
+<%= paginate @items %>

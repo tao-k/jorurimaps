@@ -1,0 +1,8 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '新規登録', {:action => :new}, :method => :get %>
+  <%= button_to 'CSV登録',  {:action => :new_csv}, :method => :get %>
+  <%= button_to '即時反映', {:action => :execute}, :method => :get, :confirm => '異動日/退職日の設定を無視して即時反映します。よろしいですか？' if @items.size > 0 %>
+<% end %>
+</span>

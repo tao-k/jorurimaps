@@ -1,0 +1,435 @@
+
+var iconSet = {};
+
+<%icon_select.each_with_index do |icon, i|
+if i==0%>
+iconConfig = { url: "<%=icon.file_uri%>", width : <%=icon.width%>, height: <%=icon.height%>, YOffset: -<%=icon.offset_y%>};
+<%end%>
+iconSet["<%="marker#{icon.id}"%>"] = { url: "<%=icon.file_uri%>", width : <%=icon.width%>, height: <%=icon.height%>, YOffset: -<%=icon.offset_y%>};
+<%end%>
+
+$(document).on("click", "#exportBtn", function(e){
+  if(overlays['vector'].features.length < 1){
+    Ext.MessageBox.alert("KML出力", "作図レイヤーにアイテムが存在しないため、出力できません。");
+    return false;
+  }
+  var kmlFormat = new OpenLayers.Format.KML(
+  {
+    'extractStyles':true,
+    'internalProjection': map.baseLayer.projection,
+    'externalProjection': new OpenLayers.Projection("EPSG:4326")
+    });
+  var kmlText = kmlFormat.write(overlays['vector'].features);
+  $.ajax({
+      url: '<%=url_for({:action => :export})%>',
+      type: 'POST',
+      dataType: 'text',
+      async: true,
+      data: {
+        "_method": "post",
+        "authenticity_token": "<%= form_authenticity_token %>",
+        "kml_data": kmlText
+      },
+       success: function(data, text_status, xhr){
+        window.location.href = getBaseUrl() + "/" + data + "/download_kml.xml";
+      },
+      error: function(xhr, text_status, err_thrown){
+            console.log(err_thrown + ' ファイルダウンロードに失敗しました');
+        }
+  });
+
+});
+
+var importCount = 1;
+$(document).on("submit", "#importForm", function(e){
+  e.preventDefault();
+    var $form, fd;
+    $form = $(this);
+    fd = new FormData($form[0]);
+    $.ajax($form.attr("action"), {
+      type: 'post',
+      processData: false,
+      contentType: false,
+      data: fd,
+      dataType: 'html',
+      success: function(data){
+        if (data=="NG"){
+          Ext.MessageBox.alert("ファイルインポート", "インポートに失敗しました。ファイルが選択されていないか、容量制限をオーバーしています。");
+          $("#item_file").replaceWith('<input id="item_file" name="item[file]" type="file">');
+        }else{
+          var import_kind =  $('#selectType input[name="import[]"]:checked').val();
+          var layerId = new Date().getTime();
+          var vectorId = 'vector' + layerId;
+          overlays[vectorId]  = new OpenLayers.Layer.Vector("インポート" + layerId,
+            {
+              visibility: true,
+              group: "others",
+              projection: new OpenLayers.Projection("EPSG:900913"),
+              displayProjection: new OpenLayers.Projection("EPSG:4326"),
+              style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 0.5},
+            });
+          map.addLayer(overlays[vectorId]);
+          if(import_kind=="kml"){
+            overlays[vectorId].addFeatures(GetFeaturesFromKMLString(data));
+          }else{
+            overlays[vectorId].addFeatures(GetFeaturesFromGPXString(data));
+          }
+          $("#item_file").replaceWith('<input id="item_file" name="item[file]" type="file">');
+          var addedLayer = '<input class="featureLayer" id="' + vectorId + '" name="feature_layer" type="checkbox" value="'+ vectorId +'" checked="checked"/>';
+          addedLayer += '<label for="'+ vectorId +'">追加レイヤー' + importCount + '</label><br />'
+          $("#vectorLayerSelect").append(addedLayer);
+          overlays[vectorId].events.register('beforefeatureadded', overlays[vectorId], afterSketch);
+          importCount++;
+        }
+
+      }
+    });
+    return false;
+  });
+
+
+function canselSketch(){
+  if(currentControl){
+    drawControls[currentControl].deactivate();
+    $("#" + currentControl + "Toggle").removeAttr("checked");
+  }
+  drawFormShow("none");
+}
+
+
+function drawFormShow(selected){
+  if(selected=="point"){
+    $("#markerControl").show();
+    $("#strokeColorControl").hide();
+    $("#fillColorControl").hide();
+    $("#radiusControl").hide();
+  }else if(selected=="line"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").hide();
+    $("#radiusControl").hide();
+    $("#strokeExplain").html("色を選択し、地図上の任意の点をクリックして線を作図してください。<br />ダブルクリックで作図を終了します。");
+  }else if(selected == "polygon"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").show();
+    $("#radiusControl").hide();
+    $("#strokeExplain").html("色を選択し、地図上の任意の点をクリックして図形を作図してください。<br />ダブルクリックで作図を終了します。");
+  }else if(selected == "drag"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").show();
+    $("#radiusControl").hide();
+    $("#strokeExplain").html('色を選択し、地図上の任意の点からドラッグで円を作図してください。');
+  }else if(selected=="click"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").show();
+    $("#radiusControl").show();
+    $("#strokeExplain").html('色を選択し、地図上の任意の点をクリックして円を作図してください。');
+  }else if(selected=="cansel"){
+    canselSketch();
+  }else{
+    $("#markerControl").hide();
+    $("#strokeColorControl").hide();
+    $("#fillColorControl").hide();
+    $("#radiusControl").hide();
+  }
+}
+
+
+function setDrawControl(){
+  var drawLayer = overlays['vector'] ;
+  polyOptions = {sides: circleSides};
+
+  drawControls = {};
+  drawControls["point"] = new OpenLayers.Control.DrawFeature(drawLayer, OpenLayers.Handler.Point);
+  drawControls["line"] =  new OpenLayers.Control.DrawFeature(drawLayer, OpenLayers.Handler.Path);
+  drawControls["polygon"] =  new OpenLayers.Control.DrawFeature(drawLayer, OpenLayers.Handler.Polygon);
+  drawControls["drag"] =  new OpenLayers.Control.DrawFeature(drawLayer, OpenLayers.Handler.RegularPolygon,{handlerOptions: polyOptions});
+  drawControls["delete"] =  new OpenLayers.Control.SelectFeature(drawLayer, {onSelect: removeSelectedFeature,onUnselect: onFeatureUnselect});
+  //drawControls["measure"] =  new OpenLayers.Control.SelectFeature(drawLayer, {onSelect: measureSelectedFeature});
+  drawControls["edit"] =  new OpenLayers.Control.SelectFeature(drawLayer, {onSelect: editFeature});
+  drawControls["click"] =  new OpenLayers.Control.circleClick();
+  for(var key in drawControls) {
+      map.addControl(drawControls[key]);
+  }
+
+}
+
+$(document).on("click", ".selectMarker", function(e){
+  var value = $(this).val();
+  iconConfig.url = iconSet[value].url;
+  iconConfig.width = iconSet[value].width;
+  iconConfig.height = iconSet[value].height;
+  iconConfig.YOffset = iconSet[value].YOffset;
+});
+$(document).on("change", ".toggleDrawControl", function(e){
+
+  var selected = $(this).val();
+  for(key in drawControls) {
+    var control = drawControls[key];
+    if(selected == key) {
+      control.activate();
+      currentControl = key;
+    } else {
+      control.deactivate();
+    }
+  }
+  /*if(selected=="none"){
+    dragFeature.activate();
+  }else{
+    dragFeature.deactivate();
+  }*/
+  for(key in measureControls) {
+    var control = measureControls[key];
+    control.deactivate();
+  }
+  drawFormShow(selected);
+    end_mode();
+});
+
+function GetFeaturesFromKMLString (strKML) {
+    var format = new OpenLayers.Format.KML({
+        'extractStyles':true,
+        'internalProjection': map.baseLayer.projection,
+        'externalProjection': new OpenLayers.Projection("EPSG:4326")
+    });
+    return format.read(strKML);
+};
+
+function GetFeaturesFromGPXString (strGPX) {
+    var format = new OpenLayers.Format.GPX({
+        'internalProjection': map.baseLayer.projection,
+        'externalProjection': new OpenLayers.Projection("EPSG:4326")
+    });
+    return format.read(strGPX);
+};
+
+function removeSelectedFeature(feature){
+  //dragFeature.deactivate();
+  overlays['vector'].removeFeatures([feature]);
+  //dragFeature.activate();
+  drawControls['delete'].deactivate();
+  drawControls['delete'].activate();
+}
+
+$(document).on("click", "#deleteAll", function(e){
+  Ext.MessageBox.confirm("確認", "作成した図形をすべて削除します。この動作はもとに戻せません。", function(btn) {
+    if (btn == "yes") {
+      //dragFeature.deactivate();
+      overlays["vector"].removeAllFeatures();
+      //dragFeature.activate();
+    } else if (btn == "no") {
+      //
+    }
+  }, window);
+
+});
+$(document).on("click", "#canselBtn", function(e){
+  canselSketch();
+});
+
+var strokeEditWindow, fillEditWindow;
+var targetFeature, editMode;
+var editWindow;
+function editFeature(feature){
+  targetFeature = feature;
+  //編集用ウィンドウ表示
+  var autoLoadUrl;
+  if(feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point"){
+    editMode = "marker";
+    autoLoadUrl = "<%=url_for({:action=>:feature_edit, :mode=>"marker"})%>";
+  }else{
+    editMode = "color";
+    autoLoadUrl = "<%=url_for({:action=>:feature_edit, :mode=>"color"})%>";
+  }
+  editWindow = new Ext.Window({
+      id:'editPanel',
+      title:'図形を編集',
+      layout:'fit',
+      width:300,
+      autoScroll:true,
+      plain: true,
+      maximizable: true,
+      collapsible: true,
+      closable: true,
+      modal: true,
+      autoLoad: {
+                url: autoLoadUrl,
+                method: "GET",
+                text: "読み込み中...",
+                timeout: 60
+            }
+        });
+   editWindow.show();
+  drawControls["edit"].unselect(feature);
+  drawControls["edit"].deactivate();
+  drawControls["edit"].activate();
+}
+$(document).on("click", "#editFeatureBtn", function(e){
+  var edit_params = {};
+  if (targetFeature && editMode){
+    if(editMode=="marker"){
+      var markerSelected = $("input:radio[name='mapIconEdit']:checked").val();
+      edit_params = iconSet[markerSelected];
+    }else{
+      edit_params = iconConfig;
+      edit_params["fillColor"] = $("#editFillValue").text();
+      edit_params["strokeColor"] = $("#editStrokeValue").text();
+    }
+    updateFeature(targetFeature, edit_params);
+  }
+  targetFeature = null;
+  editMoede = null;
+  editWindow.close();
+
+});
+
+$(document).on("click", "#strokeEditBtn", function(e){
+  strokeEditWindow = new Ext.Window({
+    height: '180',
+    width: '160',
+    xtype: 'panel',
+    closeAction:'hide',
+    title: '線色',
+    items: [{
+      xtype: 'colorpalette',
+      listeners: {
+        select: function(plt, color){
+          Ext.getCmp('stroke-edit-color').setValue(color);
+        }
+      }
+    }, {
+      xtype: 'form',
+      border: false,
+      bodyStyle: 'background-color: transparent; padding-left: 5px;',
+      labelWidth: 60,
+      items: [{
+          xtype: 'displayfield',
+          id: 'stroke-edit-color',
+          style: 'margin-top: 2px',
+          fieldLabel: '選択'
+      }]
+
+    }],
+    buttons: [{
+      text: 'OK',
+      xtype: 'button',
+      id: 'strokeColorSelect',
+      listeners: {
+        click: function(){
+            var clrtext = Ext.getCmp('stroke-edit-color').getValue();
+            var ele = Ext.get('editStroke');
+            ele.update('■');
+            ele.applyStyles('color: #'+ clrtext);
+            var valueEle = Ext.get('editStrokeValue');
+            valueEle.update(clrtext);
+            strokeEditWindow.close();
+        }
+      }
+    }]
+  });
+  strokeEditWindow.show();
+});
+$(document).on("click", "#fillEditBtn", function(e){
+  filleditWindow = new Ext.Window({
+    height: '180',
+    width: '160',
+    xtype: 'panel',
+    title: '塗色',
+    closeAction:'hide',
+    items: [{
+      xtype: 'colorpalette',
+      listeners: {
+        select: function(plt, color){
+          Ext.getCmp('fil-edit-color').setValue(color);
+        }
+      }
+    }, {
+      xtype: 'form',
+      border: false,
+      bodyStyle: 'background-color: transparent; padding-left: 5px;',
+      labelWidth: 60,
+      items: [{
+          xtype: 'displayfield',
+          id: 'fil-edit-color',
+          style: 'margin-top: 2px',
+          fieldLabel: '選択'
+      }]
+
+    }],
+    buttons: [{
+      xtype: 'button',
+      id: 'fillColorSelect',
+      text: 'OK',
+      baseCls : "colorBtn",
+      listeners: {
+        click: function(){
+            var clrtext = Ext.getCmp('fil-edit-color').getValue();
+            var ele = Ext.get('editFill');
+            ele.update('■');
+            ele.applyStyles('color: #'+ clrtext);
+            var valueEle = Ext.get('editFillValue');
+            valueEle.update(clrtext);
+            filleditWindow.close();
+        }
+      }
+    }]
+  });
+  filleditWindow.show();
+});
+
+
+function afterSketch(evt){
+  var edit_params = {};
+  if(evt.feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point"){
+      edit_params["url"] = iconConfig["url"];
+      edit_params["width"] = iconConfig["width"];
+      edit_params["height"] = iconConfig["height"];
+      edit_params["YOffset"] = iconConfig["YOffset"];
+  }else{
+    edit_params["fillColor"] = fillColor;
+    edit_params["strokeColor"] = strokeColor;
+    edit_params["strokeWidth"] = strokeWidth;
+  }
+  updateFeature(evt.feature, edit_params);
+  canselSketch();
+}
+
+function updateFeature(feature, edit_params){
+  //カラーピッカー、アイコンピッカー等で設定したプロパティをfeatureに適用する
+  var drawLayer = overlays['vector'];
+  var myFirstPointStyle = OpenLayers.Util.applyDefaults(myFirstPointStyle, OpenLayers.Feature.Vector.style['default']);
+  if(feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point"){
+      myFirstPointStyle.graphic = true;
+      myFirstPointStyle.externalGraphic = edit_params["url"];
+      myFirstPointStyle.graphicOpacity = 1;
+      myFirstPointStyle.graphicWidth = edit_params["width"];
+      myFirstPointStyle.graphicHeight = edit_params["height"];
+      myFirstPointStyle.graphicYOffset = edit_params["YOffset"];
+  }else{
+    if(feature.geometry.CLASS_NAME=="OpenLayers.Geometry.Collection"){
+    }else{
+      if(edit_params["fillColor"]=="FFFFFF" || edit_params["fillColor"] == "ffffff"){
+        myFirstPointStyle.fillOpacity = 0.1;
+      }else{
+        myFirstPointStyle.fillOpacity = 0.8;
+      }
+    }
+    myFirstPointStyle.strokeWidth = strokeWidth;
+    if(edit_params["fillColor"]){
+      if(edit_params["fillColor"]=="FFFFFF" || edit_params["fillColor"] == "ffffff"){
+        myFirstPointStyle.fillOpacity = 0.1;
+      }else{
+        myFirstPointStyle.fillOpacity = 0.8;
+      }
+
+      myFirstPointStyle.fillColor = "#" + edit_params["fillColor"];
+    }
+    myFirstPointStyle.strokeColor = "#" + edit_params["strokeColor"];
+  }
+  feature.style = myFirstPointStyle;
+  drawLayer.redraw();
+}
+

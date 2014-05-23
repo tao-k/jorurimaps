@@ -1,0 +1,18 @@
+<% if @items.present? %>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th>名前</th>
+  </tr>
+  <% @items.each do |item| %>
+    <tr class="<%= cycle '', 'cycle' %>">
+      <td class="showLink"><%= link_to '詳細', {:action => :show, :id => item.id} %></td>
+      <td><%= item.name %></td>
+    </tr>
+  <% end %>
+</table>
+<%= paginate @items %>
+<% else %>
+<div>登録データがありません。</div>
+<% end %>
+

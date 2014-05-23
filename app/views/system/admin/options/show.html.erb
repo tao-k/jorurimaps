@@ -1,0 +1,12 @@
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:kind) %></th>
+    <td><%= @item.kind_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:value) %><%= required %></th>
+    <td><%= @item.value %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'system/admin/common/operator'%>

@@ -1,0 +1,23 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '項目名設定', url_for({:controller=>"gis/admin/layers/columns",:action => :index, :layer_id => @layer.id}), :method => :get if @layer.is_editable?%>
+  <%= button_to '新規登録（1件毎）', {:action => :new}, :method => :get if @layer.is_editable?%>
+  <%= button_to 'CSV一括登録', {:action => :csv_up}, :method => :get if @layer.is_editable?%>
+  <%= button_to 'CSVデータ出力', {:action => :csv_put}, :method => :get if @layer.is_editable?%>
+<% when 'show' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get%>
+  <%= button_to '編集', {:action => :edit} , :method => :get if @layer.is_editable?%>
+  <%= button_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？' if @layer.deletable?%>
+<% when 'csv_put' %>
+  <%= button_to '項目名設定', url_for({:controller=>"gis/admin/layers/columns",:action => :index, :layer_id => @layer.id}), :method => :get if @layer.is_editable?%>
+  <%= button_to '戻る', {:action => :index}, :method => :get%>
+  <%= button_to 'CSV一括登録', {:action => :csv_up}, :method => :get if @layer.is_editable?%>
+
+<% when 'csv_up' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get%>
+  <%= button_to '項目名設定', url_for({:controller=>"gis/admin/layers/columns",:action => :index, :layer_id => @layer.id}), :method => :get if @layer.is_editable?%>
+  <%= button_to 'CSVデータ出力', {:action => :csv_put}, :method => :get if @layer.is_editable?%>
+
+<% end %>
+</span>

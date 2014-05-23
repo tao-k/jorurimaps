@@ -1,0 +1,16 @@
+<table class="show">
+  <%
+  show_fld = []
+  show_fld = @item.show_fld.split(/,/) unless @item.show_fld.blank?
+  1.upto(50) do |n|
+    fld_name = "input_fld_#{n}"
+    checked = !show_fld.index(n.to_s).blank?
+  -%>
+  <tr>
+    <th><%= @item.locale(fld_name.to_sym) %></th>
+    <td><%= f.text_field fld_name.to_sym, :class => 'title', :style => "width: 200px;"%></td>
+    <th>吹き出し表示</th>
+    <td><%= check_box_tag "show_check[#{n}]", "1", checked %>表示する</td>
+  </tr>
+  <%end -%>
+</table>

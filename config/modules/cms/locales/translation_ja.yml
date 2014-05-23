@@ -1,0 +1,31 @@
+ja:
+  activerecord:
+    attributes:
+      cms/kana_dictionary:
+        name: "名称"
+        body: "辞書データ"
+      cms/portal_photo:
+        web_state: "状態"
+        title: "管理用タイトル"
+        caption: "キャプション"
+        upload: "画像ファイル"
+        sort_no: "並び順"
+        category: "分類"
+  controller:
+    cms/admin/kana_dictionaries:
+      title: 辞書設定
+      action:
+        show: 閲覧
+        new: 新規登録
+        create: 新規登録
+        edit: 変更
+        update: 変更
+        test: 動作確認
+    cms/admin/portal_photos:
+      title: ポータル写真管理
+      action:
+        show: 閲覧
+        new: 新規登録
+        create: 新規登録
+        edit: 変更
+        update: 変更

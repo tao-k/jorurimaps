@@ -1,0 +1,79 @@
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $(function() {
+    $('#addManager').click(function(e) {
+      addTableLastRow($('#managerOptions'));
+    });
+    var num = 0;
+    function addTableLastRow(table) {
+      num = $('#managerOptions tr').length - 1;
+      var clone = table.find('tr:last').clone();
+      clone.find('input, label, select, textarea').each(function() {
+        var keys = ['id', 'name', 'for', 'type'];
+        for (var i=0; i<keys.length; i++) {
+          var key = keys[i];
+          var value = $(this).attr(key);
+          if (key == "type"){
+            if (value == "hidden"){
+              $(this).remove();
+            }
+          }else{
+            if (value) {
+              $(this).attr(key, value.replace(/\d+/, num));
+            }
+            if($(this).attr("type")!="checkbox"){
+              $(this).val('');
+            }
+          }
+
+        }
+      });
+      table.append(clone);
+    }
+  });
+})(jQuery);
+//]]>
+</script>
+<h2><%= @item.locale(:managers) %></h2>
+  <table class="index" id="managerOptions">
+    <tr>
+      <th style="width: 250px;">所属</th>
+      <th>種別</th>
+      <th>削除</th>
+    </tr>
+    <%if @manager_groups.blank?%>
+      <tr>
+        <td>
+
+          <%= select_tag "manager[_group_id][0]",  options_for_select(manager_options({:include_blank=>true}), nil) %>
+        </td>
+        <td>
+          <%= select_tag "manager[_role_kind][0]",  options_for_select(role_kind_options, "editor") %>
+        </td>
+        <td></td>
+      </tr>
+    <%else%>
+      <%@manager_groups.each_with_index{|a_manager, n|
+        checked = false
+        checked = true if params[:manager][:_destroy][a_manager.id.to_s.to_sym] if params[:manager][:_destroy] if params[:manager]
+      %>
+        <tr>
+          <td>
+            <%= hidden_field_tag "manager[_rid][#{n}]", a_manager.rid%>
+            <%= select_tag "manager[_group_id][#{n}]",  options_for_select(manager_options({:include_blank=>true}), a_manager.group_id) %>
+          </td>
+          <td>
+            <%= select_tag "manager[_role_kind][#{n}]",  options_for_select(role_kind_options, a_manager.role_kind) %>
+          </td>
+          <td>
+            <%= check_box_tag "manager[_destroy][#{n}]", 1, checked  %>
+            <label for="<%="manager__destroy_0"%>">削除する</label>
+          </td>
+        </tr>
+      <%}%>
+    <%end%>
+
+  </table>
+  <%= tag :input, :type => :button, :value => '＋', :id => 'addManager' %><br />

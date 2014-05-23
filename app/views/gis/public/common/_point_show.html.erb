@@ -1,0 +1,361 @@
+<!-- contentMap -->
+<div id="contentMap">
+  <div class="header">
+    <h1><%=point_item.name%></h1>
+  </div>
+
+  <div class="body">
+  <table>
+  <tr class="dt">
+    <th>所在地</th>
+    <td><%=point_item.address%></td>
+  </tr>
+  <% column_config = point_item.layer.get_option_columns
+       show_fld_conf = point_item.layer.show_config
+       column_config.each do |column|
+       next if column[1].blank?
+       next if show_fld_conf.index(column[0]).blank?
+       value = point_item[column[0].to_sym]
+       value = link_to(value, value, :target=>"_blank").html_safe if value =~ /http/
+       %>
+      <tr class="dt">
+        <th><%= column[1] %></th>
+        <td><%=  value %></td>
+      </tr>
+    <%end  if column_config%>
+  <tr class="pic">
+    <td colspan="2">
+    <%public_photos = point_item.get_public_photos(10)
+    public_photos.each_with_index do |photo, i|
+      next if photo.public_photo_path.blank?
+      lightbox_caption = %Q(<a onclick="window.open('#{photo.public_original_photo_path}')" href="javascript:void(0);">#{photo.public_caption}</a>)
+      -%>
+    <%=link_to image_tag(photo.thumbnail_public_photo_path), photo.public_photo_path, :name=>lightbox_caption, :alt=>photo.public_caption, :title=>photo.public_caption, :target => :_blank, :rel => "lightbox[item]"%>
+    <photo<%=i%>_path><%=%></photo<%=i%>_path>
+    <%end unless public_photos.blank?%>
+    </td>
+  </tr>
+  <tr class="map">
+    <td colspan="2">
+      <div id="resultIdList" style="display: none;"><%=point_item.rid%></div>
+      <div id="canvas" style="width: 100%; height: 400px;"></div>
+
+
+<script type="text/javascript" src="/openlayers/OpenLayers.js"></script>
+<script type="text/javascript" src="/_common/js/proj4js/lib/proj4js-combined.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+(function($) {
+
+  <%
+   wms_url = Application.config(:wms_gateway_url, "localhost")
+   vector_layer_list = []
+  %>
+  /* mapサーバ */
+  var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+  Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+  var myproj =new OpenLayers.Projection("EPSG:4326");
+  var map;
+  var gmap;
+  var mapnik;
+  var webtis_ortho;
+  var osm;
+  var s_gmap;
+  var features = new Object();
+  var overlays = new Object();
+  var Rule = OpenLayers.Rule;
+  var Filter = OpenLayers.Filter;
+  var layerStyles = new Object();
+  var selectControls = new Object();
+  var kindFilters = new Object();
+  var kind_filter_xmls = new Object();
+  var kindLayerFilters  = new Object();
+  var filterStrategy = null;
+  var listPop = new Object();
+/* base layers container */
+var baseLayers = new Object();
+
+/* overlays layers container */
+var overlays = new Object();
+
+  var defaultZoomLevel = 17;
+
+  $(function() {
+
+    var options = {
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection: new OpenLayers.Projection("EPSG:4326"),
+      units: "m",
+      numZoomLevels: 20,
+      maxResolution: 'auto',
+      controls : [
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.LayerSwitcher(),
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.ScaleLine(),
+        new OpenLayers.Control.ArgParser(),
+        new OpenLayers.Control.Attribution()
+      ]
+    };
+    map = new OpenLayers.Map("canvas", options);
+
+    initBaseLayer(map, null);
+
+    initWMSLayer();
+    setCenter();
+  });
+
+<%= render :partial =>  '/gis/public/portals/base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
+function initWMSLayer() {
+
+  layerStyles['vector_layer'] = new OpenLayers.Style({
+        pointRadius: 10,
+        strokeWidth: 3,
+        strokeOpacity: 0.7,
+        strokeColor: "navy",
+        fillColor: "yellow",
+        fillOpacity: 1
+      }
+      <%icons = icon_select
+      if  icons%>
+      , {rules: [
+      <%icons.each_with_index{|icon, i|-%>
+
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "icon_id",
+                      value: "<%=icon.id%>"
+                  }),
+                symbolizer: {
+                    externalGraphic: "<%=icon.file_uri%>",
+                    graphicWidth: <%=icon.width%>,
+                    graphicHeight: <%=icon.height%>,
+                    graphicXOffset: -<%=icon.offset_x%>,
+                    graphicYOffset: -<%=icon.offset_y%>
+                       }})<%= icons.length - 1 == i ? nil : ',' -%>
+       <%}-%>]}
+       <%end-%>);
+
+    var resultIdList = $("#resultIdList").text().split(/,/);
+    var setFilterList = [];
+    for (var i = 0; i < resultIdList.length; i++){
+      var idFilder = new OpenLayers.Filter.Comparison({
+                  type: OpenLayers.Filter.Comparison.EQUAL_TO,
+                  property: "rid",
+                  value: resultIdList[i].toString()
+            });
+      setFilterList.push(idFilder)
+    }
+
+    resultIdsFilder = new OpenLayers.Filter.Logical({
+        type: OpenLayers.Filter.Logical.OR,
+        filters: setFilterList,
+        active: true
+    });
+
+
+<%
+map_list = [@map]
+layer_list = []
+map_list.each do |map|
+  folders = get_folders_from_item(map, "all")
+    folders.each do |folder|
+      layers = get_layers_from_item(folder,"all")
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end unless folders.blank?
+   layers = get_layers_from_item(map,"all")
+    if layers
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end
+end unless map_list.blank?
+
+layer_list.each do |item|
+  if item.kind == "file" || item.kind == "raster" || item.kind ==  "vector"
+    next if item.mapfile.blank?
+    layer_names = item.mapfile_layer_name.split(/,/)
+    if layer_names.size <= 1-%>
+    var layers = "<%=item.mapfile_layer_name%>";
+    <%else%>
+    var layers = [];
+    <%layer_names.each do |name|-%>
+      layers.push("<%=name%>");
+    <%
+      end
+    end
+  end
+if item.kind == "file" || item.kind == "raster"
+-%>
+  addOverlayers("<%=item.code%>", "<%=item.kind=%>","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>);
+<%elsif item.kind ==  "vector"
+  next if !vector_layer_list.index(item.code).blank?
+  vector_layer_list << item.code -%>
+  addOverlayers("<%=item.code%>", "vector","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>);
+<%elsif item.kind == "kml"-%>
+  addOverlayers("<%=item.code%>", "kml","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>);
+<%elsif item.kind == "gpx"-%>
+  addOverlayers("<%=item.code%>", "gpx","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>);
+<%else
+  next
+end-%>
+<%end unless layer_list.blank?-%>
+
+
+}
+
+function addOverlayers(layer_code, kind,layer_id, mapfile,title,layers,url,opacity_level){
+  if(overlays[layer_code]){
+    return ;
+  }
+  if(kind=="gpx"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.GPX()
+      }),
+      style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: opacity_level},
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: true,
+    });
+  }else if(kind=="kml"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.KML({extractStyles: true,extractAttributes: true})
+      }),
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: true,
+    });
+  }else if(kind=="vector"){
+    var comparison = [
+    new Filter.Comparison({
+                    type: "==",
+                    property: "state",
+                    value: "enabled"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "web_state",
+                    value: "public"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "layer_id",
+                    value: layer_id
+              })
+
+               ];
+    kindFilters[layer_code] = new OpenLayers.Filter.Logical({
+      type: OpenLayers.Filter.Logical.AND,
+      filters:comparison
+               });
+
+    kind_filter_xmls[layer_code] = new OpenLayers.Format.XML();
+    kindLayerFilters[layer_code] = kind_filter_xmls[layer_code].write(new OpenLayers.Format.Filter().write(kindFilters[layer_code]));
+
+    overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: true,
+                strategies: [new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.Filter({filter: resultIdsFilder, active: true})],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+  }else{
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      mapserverUrl,
+       {
+       map:"gis_mapfiles/" + mapfile, //mapfileの場所指定
+       layers: layers,  //取得するレイヤー
+       version: '1.1.1', //サービスのバージョン
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: true,
+         opacity: opacity_level,
+         layerName: title
+        }
+   );
+  }
+  map.addLayer(overlays[layer_code]);
+  overlays[layer_code].setVisibility(true);
+}
+
+
+  function setCenter() {
+    var centerLon = <%= point_item.lng || Gis.defalut_position[:lng] %>;
+    var centerLat = <%= point_item.lat || Gis.defalut_position[:lat] %>;
+    var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+      new OpenLayers.Projection("EPSG:4326"),
+      new OpenLayers.Projection("EPSG:900913")
+    );
+    map.setCenter(centerLonLat, defaultZoomLevel);
+  }
+
+
+
+
+function convLonLat( x, y ) {
+  return new OpenLayers.LonLat( x ,y )
+    .transform(
+      new OpenLayers.Projection("EPSG:4326"),
+      new OpenLayers.Projection("EPSG:900913")
+    );
+}
+
+
+
+})(jQuery);
+//]]>
+</script>
+
+
+    </td>
+  </tr>
+  </table>
+  </div>
+
+</div>
+<!-- /contentMap -->
+
+<div class="toTop">
+  <a href="#header">ページの先頭へ戻る</a>
+</div>

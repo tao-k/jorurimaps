@@ -1,0 +1,70 @@
+@charset "UTF-8";
+
+/* hospitalNavi
+-----------------------------------------------------*/
+#hospitalNavi {
+  margin: 10px 0;
+}
+
+#hospitalNavi .tabMenu {
+  height: 25px;
+  border-bottom: 1px solid #CCC;
+/*  margin: 10px 0; */
+}
+#hospitalNavi .tabMenu a {
+  display: inline-block;
+  width: 120px;
+  border: 1px solid #CCC;
+  border-bottom: none;
+  background-color: #EEE;
+  margin-left: 10px;
+  font-size: 12px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 24px;
+  overflow: hidden;
+}
+#hospitalNavi .tabMenu a.current {
+  background-color: #fff;
+  border-bottom: 1px solid #fff;
+}
+
+
+#hospitalNavi .tabMenuBottom {
+  height: 25px;
+  border-left: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
+  /* margin: 10px 0; */
+}
+
+#hospitalNavi .tabMenuBottom a {
+  display: inline-block;
+  width: 120px;
+/*  border: 1px solid #CCC;*/
+  border-right:1px dotted #CCC;
+/*  background-color: #EEE; */
+/*  margin-left: 10px; */
+  font-size: 12px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 25px;
+  overflow: hidden;
+}
+#hospitalNavi .tabMenuBottom a.current {
+  background-color: #FFFFCC;
+}
+
+.medicalActionMenu .button_to {
+    display: inline-block;
+    font-size: 0.8em;
+}
+
+div.subTitle {
+    font-family: verdana;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+div.show {
+    margin: 0 0 10px;
+}

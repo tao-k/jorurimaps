@@ -1,0 +1,6 @@
+<%= render :partial => 'system/admin/common/menu', :locals => {:current => :users} %>
+<%if params[:action] =~ %r(csv)%>
+<%= render :partial => 'system/admin/common/menu_user', :locals => {:current => :csv} %>
+<%else%>
+<%= render :partial => 'system/admin/common/menu_user', :locals => {:current => :users} %>
+<%end%>

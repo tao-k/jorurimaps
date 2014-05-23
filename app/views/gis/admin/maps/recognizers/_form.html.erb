@@ -1,0 +1,93 @@
+<%=f.hidden_field :portal_id%>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(document).on("dblclick", "#user_select", function(e){
+    addUser();
+  });
+
+  $(document).on("dblclick", "#selected_users_list", function(e){
+    removeUser()
+  });
+
+  $(document).on("click","#add",function(e){
+    e.preventDefault();
+    addUser();
+  })
+  $(document).on("click","#remove",function(e){
+    e.preventDefault();
+    removeUser();
+  })
+  function addUser(){
+
+    var selectedOptions = $("#selected_users_list option");
+    var transferUsers = $("#user_select option:selected");
+    var dup = false;
+    for(var n = 0; n < transferUsers.length; n ++ ){
+      var transferUser = transferUsers[n];
+      var selectedValue = transferUser.value;
+      if(selectedOptions.length > 0){
+      for(var i = 0 ; i < selectedOptions.length; i++){
+        if (selectedOptions[i].value === selectedValue){
+          dup = true;
+          }
+        }
+      }
+      if(dup==false){
+        $('#selected_users_list').append($('<option>').html(transferUser.text).val(transferUser.value));
+        var addInput = '<input name="users[]" id="user_id_' + transferUser.value + '" type="hidden" value="'+ transferUser.value + '"/>';
+        $("#selectedUserDiv").append(addInput);
+      }
+    }
+
+  }
+
+  function removeUser(){
+    var user_options = $("#selected_users_list option");
+    $('#selected_users_list').html("");
+    for(var i = 0; i < user_options.length; i++){
+      var user_option = user_options[i];
+      if(user_option.selected){
+        $("#user_id_" + user_option.value ).remove();
+      }else{
+        $('#selected_users_list').append($('<option>').html(user_option.text).val(user_option.value));
+      }
+    }
+
+  }
+
+})(jQuery);
+//]]>
+</script>
+<div id="recognizerForm">
+<h2>承認者</h2>
+  <table class="show">
+  <tr>
+    <th>ユーザ選択</th>
+    <th style="width: 30px;"></th>
+    <th>承認者</th>
+  </tr>
+  <tr>
+    <td>
+    <%= select_tag 'user_select', options_from_collection_for_select(@group_users, "id", "name", nil), { :multiple => true, :size =>10, :style=>"width: 300px;" } %>
+    </td>
+    <td style="text-align: center;">
+      <%=button_tag "→", :id=>"add"%><br />
+      <%=button_tag "←", :id=>"remove"%>
+    </td>
+    <td>
+    <%if @selected_users.blank?%>
+      <%= select_tag 'selected_users_list', [], { :multiple => true, :size =>10, :id=>"selected_users_list", :style=>"width: 300px;" } %>
+    <%else%>
+      <%= select_tag 'selected_users_list', options_from_collection_for_select(@selected_users, "id", "name", nil), { :multiple => true, :size =>10, :style=>"width: 300px;" } %>
+    <%end%>
+    </td>
+  </tr>
+  </table>
+<div id ="selectedUserDiv">
+  <%@selected_users.each do |selected|%>
+  <input name="users[]" id="user_id_<%=selected.id%>" type="hidden" value="<%=selected.id%>"/>
+  <%end unless @selected_users.blank?%>
+</div>
+</div>

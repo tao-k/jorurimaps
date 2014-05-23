@@ -1,0 +1,22 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%=h safe{@item.status_show} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:position_offset) %></th>
+    <td><%=h safe{@item.offset_show} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr><tr>
+    <th><%= @item.locale(:caption) %></th>
+    <td><%= @item.caption %></td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %></th>
+    <td><%= @item.sort_no %></td>
+  </tr><tr>
+    <th><%= @item.locale(:upload) %>s</th>
+    <td><%= image_tag(@item.file_uri) %></td>
+  </tr>
+</table>
+<%= render :partial => 'gis/admin/common/operator'%>

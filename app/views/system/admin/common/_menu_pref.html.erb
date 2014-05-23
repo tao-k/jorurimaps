@@ -1,0 +1,6 @@
+<div class="tabMenu">
+<%= link_to '都道府県設定',  {:controller => 'system/admin/prefs'}, :class => current_class(current, :prefs) -%>
+<%= link_to '圏設定',        {:controller => 'system/admin/zones'}, :class => current_class(current, :zones) -%>
+<%= link_to '市郡設定',        {:controller => 'system/admin/counties'}, :class => current_class(current, :counties) -%>
+<%= link_to '市町村設定',    {:controller => 'system/admin/cities'}, :class => current_class(current, :cities) -%>
+</div>

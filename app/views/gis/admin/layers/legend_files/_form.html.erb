@@ -1,0 +1,34 @@
+<%
+files_uri = url_for({:controller=>"gis/admin/layers/legend_files", :action =>:index, :layer_id => item.tmp_id})
+%>
+<h2>添付ファイル</h2>
+<table class="show">
+<tr>
+  <td>
+<a href="#" id="changeDisp">開く▼</a>
+<table id="attach_form" border="0" class="show" style="display: none;">
+  <tr>
+    <td style="padding: 0px 0px;">
+      <iframe src="<%= files_uri %>" style="width: 100%; height: 200px;" frameborder="0"></iframe>
+    </td>
+  </tr>
+</table>
+  </td>
+</tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $("#changeDisp").click(function(e) {
+    e.preventDefault();
+    if ($(this).text() == "開く▼"){
+      $(this).text("▲閉じる");
+    }else{
+      $(this).text("開く▼");
+    }
+    $("#attach_form").toggle();
+  });
+
+})(jQuery);
+//]]>
+</script>

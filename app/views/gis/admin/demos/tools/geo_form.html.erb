@@ -1,0 +1,14 @@
+<div class="geoCodeFormSet">
+  <p>住所から該当する位置情報を表示します。</p>
+  <p>対象は日本国内のみ、「町」までの検索となります。</p>
+
+<%= form_for :item, :url => url_for({:action => :geocode}), :html => {:multipart => true, :id=>"geoCodingForm"}, :remote => true do |f|%>
+<%= text_field_tag :address, "", :id=>"geocodeAdress", :style=>"width : 180px"%>
+<%=f.submit :value=>"送信"%><%=submit_tag "クリア", :id=>"resetResult"%>
+<% end %>
+<p class="geoCopyRight">街区レベル位置参照情報：<a href="http://nlftp.mlit.go.jp/isj/" target="_blank">国土交通省</a><p>
+<div id="geocodeResult">
+</div>
+<div id="geocodeResultList">
+</div>
+</div>

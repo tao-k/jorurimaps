@@ -1,0 +1,26 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= @item.state_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %><%= required %></th>
+    <td><%= @item.code %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= @item.title %></td>
+  </tr><tr>
+    <th><%= @item.locale(:kind) %><%= required %></th>
+    <td><%= @item.kind_show %></td>
+  </tr>
+  <%if @item.kind=="wms"%>
+  <tr>
+    <th><%= @item.locale(:url) %><%= required %></th>
+    <td><%= @item.url %></td>
+  </tr>
+  <%end%>
+  <tr>
+    <th><%= @item.locale(:sort_no)%><%= required %></th>
+    <td><%= @item.sort_no %></td>
+  </tr>
+</table>
+<%= render :partial => 'gis/admin/common/operator'%>

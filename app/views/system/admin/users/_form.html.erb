@@ -1,0 +1,86 @@
+<%= required_head %>
+<table class="show">
+  <% if params[:action].in?('new', 'create') %>
+  <tr>
+    <th>ユーザID<%= required %></th>
+    <td><%= f.text_field :code, :class => 'string', :style => 'width: 200px;' %></td>
+  </tr>
+  <% else %>
+  <tr>
+    <th>ユーザID</th>
+    <td><%= @item.code%></td>
+  </tr>
+  <% end %>
+  <tr>
+    <th>状態<%= required %></th>
+    <td><%= radio f, :state, Gis.yaml_to_array_for_select('system_states') %></td>
+  </tr>
+  <tr>
+    <th>LDAP同期<%= required %></th>
+    <td><%= radio f, :ldap, Gis.yaml_to_array_for_select('system_users_ldaps') %></td>
+  </tr>
+  <tr>
+    <th>名前<%= required %></th>
+    <td><%= f.text_field :name, :class => 'string name', :style => 'width: 200px;' %></td>
+  </tr>
+  <tr>
+    <th>名前(英)</th>
+    <td><%= f.text_field :name_en, :class => 'string name', :style => 'width: 200px;' %></td>
+  </tr>
+  <tr>
+    <th>パスワード</th>
+    <td><%= f.text_field :password, :class => 'string name', :style => 'width: 200px;' %></td>
+  </tr>
+  <tr>
+    <th>メールアドレス</th>
+    <td><%= f.text_field :email, :class => 'string email', :style => 'width: 400px;' %></td>
+  </tr>
+  <tr>
+    <th>ユーザ権限</th>
+    <td><%= radio f, :auth_no, @item.auth_select %></td>
+  </tr>
+  <tr>
+    <th>役職</th>
+    <td><%= f.text_field :official_position, :class => 'string name', :style => 'width: 400px;' %></td>
+  </tr>
+  <tr>
+    <th>担当</th>
+    <td><%= f.text_field :assigned_job, :class => 'string name', :style => 'width: 400px;' %></td>
+  </tr>
+</table>
+
+<% if params[:action].in?('new', 'create') %>
+<%
+groups = System::Group.select_dd_tree
+%>
+<br />
+<div>登録するユーザーの所属を指定してください</div>
+<table class="show">
+  <tr>
+    <th>グループ</th>
+    <td><%= select_tag('ug[group_id]', options_for_select(groups, @group_id || safe{params[:ug][:group_id]}), :include_blank => true) %></td>
+  </tr>
+  <tr>
+    <th>本務・兼務</th>
+    <td>
+      <%= radio_button_tag 'ug[job_order]', 0, params[:ug] ? params[:ug][:job_order] == '0' : false %><%= label_tag 'ug_job_order_0', '本務' %>
+      <%= radio_button_tag 'ug[job_order]', 1, params[:ug] ? params[:ug][:job_order] == '1' : false %><%= label_tag 'ug_job_order_1', '兼務' %>
+      <%= radio_button_tag 'ug[job_order]', 9, params[:ug] ? params[:ug][:job_order] == '9' : true  %><%= label_tag 'ug_job_order_9', '仮配属' %>
+    </td>
+  </tr>
+  <tr>
+    <th>配属開始日</th>
+    <td>
+      <%= calendar_date_select_tag 'ug[start_at]', @start_at , :time => false %>
+    </td>
+  </tr>
+  <tr>
+    <th>配属終了日</th>
+    <td>
+      <%= calendar_date_select_tag 'ug[end_at]', @end_at , :time => false %>
+    </td>
+  </tr>
+</table>
+<% end %>
+
+<%= raw(gw_js_include_full) %>

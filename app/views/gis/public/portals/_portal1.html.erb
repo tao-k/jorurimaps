@@ -1,0 +1,168 @@
+<!-- banner -->
+<div id="banner">
+  <%=portal_photo_show(@map)%>
+</div>
+<!-- /banner -->
+
+<!-- docInfo -->
+<div id="docInfo" class="piece">
+  <div class="pieceContainer">
+    <div class="pieceHeader"><h2>更新情報</h2></div>
+    <div class="pieceBody">
+      <ul class="info">
+        <%for doc in @docs%>
+      <li>
+        <%= link_to doc.title, portal_doc_url(@map, doc)%>
+        <span class="attributes">（<span class="date"><%=safe{doc.published_at.strftime("%Y年%m月%d日")}%></span>）</span>
+      </li>
+        <%end%>
+      </ul>
+      <div class="next">
+        <%=link_to "更新情報一覧へ", portal_doc_url(@map)%>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /docInfo -->
+
+<!-- areaSearch -->
+<div id="areaSearch" class="piece">
+  <div class="pieceContainer">
+    <div class="pieceBody">
+      <%=link_to "現在地から周辺検索", form_action_url(@map), :id=>"searchNearBy", :alt=>"現在地から周辺検索"%></div>
+  </div>
+  <script type="text/javascript">
+//<![CDATA[
+
+(function($) {
+    var geolocation = null;
+    var default_massage = "再度お試しいただくか、詳細検索メニューをご利用ください。";
+    var geoTimer;
+    $("#searchNearBy").click(function(event){
+    event.preventDefault();
+    if(confirm("位置情報を送信します。よろしいですか？")){
+      startTimer();
+      geolocation = navigator.geolocation.getCurrentPosition(successCallback,errorCallback,{ enableHighAccuracy: true, timeout:5000});
+    }else{
+      return false;
+    }
+
+  })
+  function successCallback(position) {
+      stopTimer();
+      window.location = "<%=form_action_url(@map)%>?mode=nearby&lat=" +position.coords.latitude + "&lon=" + position.coords.longitude ;
+    }
+
+  function errorCallback(error) {
+    stopTimer();
+
+    switch(error.code) {
+      case 1:
+        alert("位置情報の取得が許可されませんでした。" + "\n" + default_massage);
+        break;
+      case 2:
+        alert("位置情報の取得に失敗しました。" + "\n" + default_massage);
+        break;
+      case 3:
+        alert("タイムアウトしました。" + "\n" + default_massage);
+        break;
+      default:
+        alert("位置情報の取得に失敗しました。" + "\n" + default_massage);
+        break;
+    }
+  }
+
+
+
+  function startTimer(){
+    geoTimer=setInterval(function(){
+      if(geolocation==null){
+        alert("タイムアウトしました。"+ "\n" + default_massage);
+        stopTimer();
+      }
+    } , 5000);
+  }
+
+  function stopTimer(){
+    clearInterval(geoTimer);
+  }
+
+})(jQuery);
+</script>
+</div>
+<!-- /areaSearch -->
+
+
+
+<!-- shisetsuSearch -->
+<div id="shisetsuSearch" class="piece">
+  <div class="pieceContainer">
+    <div class="pieceHeader">
+        <h2>登録情報を検索</h2>
+        <span class="switch">メニュー</span>
+    </div>
+
+    <!-- quickSearch -->
+    <div id="quickSearch" class="piece">
+      <div class="pieceBody">
+    <%= form_tag form_action_url(@map), :method => :get do %>
+    <div class="footMenu">
+      <div class="submitters">
+        <span><input class="" type="submit" value="すべての登録情報を閲覧する" /></span>
+      </div>
+    </div>
+    <%end%>
+    </div>
+    </div>
+    <!-- quickSearch -->
+
+    <div class="pieceBody">
+      <%= form_tag form_action_url(@map), :method => :get do %>
+      <div class="columns">
+      <%@search_configs.each_with_index do |conf,i|%>
+      <div class="column no<%=i + 1%>">
+          <div class="name"><span><%=conf.label%></span></div>
+          <div class="field">
+            <%= portal_search_form_show(conf,params[conf.field_id]) %>
+          </div>
+        </div>
+
+      <%end unless @search_configs.blank?%>
+      </div>
+        <div class="footMenu">
+          <div class="submitters">
+            <span><input class="" type="submit" value="この条件で検索する" /></span>
+            <!--<p>もっと詳しく検索したい場合<a href="#">詳細検索</a></p>-->
+          </div>
+        </div>
+      <%end%>
+
+
+
+
+      </form>
+    </div>
+  </div>
+</div>
+<!-- /shisetsuSearch -->
+
+<!-- recommend -->
+<div id="recommend" class="piece">
+  <div class="pieceContainer">
+    <div class="pieceHeader"><h2>おすすめ検索</h2>
+      <span class="switch">メニュー</span>
+    </div>
+    <div class="pieceBody">
+      <ul>
+
+        <%recommends = portal_recommend_items(@map)
+          recommends.each do |item|
+            link_title = %Q(<img src="/_common/themes/gis/images/ic/ic_w40_default-arrow.png" alt="" /><span>#{item.title}</span>)
+        %>
+           <li><%=link_to link_title.html_safe, item.url_for_search%></li>
+        <%end unless recommends.blank?%>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- /recommend -->

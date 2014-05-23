@@ -1,0 +1,286 @@
+<%=f.hidden_field :portal_id%>
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:view_select) %></th>
+    <td>
+
+<%= content_for :header do %>
+<style>
+#canvas .olControlAttribution {
+  font-size:13px;
+  bottom:3px;
+}
+</style>
+<% end %>
+
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(function() {
+    var options = {
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection: new OpenLayers.Projection("EPSG:4326"),
+      units: "m",
+      numZoomLevels: 20,
+      maxResolution: 156543.0339,
+      controls : [
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.ScaleLine(),
+        new OpenLayers.Control.ArgParser(),
+        new OpenLayers.Control.Attribution()
+      ]
+    };
+
+
+  var webtisDataSet = {
+            5:{dataId:"JAIS"},
+            6:{dataId:"JAIS"},
+            7:{dataId:"JAIS"},
+            8:{dataId:"JAIS"},
+            9:{dataId:"BAFD1000K"},
+            10:{dataId:"BAFD1000K"},
+            11:{dataId:"BAFD1000K"},
+            12:{dataId:"BAFD200K"},
+            13:{dataId:"BAFD200K"},
+            14:{dataId:"BAFD200K"},
+            15:{dataId:"DJBMM"},
+            16:{dataId:"DJBMM"},
+            17:{dataId:"DJBMM"},
+            18:{dataId:"FGD"}
+          };
+
+  var webtisDataSetOrtho = {
+            5:{dataId:"RELIEF"},
+            6:{dataId:"RELIEF"},
+            7:{dataId:"RELIEF"},
+            8:{dataId:"RELIEF"},
+            9:{dataId:"BAFD1000K"},
+            10:{dataId:"BAFD1000K"},
+            11:{dataId:"BAFD1000K"},
+            12:{dataId:"BAFD200K"},
+            13:{dataId:"BAFD200K"},
+            14:{dataId:"BAFD200K"},
+            15:{dataId:"DJBMO"},
+            16:{dataId:"DJBMO"},
+            17:{dataId:"DJBMO"},
+            18:{dataId:"FGD"}
+          };
+
+    /* base layers container */
+    var baseLayers = new Object();
+  /* webtis.next */
+  var webtisNextDataSetBlank = {
+            5:{dataId:"BLANK"},
+            6:{dataId:"BLANK"},
+            7:{dataId:"BLANK"},
+            8:{dataId:"BLANK"},
+            9:{dataId:"BLANK"},
+            10:{dataId:"BLANK"},
+            11:{dataId:"BLANK"},
+            12:{dataId:"BAFD200KG"},
+            13:{dataId:"BAFD200KG"},
+            14:{dataId:"BAFD200KG"},
+            15:{dataId:"DJBMM"},
+            16:{dataId:"DJBMM"},
+            17:{dataId:"DJBMM"},
+            18:{dataId:"FGD"}
+          };
+
+  var webtisNextDataSetMonotone = {
+            5:{dataId:"JAISG"},
+            6:{dataId:"JAISG"},
+            7:{dataId:"JAISG"},
+            8:{dataId:"JAISG"},
+            9:{dataId:"BAFD1000KG"},
+            10:{dataId:"BAFD1000KG"},
+            11:{dataId:"BAFD1000KG"},
+            12:{dataId:"BAFD200KG"},
+            13:{dataId:"BAFD200KG"},
+            14:{dataId:"BAFD200KG"},
+            15:{dataId:"DJBMM"},
+            16:{dataId:"DJBMM"},
+            17:{dataId:"DJBMM"},
+            18:{dataId:"FGD"}
+          };
+
+  var webtisNextDataSetColoring = {
+            5:{dataId:"JAIS2"},
+            6:{dataId:"JAIS2"},
+            7:{dataId:"JAIS2"},
+            8:{dataId:"JAIS2"},
+            9:{dataId:"BAFD1000K2"},
+            10:{dataId:"BAFD1000K2"},
+            11:{dataId:"BAFD1000K2"},
+            12:{dataId:"BAFD200K2"},
+            13:{dataId:"BAFD200K2"},
+            14:{dataId:"BAFD200K2"},
+            15:{dataId:"DJBMM"},
+            16:{dataId:"DJBMM"},
+            17:{dataId:"DJBMM"},
+            18:{dataId:"FGD"}
+          };
+    var map = new OpenLayers.Map("canvas", options);
+
+  initBaseLayer(map);
+
+
+    var markers = new OpenLayers.Layer.Markers("Markers");
+    map.addLayer(markers);
+
+    map.events.register("moveend", map, mapMoveListener);
+
+    setCenter();
+
+    <% if @item.lng.present? && @item.lat.present? %>
+    setMarker(<%= @item.lng %>, <%= @item.lat %>);
+    <% end %>
+
+    map.events.register('click', map, function(e) {
+      var lonlat = map.getLonLatFromViewPortPx(e.xy).transform(
+        new OpenLayers.Projection("EPSG:900913"),
+        new OpenLayers.Projection("EPSG:4326")
+      );
+      setMarker(lonlat.lon, lonlat.lat);
+      $('#item_lng').val(lonlat.lon);
+      $('#item_lat').val(lonlat.lat);
+      var centerLonLat = new OpenLayers.LonLat(lonlat.lon, lonlat.lat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+      map.setCenter(centerLonLat ,map.getZoom());
+      $('#item_zoom').val(map.getZoom());
+    });
+
+    function setCenter() {
+      var centerLon = <%= @item.lng.presence || Gis.defalut_position[:lng]%>;
+      var centerLat = <%= @item.lat.presence || Gis.defalut_position[:lat]%>;
+      var zoom = <%= @item.zoom.presence || 7 %>;
+      var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+      map.setCenter(centerLonLat, zoom);
+      setMarker(centerLon, centerLat);
+    }
+
+    function moveToCenter(lon, lat){}
+    function setMarker(lon, lat) {
+      var marker = new OpenLayers.Marker(
+        new OpenLayers.LonLat(lon, lat).transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          new OpenLayers.Projection("EPSG:900913")
+        )
+      );
+      markers.clearMarkers(marker);
+      markers.addMarker(marker);
+    }
+
+  function mapMoveListener(evt){
+    $('#item_zoom').val(map.getZoom());
+  }
+  <%= render :partial =>  '/gis/public/portals/base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
+
+   $("#item_area_code").change(function(e) {
+     var area_code = $("#item_area_code").val();
+     $.ajax({
+        type: 'GET',
+        url:  '<%= url_for(:action => :get_center) -%>?area_code=' + area_code,
+        success: function(request) {
+          if (request!="NG"){
+            var point = request.split(",");
+            var centerLonLat = new OpenLayers.LonLat(point[1], point[0]).transform(
+              new OpenLayers.Projection("EPSG:4326"),
+              new OpenLayers.Projection("EPSG:900913")
+            );
+            map.setCenter(centerLonLat, 13);
+          }
+        }
+    });
+  });
+    $('#itemForm').submit(function(e) {
+      if ($('#item_lng').val() == '' || $('#item_lat').val() == '') {
+        alert('登録する位置をクリックしてください。');
+        $('#button_to_index').removeAttr("disabled");
+        $('form').find(":submit").removeAttr("disabled");
+        e.preventDefault();
+      }
+    });
+
+$(document).on("change", ".baseLayer", function(e){
+  var radioBtnSet = $(".baseLayer");
+  var value;
+   for(var i = 0; i < radioBtnSet.length; i++){
+       inputCheck = radioBtnSet[i];
+      inputId = inputCheck.id;
+      value = $("#" + inputId).prop('checked');
+     if(value==true){
+       map.setBaseLayer(baseLayers[inputId]);
+       }else{
+       }
+   }
+});
+
+   })
+
+
+
+})(jQuery);
+//]]>
+</script>
+地図の中心にする位置をクリックしてください。
+<div id="canvas" style="width: 100%; height: 560px;"></div>
+
+<%= f.hidden_field :lng %>
+<%= f.hidden_field :lat %>
+<%= f.hidden_field :zoom %>
+    </td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:base_layer)%></th>
+    <td>
+      <%for item in base_layers(@map)
+      checked = false
+      checked = true if @baselayer && @baselayer == item.code
+      %>
+      <%=radio_button_tag(:item_base_layer, item.code , checked, :id => item.code, :class=>"baseLayer")%>
+      <label for="<%=item.code%>"><%=item.title%></label>
+      <br />
+      <%end%>
+    </td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:layers)%></th>
+    <td>
+   <%
+    last_index = nil
+    folders = get_folders_from_item(@map, "internal")
+    folders.each_with_index{|folder, n|
+      last_index = n
+    %>
+      <%layers = get_layers_from_item(folder,"internal")
+      layers.each_with_index{|layer, m|
+        checked = false
+        checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?
+      -%>
+        <%=check_box_tag("item_layers[]", layer.code, checked, {:id=>"#{layer.code}_#{n}", :class=>"featureLayer layerCheck-#{n}"})%>
+        <label for="<%="#{layer.code}_#{n}"%>"><%=layer.title%></label><br />
+      <%} unless layers.blank?-%>
+    <%} unless folders.blank?
+    last_index = last_index.blank? ? 0 : last_index + 1
+    %>
+    <%layers = get_layers_from_item(@map,"internal")
+    if layers%>
+    <%layers.each_with_index{|layer, n|
+        checked = false
+        checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?-%>
+      <%=check_box_tag("item_layers[]", layer.code, checked, {:id=>"#{layer.code}_#{last_index}", :class=>"featureLayer layerCheck-#{last_index}"})%>
+      <label for="<%="#{layer.code}_#{last_index}"%>"><%=layer.title%></label><br />
+    <%} unless layers.blank?%>
+    <%end%>
+    </td>
+  </tr>
+</table>

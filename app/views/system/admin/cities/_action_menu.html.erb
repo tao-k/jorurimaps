@@ -1,0 +1,10 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '新規登録', {:action => :new}, :method => :get %>
+<% when 'show' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get %>
+  <%= button_tag '変更', :type => :button, :onclick => "selfAction('#{url_for(:action => :edit, :id => params[:id])}')" if @item.editable? %>
+  <%= button_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？' if @item.deletable? %>
+<% end %>
+</span>

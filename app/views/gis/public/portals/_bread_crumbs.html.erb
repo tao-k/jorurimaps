@@ -1,0 +1,12 @@
+<%if @map.portal_kind==3 || @map.portal_kind==4%>
+
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+<a href="/">TOP</a> &gt; <%=link_to @map.title, "/#{@map.code}/"%>
+    </div>
+  </div>
+</div>
+</div>
+<%end%>

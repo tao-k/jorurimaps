@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<link rel="shortcut icon" href="/images/favicon.ico"  />
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<meta name="viewport" content="width=device-width" />
+<title><%=show_site_settings[:title]%></title>
+<%= javascript_include_tag :prototype %>
+<%
+@css = @css || []
+css_ret=''
+@css.each{|x|css_ret+=stylesheet_link_tag(x, :media=>:all)+"\n"};
+%>
+<%=raw(css_ret)%>
+<%= stylesheet_link_tag '/_common/themes/gis/css/sm.css', :media=> "only screen and (max-width: 799px)"  %>
+<%= stylesheet_link_tag '/_common/themes/gis/css/pc.css', :media=> "only screen and (min-width: 800px)"  %>
+<%= javascript_include_tag '/_common/themes/gis/js/jquery-1.8.3.min.js'%>
+<%= javascript_include_tag '/_common/themes/gis/js/toogle-menu.js'%>
+<%=javascript_include_tag '/_common/js/analytics.js'%>
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" href="/_common/themes/gis/css/pc.css" />
+<![endif]-->
+<link href="/_common/themes/joruri/base/colors/gis_white.css" media="only screen and (min-width: 800px)" rel="alternate stylesheet" title="white" type="text/css" />
+<link href="/_common/themes/joruri/base/colors/gis_blue.css" media="only screen and (min-width: 800px)" rel="alternate stylesheet" title="blue" type="text/css" />
+<link href="/_common/themes/joruri/base/colors/gis_black.css" media="only screen and (min-width: 800px)" rel="alternate stylesheet" title="black" type="text/css" />
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" href="/_common/themes/gis/css/pc.css" />
+<link href="/_common/themes/joruri/base/colors/gis_blue.css" media="screen" rel="alternate stylesheet" title="blue" type="text/css" />
+<link href="/_common/themes/joruri/base/colors/gis_black.css" media="screen" rel="alternate stylesheet" title="black" type="text/css" />
+<![endif]-->
+</head>
+<body <%= Page.body_id %> <%= Page.body_class %>>
+<div id="container">
+
+<!-- アクセシビリティツール -->
+<%= render :partial => 'layouts/public/gis/header' rescue nil%>
+
+<!-- アクセシビリティツール終り -->
+
+
+
+<div id="main">
+
+<div id="wrapper">
+
+<div id="content">
+<div id="contentContainer">
+<div id="contentBody" class="docPage">
+
+<%= yield  %>
+</div>
+<!-- end #contentContainer --></div>
+<!-- end #content --></div>
+
+
+
+<!-- end #wrapper --></div>
+<!-- end #main --></div>
+
+
+<%= render :partial => 'layouts/public/gis/footer'  rescue nil%>
+
+
+
+</div>
+</body>
+</html>

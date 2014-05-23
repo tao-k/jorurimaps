@@ -1,0 +1,16 @@
+<!-- contentArticleDoc -->
+      <div id="contentArticleDoc">
+        <div class="header">
+          <h1><%=@map.title%></h1>
+          <div class="publishedAt"><%=safe{@map.updated_at.strftime("%Y-%m-%d")}%></div>
+        </div>
+
+        <div class="body">
+        <div><img src="<%=map_tumb_path(@map)%>" alt="" /></div>
+        <p>&nbsp;</p>
+        <h2><%=@map.title%>について</h2>
+        <%=safe{@map.message.html_safe}%>
+        </div>
+
+      </div>
+      <!-- /contentArticleDoc -->

@@ -1,0 +1,12 @@
+<%case @map.portal_kind
+when 1%>
+  <%= render :partial =>  'portal1' rescue nil%>
+<%when 2%>
+  <%= render :partial =>  'portal2' rescue nil %>
+<%when 3%>
+  <%= render :partial =>  'portal3'  rescue nil%>
+<%when 4%>
+  <%= render :partial =>  'portal4' rescue nil %>
+<%else%>
+<%end%>
+

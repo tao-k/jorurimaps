@@ -1,0 +1,46 @@
+<%= init_tiny_mce :readonly => true %>
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:published_at) %></th>
+    <td><%= safe{@item.published_at.strftime("%Y-%m-%d %H:%M")} %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%= @item.web_state_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:is_tweet) %></th>
+    <td><%= @item.is_tweet_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr>
+  <tr>
+    <th colspan="2"><%= @item.locale(:body) %></th>
+  </tr>
+  <tr>
+    <td colspan="2"><%= text_area_tag 'body', @item.body, :class => 'mceEditor', :style => 'width:100%' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:inquiry_group_id) %></th>
+    <td><%= safe{@item.inquiry_department} %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:charge) %></th>
+    <td><%= @item.charge %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:tel) %></th>
+    <td><%= @item.tel %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:fax) %></th>
+    <td><%= @item.fax %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:mail_to) %></th>
+    <td><%= @item.mail_to %></td>
+  </tr>
+</table>

@@ -1,0 +1,71 @@
+<%= content_for :header do %>
+<style>
+#canvas .olControlAttribution {
+  font-size:13px;
+  bottom:3px;
+}
+</style>
+<% end %>
+
+<script type="text/javascript" src="/openlayers/OpenLayers.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(function() {
+    var options = {
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection: new OpenLayers.Projection("EPSG:4326"),
+      units: "m",
+      numZoomLevels: 20,
+      maxResolution: 156543.0339,
+      controls : [
+        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.ScaleLine(),
+        new OpenLayers.Control.ArgParser(),
+        new OpenLayers.Control.Attribution()
+      ]
+    };
+
+
+    var map = new OpenLayers.Map("canvas", options);
+    var gmap = new OpenLayers.Layer.Google("グーグルマップ", {visibility: false});
+    map.addLayer(gmap);
+
+    var markers = new OpenLayers.Layer.Markers("Markers");
+    map.addLayer(markers);
+
+    setCenter();
+    <% if @item.lng.present? && @item.lat.present? %>
+    setMarker(<%= @item.lng %>, <%= @item.lat %>);
+    <% end %>
+
+    function setCenter() {
+       var centerLon = <%= @item.lng.presence || Gis.defalut_position[:lng] %>;
+      var centerLat = <%= @item.lat.presence || Gis.defalut_position[:lat] %>;
+      var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+      map.setCenter(centerLonLat, 13);
+    }
+    function setMarker(lon, lat) {
+      var marker = new OpenLayers.Marker(
+        new OpenLayers.LonLat(lon, lat).transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          new OpenLayers.Projection("EPSG:900913")
+        )
+      );
+      markers.clearMarkers(marker);
+      markers.addMarker(marker);
+    }
+  });
+
+})(jQuery);
+//]]>
+</script>
+
+<div id="canvas" style="width: 100%; height: 560px;"></div>

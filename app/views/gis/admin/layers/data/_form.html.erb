@@ -1,0 +1,71 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %><%= required %></th>
+    <td><%= f.radio_buttons :state, @item.state_select, :class => 'status' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:web_state) %><%= required %></th>
+    <td><%= f.radio_buttons :web_state, @item.web_state_select, :class => 'status' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:name) %><%= required %></th>
+    <td><%= f.text_field :name, :class => 'title', :style => "width: 200px;"%></td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:area_code)%></th>
+    <td><%=select_area_code_form(f,@item.area_code)%></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:icon_kind) %><%= required %></th>
+    <td><span id="show_icon"><%=safe{image_tag(@item.icon.file_uri)}%></span><%=f.select(:icon_id, options_for_select(icon_options, :selected=>@item.icon_id))%></td>
+  </tr>
+  <% column_config = @layer.get_option_columns
+    column_config.each do |column|
+    next if column[1].blank? %>
+  <tr>
+    <th><%= column[1] %></th>
+    <td><%= f.text_area column[0].to_sym, :class => 'title', :style => "width: 300px; height: 80px;"%></td>
+  </tr>
+  <%end  if column_config%>
+</table>
+
+<table class="show">
+  <th><%= @item.locale(:g) %></th>
+  <td><%= render :partial => 'gis/admin/common/form_map', :locals=>{:f=>f} %></td>
+</table>
+
+<%#= render :partial => 'gis/admin/common/users_field_form', :locals => {:f => f} %>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $("#item_icon_id").change(function(e) {
+    var icon_id = $("#item_icon_id").val();
+    var request_uri = '<%=url_for({:controller=>"/gis/admin/map_icons", :action => :index})%>/' + icon_id + '/icon';
+    $.ajax({
+          url: request_uri,
+          async: true,
+          cache: false,
+          dataType:"xml",
+          error: function(){
+            //alert('Error loading CSV document');
+          },
+          success: function(xml){
+            var icon_uri,caption;
+            $(xml).find("item").each(function(){
+              icon_uri = $(this).find("file_uri").text();
+              caption = $(this).find("caption").text();
+            })
+            if(icon_uri){
+              $("#show_icon").html('<img src="'+ icon_uri + '" />');
+            }
+           }
+         });
+  });
+
+})(jQuery);
+//]]>
+</script>
+
+<%= render :partial => 'gis/admin/layers/data/photo_form', :locals=>{:f=>f} %>

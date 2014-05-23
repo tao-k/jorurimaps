@@ -1,0 +1,35 @@
+<%= render :partial => 'search' %>
+
+<% if @items.present? %>
+<div><%= @items.total_entries %>件登録しています。</div>
+<% if @will_retire_all_managers %>
+<div style="color:red;">退職により企業管理者が不在となります。管理者に企業管理者の割当を申請してください。</div>
+<% end %>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th>異動/退職</th>
+    <th>職員番号</th>
+    <th>氏名</th>
+    <th>異動日/退職日</th>
+    <th>異動先所属</th>
+    <th>変更</th>
+    <th>削除</th>
+  </tr>
+  <% @items.each do |item| %>
+  <tr class="<%= cycle '', 'cycle' %>">
+    <td class="showLink"><%= link_to '詳細', {:action => :show, :id => item.id} %></td>
+    <td><%= item.change_type_label %></td>
+    <td><%= safe{item.user.code} %></td>
+    <td><%= safe{item.user.name} %></td>
+    <td><%= safe{item.change_at.strftime('%Y/%m/%d')} %></td>
+    <td><%= item.next_group_name_from_root %></td>
+    <td><%= link_to '変更', {:action => :edit, :id => item.id} %></td>
+    <td><%= link_to '削除', {:action => :destroy, :id => item.id}, :method => :delete, :confirm => '削除してよろしいですか？' if item.deletable? %></td>
+  </tr>
+  <% end %>
+</table>
+<%= paginate @items %>
+<% else %>
+<div>登録データがありません。</div>
+<% end %>

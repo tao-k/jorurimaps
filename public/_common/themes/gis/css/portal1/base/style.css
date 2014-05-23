@@ -1,0 +1,320 @@
+@charset "UTF-8";
+
+html {
+    font-size: 85%;
+    height: 100%;
+}
+body {
+    background-color: #FFFFFF;
+    border: 0 none;
+    height: 100%;
+    
+}
+body, td, th, select, option {
+    font-family: "Hiragino Kaku Gothic Pro","ヒラギノ角ゴ Pro W3",Meiryo,"メイリオ","MS PGothic","ＭＳ　Ｐゴシック",sans-serif;
+    font-weight: lighter;
+    letter-spacing: 0;
+}
+input, textarea {
+    font-family: Arial,sans-serif;
+    font-size: 110%;
+}
+blockquote {
+    margin: 10px 20px;
+}
+h1, h2, h3, h4, h5 {
+    font-size: 120%;
+    letter-spacing: 0.1em;
+}
+img {
+    border-style: none;
+}
+strong {
+    font-weight: bold;
+}
+pre {
+    font-family: SimHei,"ＭＳ ゴシック",monospace;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    empty-cells: show;
+}
+ul {
+    list-style-position: outside;
+    list-style-type: none;
+}
+li {
+    list-style-position: outside;
+    margin: 0;
+    padding: 0;
+}
+rp, rt {
+    font-size: 80%;
+    text-decoration: none;
+}
+a {
+    color: #003399;
+}
+a:visited {
+    color: #660099;
+}
+a:hover {
+    color: #D03D5F;
+    text-decoration: underline;
+}
+div.clearBlank {
+    clear: both;
+    font-size: 1px;
+    height: 1px;
+    line-height: 1px;
+}
+img.fileIcon {
+    margin-right: 3px;
+    position: relative;
+    vertical-align: middle;
+}
+ul.notices {
+    background-color: #DDEEFF;
+    border: 1px solid #BBDDFF;
+    margin: 0 0 15px;
+    padding: 5px 10px;
+}
+ul.notices li {
+    color: #3355FF;
+}
+.formError {
+    border: 1px solid #EE0000;
+    color: #EE0000;
+    margin: 15px 0;
+    padding: 10px;
+}
+.elementError {
+    color: #EE0000;
+    margin: 3px 0 0;
+}
+.errorExplanation {
+    background-color: #FFF6F7;
+    border-radius: 8px 8px 8px 8px;
+    color: #CC2200;
+    margin: 20px;
+    padding: 10px 15px;
+}
+.errorExplanation h2 {
+    background-color: #FF5566;
+    border-radius: 8px 8px 0 0;
+    color: #FFFFFF;
+    font-weight: bold;
+    margin: -10px -15px 10px;
+    padding: 5px 15px;
+}
+.errorExplanation p {
+    font-size: 110%;
+    font-weight: bold;
+    margin: 0 0 5px;
+}
+.errorExplanation ul {
+    list-style-type: disc;
+    margin: 0 20px;
+}
+.errorExplanation li {
+    padding: 1px 0;
+}
+.field_with_errors {
+    display: inline;
+}
+.field_with_errors input, .field_with_errors textarea, .field_with_errors select {
+    border: 1px solid #EE0000;
+}
+.field_with_errors input[type="radio"] {
+    margin-right: 6px;
+    outline: 1px solid #EE0000;
+}
+.field_with_errors + .field_with_errors, .field_with_errors ~ .field_with_errors {
+    display: inline;
+}
+.field_with_errors input[type="hidden"] {
+    display: none;
+}
+table.list {
+    width: 100%;
+}
+table.list th {
+    background-color: #E4E4E4;
+    border: 1px solid #BBBBBB;
+    color: #000000;
+    font-weight: lighter;
+    padding: 6px 7px;
+    text-align: left;
+}
+table.list td {
+    border: 1px solid #CCCCCC;
+    padding: 6px 7px;
+}
+table.list tr.cycle td {
+    background-color: #F7F7F7;
+}
+table.form {
+    margin: 10px 0 0;
+    width: 100%;
+}
+table.form th {
+    background-color: #E4E4E4;
+    border: 1px solid #BBBBBB;
+    color: #000000;
+    font-weight: lighter;
+    padding: 6px 7px;
+    text-align: left;
+    width: 200px;
+}
+table.form td {
+    border: 1px solid #CCCCCC;
+    padding: 6px 7px;
+}
+div.submitters {
+    margin: 20px 10px;
+}
+div.submitters input, div.submitters a {
+    margin: 0 10px;
+}
+div.submitters input {
+    padding: 2px 20px;
+}
+.feed {
+    background-color: transparent;
+    float: right;
+    position: relative;
+    right: 0;
+    top: -36px;
+}
+.feed a, .feed a {
+    display: inline-block;
+}
+.feed a.rss, .feed a.atom, a.feedRss, a.feedAtom {
+    background-color: #D64000;
+    border-color: #EAA081 #B84000 #B84000 #EAA081;
+    border-style: solid;
+    border-width: 1px;
+    color: #FFFFFF;
+    font-weight: bold;
+    margin-right: 5px;
+    padding: 0 5px;
+    text-decoration: none;
+}
+.pagination {
+    text-align: center;
+    zoom: 1;
+}
+.pagination em {
+    font-style: normal;
+    font-weight: bold;
+    padding: 0 3px;
+}
+.iconFile, .iconDefault {
+    background-image: url("/_common/images/icons/default.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconBmp {
+    background-image: url("/_common/images/icons/bmp.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconCsv {
+    background-image: url("/_common/images/icons/csv.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconDoc, .iconDocx {
+    background-image: url("/_common/images/icons/doc.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconGif {
+    background-image: url("/_common/images/icons/gif.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconJpg {
+    background-image: url("/_common/images/icons/jpg.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconJpe {
+    background-image: url("/_common/images/icons/jpg.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconJpeg {
+    background-image: url("/_common/images/icons/jpg.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconJtd {
+    background-image: url("/_common/images/icons/jtd.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconLzh {
+    background-image: url("/_common/images/icons/lzh.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconPdf {
+    background-image: url("/_common/images/icons/pdf.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconPng {
+    background-image: url("/_common/images/icons/png.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconPpt {
+    background-image: url("/_common/images/icons/ppt.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconTxt {
+    background-image: url("/_common/images/icons/txt.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconXls, .iconXlsx {
+    background-image: url("/_common/images/icons/xls.gif");
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 3.3;
+    padding: 12px 5px 12px 42px;
+}
+.iconZip {
+    background-image: url("/_common/images/icons/zip.gif");
+}

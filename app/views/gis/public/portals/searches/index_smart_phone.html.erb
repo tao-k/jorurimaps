@@ -1,0 +1,42 @@
+
+
+<span id="openCount" style="display: none;">0</span>
+<div id="canvas"></div><br />
+<div id="popupText"></div>
+<%= render :partial =>  'result' rescue nil %>
+<div class="explanatory">
+<a href="#legend" class="mapFuncBtn" id="legendShowBtn">凡例</a><br />
+<div id="legendPanel_set" style="display: none;">
+  <%for layer in @layers%>
+  <div id="legend_<%=layer.code%>">
+  <h4><%=layer.title%></h4>
+  <%=layer.layer_legend.html_safe unless layer.layer_legend.blank?%>
+  <hr />
+  </div>
+  <%end%>
+</div>
+</div>
+<%=link_to "再検索する", "/#{@map.code}/#{@qs}", :class=>"backToTOp"%>
+<div id="layerMenu">
+<%= render :partial =>  'layer' rescue nil %>
+</div>
+<div class="linkMenu">
+</div>
+
+<script type="text/javascript">
+
+
+//<![CDATA[
+(function($) {
+
+  $("#legendShowBtn").click(function (e) {
+    $("#legendPanel_set").toggle();
+    if($("#legendPanel_set").css("display")=="none"){
+      $("#legendShowBtn").removeClass("open");
+    }else{
+      $("#legendShowBtn").addClass("open");
+    }
+  });
+})(jQuery);
+</script>
+</div>

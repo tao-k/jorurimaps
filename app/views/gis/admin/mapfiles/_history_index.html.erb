@@ -1,0 +1,22 @@
+<table class="index">
+
+  <tr>
+    <th>詳細</th>
+    <th style="width: 60px;">状態</th>
+    <th style="width: ;">タイトル</th>
+    <th style="width: ;">更新日</th>
+  </tr>
+
+  <% for item in @histories %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td class="showLink"><%= link_to :show, url_for(:controller => "gis/admin/mapfile_histories", :action => :show, :id => item) %></td>
+    <td ><%= item.state_show %></td>
+    <td><%= item.title %></td>
+    <td><%= safe{item.updated_at.strftime("%Y-%m-%d %H:%M")} %></td>
+  </tr>
+  <% end %>
+
+</table>
+
+<%#= paginate @histories %>
+

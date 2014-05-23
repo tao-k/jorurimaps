@@ -1,0 +1,8 @@
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:start_at) %></th>
+    <td><%= safe{@item.start_at.strftime("%Y-%m-%d %H:%M")} %></td>
+  </tr>
+</table>
+<br />

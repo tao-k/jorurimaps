@@ -1,0 +1,45 @@
+<!-- banner -->
+      <div id="banner">
+        <%=image_tag(top_banner_url, :title=>show_site_settings[:title], :alt => show_site_settings[:title])%>
+      </div>
+      <!-- /banner -->
+
+      <%= render_show_cache("shortmessage_piece", '/gis/public/fronts/messages_index',{}) %>
+      <!-- docInfo -->
+      <%= render_show_cache("update_index_piece", '/gis/public/fronts/updates_index',{}) %>
+      <!-- /docInfo -->
+      <!-- docTab -->
+      <div id="docTab" class="piece">
+      <div class="pieceContainer">
+      <div class="pieceBody">
+        <script type="text/javascript" src="/_common/themes/gis/js/doc_tabs.js"></script>
+          <script type="text/javascript">
+            //<![CDATA[
+              var docTabs62 = new ArticleDocTabs('docTab');
+            //]]>
+          </script>
+
+
+      <div class="wrapper">
+        <div class="content">
+          <div class="title"><h2>マップ情報一覧</h2></div>
+          <div class="change">
+            <span id="samunail" class="current">サムネイル</span>
+            <span id="ichiran">一覧</span>
+          </div>
+          <ul class="shinchaku" >
+          <li>
+            <%= render :partial =>  'gis/public/common/map_index', :locals=>{:map_items => @maps} rescue nil %>
+          </li>
+          </ul>
+        </div>
+
+        <%= paginate @maps %>
+
+      </div>
+      <!-- /.wrapper -->
+
+      </div>
+      </div>
+      </div>
+      <!-- docTab -->

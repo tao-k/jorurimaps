@@ -1,0 +1,27 @@
+<table class="index">
+
+  <tr>
+    <th>詳細</th>
+    <th style="width: 60px;">公開状態</th>
+    <th style="width: ;">管理用タイトル</th>
+    <th style="width: 60px;">並び順</th>
+    <th>更新日</th>
+    <th>更新者</th>
+
+  </tr>
+
+  <% for item in @items %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item) %></td>
+    <td ><%= item.web_status_show %></td>
+    <td><%=h item.title %></td>
+    <td ><%= item.sort_no %></td>
+    <td><%=h safe{item.updated_at.strftime('%Y-%m-%d %H:%M')} %></td>
+    <td><%=item.updated_user%></td>
+
+  </tr>
+  <% end %>
+
+</table>
+
+<%= paginate @items %>

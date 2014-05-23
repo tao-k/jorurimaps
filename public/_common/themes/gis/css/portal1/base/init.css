@@ -1,0 +1,51 @@
+@charset "UTF-8";
+
+html {
+    height: 100%;
+    margin-bottom: 1px;
+}
+body {
+    background-color: #FFFFFF;
+}
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    padding: 0;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+input, textarea, select, option {
+    font-size: 100%;
+}
+input[type="checkbox"], input[type="radio"] {
+    margin-right: 4px;
+}
+html[xmlns] label {
+    display: inline-block;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    empty-cells: show;
+    margin: 0;
+}
+caption, th, td {
+    font-weight: 400;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+    content: "";
+}
+blockquote, q {
+    quotes: "" "";
+}
+ul, ol {
+    list-style-position: outside;
+    margin: 0;
+    padding: 0;
+}
+dl {
+    margin: 0;
+    padding: 0;
+}
+em {
+    font-style: italic;
+}

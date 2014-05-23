@@ -1,0 +1,107 @@
+
+<div class="dropdown">
+<a href="#tab2" class="mapFuncBtn current" id="tabLink1">レイヤー切替</a>
+</div>
+
+
+<div id="tabContainer">
+
+
+<div id="tab2" class="tanPanel" style="display: none;">
+<div class="layerSet">
+
+
+<%
+portal_maps = [@map]
+portal_maps.each_with_index{|item, i|
+  map_class = "other"
+  map_class = "current" if i == 0
+%>
+<div class="<%=map_class%>">
+    <%
+    last_index = nil
+    folders = get_folders_from_item(item, "all")
+    folders.each_with_index{|folder, n|
+      last_index = n
+    %>
+    <div id="title<%=i%>-<%=n%>" class="title<%=i%> layerTitleLink" style="margin-left: 10px;">
+      <a  class="layerTitle" href="#" id="titleLink<%=i%>-<%=n%>"><%=folder.title%></a>
+    </div>
+    <div class="layerBody body<%=i%>" id="body<%=i%>-<%=n%>"  style="margin-left: 20px; display: none;">
+      <%layers = get_layers_from_item(folder,"all")
+      layers.each_with_index{|layer, m|
+        checked = true
+      -%>
+        <%=check_box_tag("feature_layer", layer.code, checked, {:id=>"#{layer.code}_#{i}_#{n}", :class=>"featureLayer layerCheck#{i}-#{n}"})%>
+        <label for="<%="#{layer.code}_#{i}_#{n}"%>"><%=layer.title%><span class="countShow">（<%=@layers_count[layer.id.to_s] || 0%>）</span></label><br />
+      <%} unless layers.blank?-%>
+      </div>
+    <%} unless folders.blank?
+    last_index = last_index.blank? ? 0 : last_index + 1
+    %>
+
+    <%layers = get_layers_from_item(item,"all")
+    if layers%>
+    <div id="title<%=i%>-<%=last_index%>" class="title<%=i%> layerTitleLink body<%=i%>"  style="margin-left: 10px;">
+    <%layers.each_with_index{|layer, n|
+        checked = true-%>
+      <%=check_box_tag("feature_layer", layer.code, checked, {:id=>"#{layer.code}_#{i}_#{last_index}", :class=>"featureLayer layerCheck#{i}-#{last_index}"})%>
+      <label for="<%="#{layer.code}_#{i}_#{last_index}"%>"><%=layer.title%><span class="countShow">（<%=@layers_count[layer.id.to_s] || 0%>）</span></label><br />
+    <%} unless layers.blank?%>
+     </div>
+
+    <%end%>
+</div>
+
+<%} unless portal_maps.blank?%>
+
+
+
+</div>
+</div>
+<div class="dropdown">
+<a href="#tab1" class="mapFuncBtn" id="tabLink2">背景地図切替</a>
+</div>
+
+<div id="tab1" class="tanPanel" style="display: none;">
+
+
+<%for item in base_layers
+checked = false
+checked = true if item.code == 'gmap'
+next if item.kind =~ %r(webtis)
+%>
+<%=radio_button_tag(:item_layer, 1 , checked, :id => item.code, :class=>"baseLayer")%>
+<label for="<%=item.code%>"><%=item.title%></label>
+<br />
+<%end%>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+//<![CDATA[
+
+(function($) {
+
+
+  $(".dropdown a").click(function (e) {
+    e.preventDefault();
+    $($(this).attr("href")).toggle();
+    if($($(this).attr("href")).css("display")=="none"){
+      $(this).removeClass("current");
+    }else{
+      $(this).addClass("current");
+    }
+  });
+
+  $("span.closeBtn a").click(function (e) {
+    $($(this).attr("href")).hide();
+  });
+
+})(jQuery);
+</script>
+</div>

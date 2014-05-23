@@ -1,0 +1,116 @@
+<!-- アクセシビリティツール -->
+<div id="a-tool">
+<div id="a-toolContainer">
+<div id="a-toolBody">
+
+<div class="piece" id="a-toolHeader">
+<div class="pieceContainer">
+<div class="pieceBody">
+
+<span id="nocssread">
+<a href="#main">本文へ移動</a>
+</span>
+
+<span class="naviFont">
+  <span class="label">文字サイズ</span>
+  <span title="文字を小さく" class="small">小さく</span>
+  <span title="標準サイズ" class="base">標準</span>
+  <span title="文字を大きく" class="big">大きく</span>
+</span>
+
+<span id="smartSwitch"></span>
+
+<span class="riyou">
+  <a title="ご利用案内" href="./use.html">ご利用案内</a>
+</span>
+
+<span class="naviTheme">
+  <span class="label">背景色</span>
+  <span title="白背景" class="white current">白</span>
+  <span title="青背景" class="blue">青</span>
+  <span title="黒背景" class="black">黒</span>
+</span>
+
+<span class="naviRuby">
+  <span title="ふりがなをつける" class="ruby">ふりがなをつける</span>
+</span>
+
+<span class="naviTalk">
+  <span title="よみあげる" class="talk">よみあげる</span>
+  <span class="player"></span>
+</span>
+
+</div>
+</div>
+</div>
+<!-- /skip reading -->
+
+<!-- end #a-toolBody --></div>
+<!-- end #a-toolContainer --></div>
+<!-- end #a-tool --></div>
+<!-- /アクセシビリティツール -->
+
+
+
+<!-- header -->
+<div id="header">
+<div id="headerContainer">
+  <!-- hedaerBody -->
+  <div id="headerBody">
+    <div id="commonHeader" class="piece">
+    <div class="pieceContainer">
+    <div class="pieceBody">
+
+        <!-- logo -->
+        <div class="logo">
+          <%if @map%>
+          <img src="<%=map_icon_uri(@map)%>" alt="<%=@map.title%>" title="<%=@map.title%>" />
+
+          <h1><%=link_to safe{@map.title}, "/#{@map.code}/"-%></h1>
+          <span class="department"><%=safe{@map.department}-%></span>
+           <%end%>
+        </div>
+        <!-- /logo -->
+
+        <!-- toogle-menu -->
+        <div class="site-header-toogle">
+          <div id="toogle-menu">
+            <a href="#">メニュー</a>
+          </div>
+        </div>
+        <!-- /toogle-menu -->
+
+        <!-- menu -->
+        <div class="menu">
+          <div class="upperMenu">
+            <a href="/" target="other">
+              <%=show_site_settings[:title]%>
+            </a>
+          </div>
+          <div class="lowerMenu">
+            <a href="/<%=safe{@map.code}%>/" class="toTop">トップページ</a>
+          </div>
+          </div>
+        <!-- /menu -->
+
+    </div>
+    </div>
+    </div>
+  </div>
+  <!-- /headerBody -->
+
+  <!-- navi -->
+  <div id="navi">
+    <div id="naviContainer">
+      <ul class="naviMenu">
+        <li class="top"><a href="/<%=safe{@map.code}%>/">トップページ</a></li>
+        <li class="inquiry"><a href="<%="/#{safe{@map.code}}/inquiry.html"%>">お問い合わせ</a></li>
+        <li class="sitemap"><a href="<%="/#{safe{@map.code}}/sitemap.html"%>">サイトマップ</a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- /navi -->
+
+<!-- end #headerContainer --></div>
+<!-- end #header --></div>
+<!-- /header -->

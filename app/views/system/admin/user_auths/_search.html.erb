@@ -1,0 +1,21 @@
+<%
+role_options = System::UserAuth.new.role_options
+priv_options = System::UserAuth.new.priv_options
+%>
+
+<%= form_tag '', :method => :get, :class => 'search' do %>
+<table>
+  <tr>
+    <th>ロール名</th>
+    <td><%= select_tag :role_id, options_for_select(role_options, params[:role_id]), :include_blank => true %></td>
+    <th>権限名</th>
+    <td><%= select_tag :priv_id, options_for_select(priv_options, params[:priv_id]), :include_blank => true %></td>
+    <th>表示行数</th>
+    <td><%= select_tag :limit, options_for_select(limit_options, params[:limit]) %></td>
+    <td class="submitters">
+      <%= submit_tag '検索',     :name => :search %>
+      <%= submit_tag 'リセット', :name => :reset %>
+    </td>
+  </tr>
+</table>
+<% end %>

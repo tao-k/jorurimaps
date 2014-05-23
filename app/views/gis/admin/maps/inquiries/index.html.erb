@@ -1,0 +1,21 @@
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th style="width: ;">並び順</th>
+    <th style="width: ;">所属名</th>
+    <th style="width: ;">更新日</th>
+    <th style="width: ;">更新者</th>
+  </tr>
+
+  <% for item in @items %>
+  <tr class="<%= cycle '', 'cycle' %>">
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item) %></td>
+    <td><%=item.sort_no%></td>
+    <td><%=h safe{item.inquiry_department} %></td>
+    <td><%=h safe{item.updated_at.strftime('%Y-%m-%d %H:%M')} %></td>
+    <td><%=h item.updated_user %></td>
+  </tr>
+  <% end %>
+</table>
+
+<%= paginate @items %>

@@ -1,0 +1,281 @@
+
+
+$(document).on("click", "#openFuncWindow", function(e){
+  e.preventDefault();
+  addLayerWin.show();
+});
+
+var map_id = null;
+var folder_id = null;
+
+
+
+$(document).on("change", "#mapSelect", function(e){
+  map_id = $(this).val();
+  if(map_id==null || map_id == 0 || map_id == '0'){
+    return;
+  }
+  var request_uri = "/_admin/gis/demos/<%=@map.code%>/tools/" +$(this).val() +"/folder_list";
+   $.ajax({
+         url   :request_uri,
+         type: 'post',
+         method: 'post',
+         dataType: 'json',
+         data:{
+             authenticity_token: "<%=form_authenticity_token%>"
+         },
+         success:function(data){
+           $('#folderSelect').children().remove();
+           $('#layerSelect').children().remove();
+           $('#layerSelect').append($('<option>').html("フォルダを選択してください").val(null));
+           $('#layerSelect').attr("disabled","disabled");
+           $('#layerSelect').removeClass("active");
+           $('#folderSelect').removeAttr("disabled");
+           $('#folderSelect').addClass("active");
+           $('#folderSelect').append($('<option>').html("　　　").val(""));
+           for(var i in data.items){
+             $('#folderSelect').append($('<option>').html(data.items[i].title).val(data.items[i].id));
+           }
+         },
+         failure:function(result,opt){
+             //alert("データ出力フォームの取得に失敗");
+         }
+   });
+});
+
+$(document).on("change", "#folderSelect", function(e){
+  if($(this).val()==null){
+    return;
+  }
+  folder_text = $('#folderSelect option:selected').text();
+  if(folder_text == "未分類"){
+    var request_uri = "/_admin/gis/demos/<%=@map.code%>/tools/" + map_id +"/layer_list?no_category=1";
+    folder_id = null;
+  }else{
+    var request_uri = "/gis/tools/" + $(this).val() +"/layer_list";
+    folder_id = $(this).val();
+  }
+
+     $.ajax({
+           url   :request_uri,
+           type: 'post',
+           method: 'post',
+           dataType: 'json',
+           data:{
+               authenticity_token: "<%=form_authenticity_token%>"
+           },
+           success:function(data){
+             $('#layerSelect').children().remove();
+             $('#layerSelect').removeAttr("disabled");
+             $('#layerSelect').addClass("active");
+             for(var i in data.items){
+               $('#layerSelect').append($('<option>').html(data.items[i].title).val(data.items[i].id));
+             }
+           },
+           failure:function(result,opt){
+               //alert("データ出力フォームの取得に失敗");
+           }
+     });
+});
+
+
+
+function requestLayerInfo(layer_id,map_id,folder_id ){
+  var request_uri = "/_admin/gis/demos/<%=@map.code%>/tools/" + layer_id +"/layer?map_id=" + map_id + "&folder_id=" + folder_id ;
+  $.ajax({
+      url   :request_uri,
+      type: 'post',
+      method: 'post',
+      dataType: 'json',
+      data:{
+          authenticity_token: "<%=form_authenticity_token%>"
+      },
+      success:function(data){
+        var resultHtml = "";
+        resultHtml = '<div class="resultShow" id="layerSet' + map_id + '_'+ folder_id + '_' + layer_id +'"><ul class="level1"><li><span class="title">';
+        resultHtml += data.map.title
+        resultHtml += '</span><span style="display:none;" class="mapId">' + map_id + '</span><ul class="level2"><li><span class="title">'
+        resultHtml += data.folder.title
+        resultHtml += '</span><span style="display:none;" class="folderId">' + folder_id + '</span><ul class="level3"><li><span class="title">'
+        resultHtml += data.layer.title
+        resultHtml += '</span><span style="display:none;" class="layerId">' + layer_id + '</span>'
+        resultHtml += '<span style="display:none;" class="layerCode">' + data.layer.code + '</span>'
+        resultHtml += '<span style="display:none;" class="kind">' + data.layer.kind + '</span>'
+        resultHtml += '<span style="display:none;" class="mapfile">' + data.layer.mapfile + '</span>'
+        resultHtml += '<span style="display:none;" class="layers">' + data.layer.layers + '</span>'
+        resultHtml += '<span style="display:none;" class="url">' + data.layer.url + '</span>'
+        resultHtml += '<span style="display:none;" class="opacity">' + data.layer.opacity + '</span>'
+        resultHtml += '<span style="display:none;" class="internal">' + data.layer.internal + '</span>'
+
+        resultHtml += '</li></ul></li></ul></li></ul><a href="#" class="cansel">削除</a></div>'
+        $("#selectResult").append(resultHtml);
+
+      },
+      failure:function(result,opt){
+          //alert("データ出力フォームの取得に失敗");
+      }
+  });
+}
+var selectResultArray = new Array();
+var  addedLayersArray = new Array();
+$(document).on("click", "#addBtn", function(e){
+  e.preventDefault();
+  selectedLayers = $("#layerSelect").val();
+  if (selectedLayers == null){
+    return ;
+  }
+  var currentSelectLayers = $(".resultShow").length;;
+  var addLayerCount = $(".selectedLayers").length + $("#selectedLayers input.featureLayer").length;
+  if(selectedLayers.length + addLayerCount + currentSelectLayers > 5){
+    alert("5つ以上のレイヤーを追加することはできません。");
+    return;
+  }
+  if($("#selectResult").text() == "レイヤーを選択してください"){
+    $("#selectResult").html("");
+    $("#selectResult").addClass("active");
+  }
+  for (var n=0 ; n < selectedLayers.length; n++){
+    var selected = false;
+    if(selectResultArray){
+      selectResultArray.push({layer_id:selectedLayers[n], map_id:map_id,folder_id :folder_id   })
+    }else{
+      for (var i=0; i < selectResultArray.length; i++ ){
+        if(selectResultArray[i]["layer_id"] == selectedLayers[i] && selectResultArray[i]["map_id"] == map_id && selectResultArray[i]["folder_id"] == folder_id ){
+          selected = true;
+          break;
+        }
+      }
+      selectResultArray.push({layer_id:selectedLayers[n], map_id:map_id,folder_id :folder_id   })
+    }
+    if(selected ){
+      continue;
+    }else{
+      requestLayerInfo(selectedLayers[n],map_id,folder_id );
+    }
+
+  }
+
+});
+
+$(document).on("click", ".cansel", function(e){
+    e.preventDefault();
+  $(this).parent("div").remove();
+  if($("#selectResult").text() == ""){
+    $("#selectResult").html("レイヤーを選択してください");
+    $("#selectResult").removeClass("active");
+  }
+});
+
+$(document).on("click", "#addLayerCansel", function(e){
+    e.preventDefault();
+    addLayerWin.hide();
+
+    cloaseSelectWindow();
+
+});
+
+function cloaseSelectWindow(){
+    $("#mapSlect").val(0);
+    $("#selectResult").html("レイヤーを選択してください");
+    $("#selectResult").removeClass("active");
+    $('#folderSelect').children().remove();
+    $('#layerSelect').children().remove();
+    $('#folderSelect').attr("disabled","disabled");
+    $('#folderSelect').removeClass("active");
+    $('#layerSelect').attr("disabled","disabled");
+    $('#layerSelect').removeClass("active");
+    $('#folderSelect').append($('<option>').html("マップを選択してください").val(null));
+    $('#layerSelect').append($('<option>').html("フォルダを選択してください").val(null));
+    selectResultArray = new Array();
+    addedLayersArray = new Array();
+}
+
+$(document).on("click", "#selectFinish", function(e){
+    e.preventDefault();
+    setLayerTabAdded();
+    addLayerWin.hide();
+    cloaseSelectWindow();
+
+});
+
+var setLayerTabArray = new Object();
+
+function setLayerTabAdded(){
+  var setLayerOptions = $(".resultShow");
+  for(var i = 0; i < setLayerOptions.length; i++){
+    var id = setLayerOptions[i].id;
+    var map_id = $("#" + id + " ul li span.mapId").html();
+    var map_title= $("#" + id + " ul li span.title").html();
+    var folder_id = $("#" + id + " ul li ul li span.folderId").html();
+    var folder_title= $("#" + id + " ul li ul li span.title").html();
+    var layer_id = $("#" + id + " ul li ul li ul li span.layerId").html();
+    var layer_code = $("#" + id + " ul li ul li ul li span.layerCode").html();
+    var layer_title = $("#" + id + " ul li ul li ul li span.title").html();
+    var layer_kind = $("#" + id + " ul li ul li ul li span.kind").html();
+    var mapfile= $("#" + id + " ul li ul li ul li span.mapfile").html();
+    var layers= $("#" + id + " ul li ul li ul li span.layers").html();
+    var url = $("#" + id + " ul li ul li ul li span.url").html();
+    var opacity= $("#" + id + " ul li ul li ul li span.opacity").html();
+    var internal= $("#" + id + " ul li ul li ul li span.internal").html();
+    var setObject =  { map_id: map_id, map_title: map_title,folder_id: folder_id,folder_title: folder_title,layer_id: layer_id,layer_code: layer_code,layer_title: layer_title};
+    if(setLayerTabArray[map_id]){
+      if(setLayerTabArray[map_id][folder_id]){
+        if(setLayerTabArray[map_id][folder_id][layer_id]){
+          continue;
+          //存在するのでスキップ
+        }else{
+        //配列にレイヤー設定を追加　layerid, mapid,folderid 各タイトル
+          setLayerTabArray[map_id][folder_id][layer_id] = setObject;
+          //フォルダにレイヤー追加
+          var mapHtml = "";
+          mapHtml += '<input checked="checked" class="featureLayer layerCheck'+ map_id + '_addMap-' + folder_id + '_addFolder" id="' + layer_code + '_' + map_id + '_addMap-' + folder_id + '_addFolder" ';
+          mapHtml += 'name="feature_layer" value="'+ layer_code +'" type="checkbox"><label for="body' + map_id + '_addMap-' + folder_id + '_addFolder_'+ layer_code +'">'+ layer_title +'</label><br>'
+          $('#body'+ map_id + '_addMap-' + folder_id + '_addFolder').append(mapHtml);
+        }
+      }else{
+        //配列を作成し設定
+        setLayerTabArray[map_id][folder_id] = new Object();
+        setLayerTabArray[map_id][folder_id][layer_id] = setObject;
+        //マップにフォルダ追加
+        var mapHtml = "";
+        mapHtml = '<div id="title'+ map_id + '_addMap-' + folder_id + '_addFolder" class="open title' + map_id + '_addMap layerTitleLink ">';
+        mapHtml += '<input class="allCheck" id="allCheck' + map_id + '_addMap-' + folder_id + '_addFolder" name="allCheck" value="1" type="checkbox">';
+        mapHtml += '<a class="layerTitle" href="#" id="titleLink' + map_id + '_addMap-' + folder_id + '_addFolder">' + folder_title +'</a></div>';
+        mapHtml += '<div class="open layerBody body' + map_id + '_addMap" id="body'+ map_id + '_addMap-' + folder_id + '_addFolder">';
+        mapHtml += '<input checked="checked" class="featureLayer layerCheck'+ map_id + '_addMap-' + folder_id + '_addFolder" id="body' + layer_code + '_' + map_id + '_addMap-' + folder_id + '_addFolder" ';
+        mapHtml += 'name="feature_layer" value="'+ layer_code +'" type="checkbox"><label for="' + map_id + '_addMap-' + folder_id + '_addFolder_'+ layer_code +'">'+ layer_title +'</label><br></div>'
+        $("#selectedMap" + map_id).append(mapHtml);
+      }
+    }else{
+      setLayerTabArray[map_id] = new Object();
+      setLayerTabArray[map_id][folder_id] = new Object();
+      setLayerTabArray[map_id][folder_id][layer_id] = setObject;
+      //マップから追加
+      var mapHtml = '<div class="other" id="selectedMap'+ map_id + '"><a href="#mapAdd' + map_id + '" class="open mapTitle" id="mapTitle' + map_id + '_addMap">' + map_title +'</a><br>';
+      mapHtml += '<div id="title'+ map_id + '_addMap-' + folder_id + '_addFolder" class="open title' + map_id + '_addMap layerTitleLink">';
+      mapHtml += '<input class="allCheck" id="allCheck' + map_id + '_addMap-' + folder_id + '_addFolder" name="allCheck" value="1" type="checkbox">';
+      mapHtml += '<a class="layerTitle" href="#" id="titleLink' + map_id + '_addMap-' + folder_id + '_addFolder">' + folder_title +'</a></div>';
+      mapHtml += '<div class="open layerBody body' + map_id + '_addMap" id="body'+ map_id + '_addMap-' + folder_id + '_addFolder">';
+      mapHtml += '<input checked="checked" class="featureLayer layerCheck'+ map_id + '_addMap-' + folder_id + '_addFolder" id="' + layer_code + '_' + map_id + '_addMap-' + folder_id + '_addFolder" ';
+      mapHtml += 'name="feature_layer" value="'+ layer_code +'" type="checkbox"><label for="body' + map_id + '_addMap-' + folder_id + '_addFolder_'+ layer_code +'">'+ layer_title +'</label><br></div>'
+      mapHtml += '</div>';
+      $("#selectedLayers").append(mapHtml);
+    }
+    var external = false;
+    if (internal==0 || internal=="0"){
+      external = true;
+    }
+    addOverlayers(layer_code, layer_kind,layer_id, mapfile,layer_title,layers,url,opacity,false,external);
+    overlays[layer_code].setVisibility(true);
+    if(layer_kind == "vector"){
+      var selectControlLayers = selectControls['demo'].layers;
+      selectControlLayers.push(overlays[layer_code]);
+      selectControls['demo'].deactivate();
+      selectControls['demo'].setLayer(selectControlLayers);
+      selectControls['demo'].activate();
+    }
+  }
+  var leftCount = 5 -  $("#selectedLayers input.featureLayer").length;
+  $("#addLayerCount").html(leftCount);
+
+}

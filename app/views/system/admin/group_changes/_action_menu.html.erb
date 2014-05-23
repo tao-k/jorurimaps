@@ -1,0 +1,14 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '新規登録', {:action => :new}, :method => :get unless @start_at.blank?%>
+  <%= button_to 'CSV一括登録', {:action => :csv_up}, :method => :get unless @start_at.blank?%>
+  <%= button_to '組織変更実行', {:action => :reflect}, :method => :get, :confirm => 'LDAP同期及びデータのバックアップを実行後に組織変更を行ってください。この操作は元に戻せません。' %>
+<% when 'show' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get%>
+  <%= button_to '編集', {:action => :edit} , :method => :get if @item.editable?%>
+  <%= button_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？' if @item.deletable?%>
+<% when 'csv_up' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get%>
+<% end %>
+</span>

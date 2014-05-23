@@ -1,0 +1,24 @@
+<% if @items.present? %>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th>都道府県</th>
+    <th>圏</th>
+    <th>市郡</th>
+    <th>市町村名</th>
+  </tr>
+  <% @items.each_with_index do |item, i| %>
+    <tr class="<%= cycle '', 'cycle' %>">
+      <td class="showLink"><%= link_to '詳細', {:action => :show, :id => item.id} %></td>
+      <td><%= safe{item.pref.name} %></td>
+      <td><%= safe{item.zone.name} %></td>
+      <td><%= safe{item.county.name} %></td>
+      <td><%= item.name %></td>
+    </tr>
+  <% end %>
+</table>
+<%= paginate @items %>
+<% else %>
+<div>登録データがありません。</div>
+<% end %>
+

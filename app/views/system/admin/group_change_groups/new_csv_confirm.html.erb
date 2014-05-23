@@ -1,0 +1,43 @@
+<%= form_tag url_for(:action => :create_csv), {:id => 'itemForm'} do %>
+  <%= error_messages_for :item %>
+  <table class="index">
+    <tr>
+      <th>行数</th>
+      <th>所属コード</th>
+      <th>所属名</th>
+      <th>引継元所属</th>
+      <th>エラー内容</th>
+    </tr>
+    <% @items.each_with_index do |item, i| %>
+    <tr class="<%= cycle '', 'cycle' %>">
+      <td><%= i+2 %></td>
+      <td><%= item.code %></td>
+      <td><%= item.group_name_from_root %></td>
+      <td><%=br item.ogirinal_group_names.join("\n") %></td>
+      <td><%= simple_error_messages_for item %></td>
+    </tr>
+    <% end %>
+  </table>
+  
+  <% @items.each_with_index do |item, i| %>
+    <% if item.errors.blank? %>
+      <% @cgcodes[i].each_with_index do |cgcode, j| %>
+        <%= hidden_field_tag "cgcodes[#{i}][]", cgcode %>
+      <% end %>
+      <% @cgnames[i].each_with_index do |cgname, j| %>
+        <%= hidden_field_tag "cgnames[#{i}][]", cgname %>
+      <% end %>
+      <% if @ogcodes[i].size > 0 %>
+        <% @ogcodes[i].each_with_index do |ogcodes, j| %>
+          <% ogcodes.each_with_index do |ogcode, k| %>
+            <%= hidden_field_tag "ogcodes[#{i}][#{j}][]", ogcode %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <%= hidden_field_tag "ogcodes[#{i}][0][]", nil %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= button_tag '入力内容を修正する', :type => :button, :onclick => "document.location='#{url_for(:action => :new_csv)}';" %>
+  <%= submit_tag 'この内容で登録する' %>
+<% end %>

@@ -1,0 +1,26 @@
+<table class="show"><tr>
+  <tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%= @item.web_state_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:title) %><%=required("")%></th>
+    <td><%= @item.title %></td>
+  </tr><tr>
+    <th><%= @item.locale(:user_kind) %></th>
+    <td><%= @item.user_kind_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_group_id) %></th>
+    <td><%= safe{@item.admin_group.name}  %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_user_id) %></th>
+    <td>
+    <%= safe{@item.admin_user.name} %></td>
+  </tr>
+</table>
+<%= render :partial => 'gis/admin/common/operator'%>
+<%= render :partial => 'gis/admin/common/index_layer'%>
+<%= render :partial => 'gis/admin/common/index_map'%>
+

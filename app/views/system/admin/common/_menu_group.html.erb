@@ -1,0 +1,4 @@
+<div class="tabMenu">
+<%= link_to 'グループ',  {:controller => 'system/admin/groups', :parent=>@parent.id}, :class => current_class(current, :groups) -%>
+<%= link_to 'ユーザ',  {:controller => 'system/admin/users_groups', :parent=>@parent.id}, :class => current_class(current, :users) -%>
+</div>

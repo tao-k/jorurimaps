@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<link rel="shortcut icon" href="/images/ic_favicon.ico"  />
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<meta name="viewport" content="width=device-width" />
+<title>徳島県総合地図提供システム</title>
+<script src="/assets/prototype-67a71a51cf625786c7676cac918a7725.js" type="text/javascript"></script>
+<link href="/_common/themes/gis/css/page/doc.css" media="all" rel="stylesheet" type="text/css" />
+
+<link href="/_common/themes/gis/css/sm.css" media="only screen and (max-width: 799px)" rel="stylesheet" type="text/css" />
+<link href="/_common/themes/gis/css/pc.css" media="only screen and (min-width: 800px)" rel="stylesheet" type="text/css" />
+<script src="/_common/themes/gis/js/jquery-1.8.3.min.js" type="text/javascript"></script>
+<script src="/_common/themes/gis/js/toogle-menu.js" type="text/javascript"></script>
+<script src="/_common/themes/gis/js/heightLine.js" type="text/javascript"></script>
+<script src="/_common/js/analytics.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" href="/_common/themes/gis/css/pc.css" />
+<![endif]-->
+<link href="/_common/themes/joruri/base/colors/gis_white.css" media="only screen and (min-width: 800px)" rel="alternate stylesheet" title="white" type="text/css" />
+<link href="/_common/themes/joruri/base/colors/gis_blue.css" media="only screen and (min-width: 800px)" rel="alternate stylesheet" title="blue" type="text/css" />
+<link href="/_common/themes/joruri/base/colors/gis_black.css" media="only screen and (min-width: 800px)" rel="alternate stylesheet" title="black" type="text/css" />
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" href="/_common/themes/gis/css/pc.css" />
+<link href="/_common/themes/joruri/base/colors/gis_blue.css" media="screen" rel="alternate stylesheet" title="blue" type="text/css" />
+<link href="/_common/themes/joruri/base/colors/gis_black.css" media="screen" rel="alternate stylesheet" title="black" type="text/css" />
+<![endif]-->
+</head>
+<body id="page-doc-information" class="dir-doc">
+<div id="container">
+
+<!-- アクセシビリティツール -->
+<!-- skip reading -->
+<div id="a-tool">
+<div id="a-toolContainer">
+<div id="a-toolBody">
+<div class="piece"  id="a-toolHeader">
+<div class="pieceContainer">
+<div class="pieceBody">
+<script type="text/javascript" src="/_common/js/joruri/cookie.js"></script>
+<script type="text/javascript" src="/_common/js/joruri/accessibility-navi.js"></script>
+<span id="nocssread">
+<a href="#main">本文へ移動</a>
+</span>
+<span class="section font-size naviFont">
+<span class="sectionTitle label">文字サイズ</span>
+<span title="文字を小さく" class="small">小さく</span>
+<span title="標準サイズ" class="base">標準</span>
+<span title="文字を大きく" class="big">大きく</span>
+</span>
+<span class="riyou">
+<a title="ご利用案内" href="/gis/use.html">ご利用案内</a>
+</span>
+
+<span class="section naviTheme">
+<span class="sectionTitle label">背景色</span>
+<span title="白背景" class="white">白</span>
+<span title="青背景" class="blue">青</span>
+<span title="黒背景" class="black">黒</span>
+</span>
+
+<span class="section naviRuby">
+<span title="ふりがなをつける" class="ruby">ふりがなをつける</span>
+<span id="navigationTalkPlayer"></span>
+</span>
+
+
+</div>
+</div>
+</div>
+<!-- /skip reading -->
+<!-- end #a-toolBody --></div>
+<!-- end #a-toolContainer --></div>
+<!-- end #a-tool --></div>
+
+<!-- アクセシビリティツール終り -->
+
+
+<!-- header -->
+<div id="header">
+<div id="headerContainer">
+  <!-- hedaerBody -->
+  <div id="headerBody">
+    <div id="commonHeader" class="piece">
+    <div class="pieceContainer">
+    <div class="pieceBody">
+
+        <!-- logo -->
+        <div class="logo">
+          <h1>
+            <a href="/">
+              <img src="/_common/themes/gis/images/header/bg_header_logo.png" alt="徳島県総合地図提供システム" title="徳島県総合地図提供システム" />
+            </a>
+          </h1>
+        </div>
+        <!-- /logo -->
+
+        <!-- toogle-menu -->
+        <div class="site-header-toogle">
+          <div id="toogle-menu">
+            <a href="#">メニュー</a>
+          </div>
+          <div id="toogle-search">
+            <a href="#">検索</a>
+          </div>
+        </div>
+        <!-- /toogle-menu -->
+
+        <!-- menu -->
+        <div class="menu">
+          <div class="upperMenu">
+            <a href="http://www.pref.tokushima.jp/" target="other">
+              <img src="/_common/themes/gis/images/header/tokushima.gif" alt="徳島県" title="徳島県" />
+            </a>
+          </div>
+          <div class="lowerMenu">
+
+            <form id="cse-search-box" action="/search/index.html">
+              <span class="searchContainer">
+                <input type="hidden" name="cx" value="011322068108766559923:tojttvxzoa0" />
+                <input name="cof" value="FORID:10" type="hidden">
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input type="hidden" name="ref" value="maps.pref.tokushima.jp/">
+                <input type="text" value="" title="" class="text" id="search-box" size="20" name="q" />
+              </span>
+            <input type="submit" align="top" id="search-button" value="検索" name="sa" />
+            <script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=ja"></script>
+          </form>
+            <a href="/inquiry/index.html" class="toiawase">お問い合わせ</a>
+            <a href="/gis/sitemap.html" class="siteMap">サイトマップ</a>
+          </div>
+          </div>
+        <!-- /menu -->
+
+    </div>
+    </div>
+    </div>
+  </div>
+  <!-- /headerBody -->
+
+  <!-- navi -->
+  <div id="navi">
+    <div id="naviContainer">
+      <div class="border">.</div>
+      <ul class="naviMenu">
+        <li class="top"><a href="/" class="">トップページ</a></li>
+        <li class="kurashi"><a href="/gis/category/kurashi/" class="">くらし</a></li>
+        <li class="kyouikubunka"><a href="/gis/category/kyouikubunka/" class="">教育・文化</a></li>
+        <li class="kankoubussan"><a href="/gis/category/kankoubussan/" class="">観光・物産</a></li>
+        <li class="sangyouroudou"><a href="/gis/category/sangyouroudou/" class="">産業・労働</a></li>
+        <li class="kendozukuri"><a href="/gis/category/kendozukuri/" class="">県土づくり</a></li>
+        <li class="gyouseichiiki"><a href="/gis/category/gyouseichiiki/" class="">行政・地域</a></li>
+        <li class="bousai"><a href="/gis/category/bousai/" class="">防災</a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- /navi -->
+<!-- end #headerContainer --></div>
+<!-- end #header --></div>
+<!-- /header -->
+
+
+
+
+
+
+<!-- ナビ -->
+
+
+<!-- ナビ終り -->
+
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+  <a href="/">トップページ</a>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div id="main">
+
+<div id="wrapper">
+
+<div id="content">
+<div id="contentContainer">
+<div id="contentBody" class="docPage">
+
+<!-- contentArticleDoc -->
+      <div id="contentArticleDoc">
+        <div class="header">
+          <h1>お探しのページは見つかりません。 - 404 Not Found</h1>
+        </div>
+        <div class="body">
+
+          <p>お探しのページは見つかりませんでした。<br />
+          一時的にアクセスできない状態になっているか、URLが変更・削除されたのかもしれません。</p>
+          <div class="details"><div class="detailsBody">・以前存在したページが削除されている可能性があります。<br />
+          ・URLをもう一度確認してみてください。<br />
+          ・アクセス過多の為表示できない場合があります。</div></div>
+          <div class="back"><a href="/">>>「徳島総合地図提供システム」　トップページへ</a></div>
+
+        </div>
+
+
+
+      </div>
+      <!-- /contentArticleDoc -->
+</div>
+<!-- end #contentContainer --></div>
+<!-- end #content --></div>
+
+
+
+<!-- end #wrapper --></div>
+<!-- end #main --></div>
+
+
+
+<!-- footer -->
+<div id="footer">
+<div id="footerContainer">
+<div id="footerBody">
+    <div class="piece" id="address">
+      <div class="pieceContainer">
+      <div class="pieceBody">
+      このページに関するお問い合わせは<br>
+      徳島県&nbsp;経営戦略部&nbsp;情報システム課<br>
+      電話番号：088-621-2158&nbsp;&nbsp;&nbsp;ファクシミリ：088-621-2836&nbsp;&nbsp;&nbsp;メールアドレス：<a href="mailto:mapinfo@mail.pref.tokushima.lg.jp">mapinfo@mail.pref.tokushima.lg.jp</a>
+      </div>
+      </div>
+    </div>
+    <div class="piece" id="copyRight">
+      <div class="pieceContainer">
+        <div class="pieceBody">
+        Copyright&copy;2013徳島県総合地図提供システム All Rights Reserved.
+        </div>
+        <div class="pieceFooter">
+        <a href="http://joruri.org/" target="_blank"><img src="/_common/themes/gis/images/main/bn_pb_jorurimap.png" alt="Joruri公式サイト"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- end #footerContainer --></div>
+<!-- end #footer --></div>
+
+
+
+</div>
+</body>
+</html>

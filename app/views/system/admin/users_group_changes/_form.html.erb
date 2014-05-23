@@ -1,0 +1,65 @@
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(function() {
+    $('#item_curr_group_id').on('change', function(e) {
+      var elm = $(this);
+      $.get('<%= url_for(:action => :user_options) %>', {company_id: '<%= @company.id %>', curr_group_id: elm.val()}, function(data) {
+        $('#item_user_id').html(data);
+      });
+    });
+    $('input[name="item[change_type]"]').on('change', function(e) {
+      switch ($(this).val()) {
+      case 'change':
+        $('#changeOptions').show("fast");
+        break;
+      case 'retire':
+        $('#changeOptions').hide("fast");
+        break;
+      }
+    });
+    
+    <% if @item.change_type == 'retire' %>
+    $('#changeOptions').hide();
+    <% end %>
+  });
+})(jQuery);
+//]]>
+</script>
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:change_type) %><%= required %></th>
+    <td><%= f.radio_buttons :change_type, @item.change_types %></td>
+  </tr>
+</table>
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:user_id) %><%= required %></th>
+    <td>
+      <%= f.select :curr_group_id, options_for_select([['所属が未登録の職員', '-1']] + @item.group_options, @item.curr_group_id), :prompt => '対象ユーザーの現在の所属を選択してください' %>
+      <%= f.select :user_id, options_for_select(@item.user_options, @item.user_id), :include_blank => true %>
+    </td>
+  </tr><tr>
+    <th><%= @item.locale(:change_at) %><%= required %></th>
+    <td><%= f.date_select :change_at, :use_month_numbers => true, :start_year => Time.now.year, :end_year => Time.now.year+10, :year_separator => '年', :month_separator => '月', :day_separator => '日' %></td>
+  </tr>
+</table>
+
+<div id="changeOptions">
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:next_group_id) %><%= required %></th>
+    <td><%= f.select :next_group_id, options_for_select(@item.group_options, @item.next_group_id), :include_blank => '対象ユーザーの異動後の所属を選択してください' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:count_flag) %><%= required %></th>
+    <td><%= f.radio_buttons :count_flag, @item.count_flags %></td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %><%= required %></th>
+    <td><%= f.text_field :sort_no, :size => 10, :class => 'IMEoff' %></td>
+  </tr>
+</table>
+</div>
+
+<%= f.hidden_field :company_id %>

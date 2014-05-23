@@ -1,0 +1,28 @@
+<%= render :partial => 'search' %>
+<%= form_tag url_for(:action => :update_order), {:method => :put, :id => 'itemForm'} do %>
+  <%= unique_error_messages_for @items %>
+  <table class="index">
+    <tr>
+      <th>市町村名</th>
+      <th>地区名</th>
+      <th>表示順<span class="attention">(必須)</span></th>
+    </tr>
+    <% @items.each do |item| %>
+      <tr class="<%= cycle '', 'cycle' %>">
+        <td><%= item.city_name -%></td>
+        <td><%= item.area -%></td>
+        <td>
+          <% field_with_errors item, :order_no do %>
+            <%= text_field_tag("order_no[#{item.area_code}]",item.order_no_before_type_cast,
+              {:size => 10, :class => "IMEoff"}) -%>
+          <% end %>
+        </td>
+      </tr>
+
+    <% end %>
+  </table>
+  <%= hidden_field_tag :s_keyword, params[:s_keyword] %>
+  <%= hidden_field_tag :city_code, params[:city_code] %>
+  <%= button_tag '戻る', :type => :button, :onclick => "document.location='#{url_for(:action => :index)}';" %>
+  <%= submit_tag 'この内容で登録する' %>
+<% end %>

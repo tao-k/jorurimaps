@@ -1,0 +1,79 @@
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $(function() {
+    $('#addFolder').click(function(e) {
+      addTableLastRow($('#folderOptions'));
+    });
+    var num = 0;
+    function addTableLastRow(table) {
+      num = $('#folderOptions tr').length;
+      var clone = table.find('tr:last').clone();
+      clone.find('input, label, select, textarea').each(function() {
+        var keys = ['id', 'name', 'for', 'type'];
+        for (var i=0; i<keys.length; i++) {
+          var key = keys[i];
+          var value = $(this).attr(key);
+          if (key == "type"){
+            if (value == "hidden"){
+              $(this).remove();
+            }
+          }else{
+            if (value) {
+              $(this).attr(key, value.replace(/\d+/, num));
+            }
+            if($(this).attr("type")!="checkbox"){
+              $(this).val('');
+            }
+          }
+
+        }
+      });
+      table.append(clone);
+    }
+  });
+})(jQuery);
+//]]>
+</script>
+<h2><%= @item.locale(:assortments) %></h2>
+  <table class="index" id="folderOptions">
+    <tr>
+      <th style="width: 250px;">フォルダ</th>
+      <th>並び順</th>
+      <th>削除</th>
+    </tr>
+    <%if @a_folders.blank?%>
+      <tr>
+        <td>
+
+          <%= select_tag "assortment[_assortment_id][0]",  grouped_options_for_select(folder_grouped_options, nil,"　　　") %>
+        </td>
+        <td>
+          <%= text_field_tag "assortment[_sort_no][0]", "", :size=>3 %>
+        </td>
+        <td></td>
+      </tr>
+    <%else%>
+      <%@a_folders.each_with_index{|m_assortment, n|
+        checked = false
+        checked = true if params[:assortment][:_destroy][m_assortment.id.to_s.to_sym] if params[:assortment][:_destroy] if params[:assortment]
+      %>
+        <tr>
+          <td>
+            <%= hidden_field_tag "assortment[_rid][#{n}]", m_assortment.rid%>
+            <%= select_tag "assortment[_assortment_id][#{n}]",  grouped_options_for_select(folder_grouped_options, m_assortment.assortment_id,"　　　") %>
+          </td>
+          <td>
+            <%= text_field_tag "assortment[_sort_no][#{n}]", m_assortment.sort_no, :size=>3  %>
+          </td>
+          <td>
+            <%= check_box_tag "assortment[_destroy][#{n}]", 1, checked  %>
+            <label for="<%="assortment__destroy_0"%>">削除する</label>
+          </td>
+        </tr>
+      <%}%>
+    <%end%>
+
+  </table>
+  <%= tag :input, :type => :button, :value => '＋', :id => 'addFolder' %><br />

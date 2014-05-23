@@ -1,0 +1,66 @@
+<div class="drawFeatureTool">
+<input class="featureLayer" id="vector" name="feature_layer" type="checkbox" value="vector" checked="checked"/>
+  <label for="vector">作画レイヤー</label><br />
+<button id="deleteAll">図形をすべて削除</button><br />
+<input name="drawType" value="point" id="pointToggle"class="toggleDrawControl" type="radio">
+<label for="pointToggle">点</label><br />
+<input name="drawType" value="line" id="lineToggle"class="toggleDrawControl" type="radio">
+<label for="lineToggle">線</label><br />
+<input name="drawType" value="polygon" id="polygonToggle" class="toggleDrawControl" type="radio">
+<label for="polygonToggle">図形</label><br />
+<div id="strokeColorControl" style="display: none;">
+<span id="strokeExplain">色を選択し、地図上の任意の点をクリックして図形を作図してください。</span><br />
+  <span id="strokeColorBtn">線色：<input id="selectedStroke" name="stroke" type="text" value="#000000" /></span>
+</div>
+
+<div id="fillColorControl" style="display: none;">
+  <span id="fillColorBtn">塗色：<input id="selectedFill" name="fill" type="text" value="#FF0000" /></span>
+<br />
+</div>
+<div id="markerControl" style="display: none;">
+下記のリストからマーカーを選択し、地図上の任意の点をクリックして設置してください。
+<%=radio_button_tag("mapIcon[]", "red", true, {:id=>"redIcon", :class=>"selectMarker"})%>
+<label for="redIcon"><img src="/_common/themes/gis/images/red-dot.png" /></label>
+<%=radio_button_tag("mapIcon[]", "ltblue", false, {:id=>"ltblueIcon", :class=>"selectMarker"})%>
+<label for="ltblueIcon"><img src="/_common/themes/gis/images/ltblue-dot.png" /></label><br />
+<% [1, 2, 3].each do |i|%>
+<%=radio_button_tag("mapIcon[]", "ic_dot_a_00#{i}", false, {:id=>"ic_dot_a_00#{i}Icon", :class=>"selectMarker"})%>
+<label for="<%="ic_dot_a_00#{i}Icon"%>"><img src="/_common/themes/gis/images/<%="ic_dot_a_00#{i}"%>.png" /></label>
+
+<%=radio_button_tag("mapIcon[]", "ic_point_a_00#{i}", false, {:id=>"ic_point_a_00#{i}Icon", :class=>"selectMarker"})%>
+<label for="<%="ic_point_a_00#{i}Icon"%>"><img src="/_common/themes/gis/images/<%="ic_point_a_00#{i}"%>.png" /></label>
+
+<%=radio_button_tag("mapIcon[]", "ic_point_b_00#{i}", false, {:id=>"ic_point_b_00#{i}Icon", :class=>"selectMarker"})%>
+<label for="<%="ic_point_b_00#{i}Icon"%>"><img src="/_common/themes/gis/images/<%="ic_point_b_00#{i}"%>.png" /></label>
+
+<%=radio_button_tag("mapIcon[]", "ic_sign_00#{i}", false, {:id=>"ic_sign_00#{i}Icon", :class=>"selectMarker"})%>
+<label for="<%="ic_sign_00#{i}Icon"%>"><img src="/_common/themes/gis/images/<%="ic_sign_00#{i}"%>.png" /></label>
+<br />
+<%end%>
+<br />
+<%1.upto(13){|num|
+  num_s = "%02d" % num
+  %>
+<%=radio_button_tag("mapIcon[]", "ic_faci_0#{num_s}", false, {:id=>"ic_faci_0#{num_s}Icon", :class=>"selectMarker"})%>
+<label for="<%="ic_faci_0#{num_s}Icon"%>"><img src="/_common/themes/gis/images/<%="ic_faci_0#{num_s}"%>.png" /></label>
+<%if num % 3 == 0 %><br /><%end%>
+<%}%>
+<br />
+<%1.upto(20){|num|
+  num_s = "%02d" % num
+  %>
+<%=radio_button_tag("mapIcon[]", "ic_number_0#{num_s}", false, {:id=>"ic_number_0#{num_s}Icon", :class=>"selectMarker"})%>
+<label for="<%="ic_number_0#{num_s}Icon"%>"><img src="/_common/themes/gis/images/<%="ic_number_0#{num_s}"%>.png" /></label>
+<%if num % 3 == 0 %><br /><%end%>
+<%}%>
+<br />
+</div>
+<button id="canselBtn">キャンセル</button><br />
+
+</div>
+<script type="text/javascript">
+(function($) {
+  $("#selectedStroke").colorPicker();
+  $("#selectedFill").colorPicker();
+})(jQuery);
+</script>

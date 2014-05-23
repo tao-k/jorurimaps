@@ -1,0 +1,21 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:created_user) %></th>
+    <td><%= @item.created_user %></td>
+  </tr><tr>
+    <th><%= @item.locale(:created_group) %></th>
+    <td><%= @item.created_group %></td>
+  </tr><tr>
+    <th><%= @item.locale(:created_at) %></th>
+    <td><%= safe{@item.created_at.strftime("%Y/%m/%d %H:%M")} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:updated_user) %></th>
+    <td><%= @item.updated_user %></td>
+  </tr><tr>
+    <th><%= @item.locale(:updated_group) %></th>
+    <td><%= @item.updated_group %></td>
+  </tr><tr>
+    <th><%= @item.locale(:updated_at) %></th>
+    <td><%= safe{@item.updated_at.strftime("%Y/%m/%d %H:%M")} %></td>
+  </tr>
+</table>

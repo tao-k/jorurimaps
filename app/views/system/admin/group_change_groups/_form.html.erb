@@ -1,0 +1,69 @@
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(function() {
+    $('#add').on('click', function(e) {
+      addTableLastRow($('#options'));
+    });
+    function addTableLastRow(table) {
+      var num = table.find('tr').length - 1;
+      var clone = table.find('tr:last').clone();
+      clone.find('input, label, select, textarea').each(function() {
+        var elm = $(this);
+        var keys = ['id', 'name', 'for'];
+        for (var i=0; i<keys.length; i++) {
+          var key = keys[i];
+          var value = elm.attr(key);
+          if (value) {
+            elm.attr(key, value.replace(/\d+/, num));
+          }
+          if (elm.attr('type') != 'hidden') {
+            elm.val('');
+          }
+        }
+      });
+      table.append(clone);
+    }
+  });
+})(jQuery);
+//]]>
+</script>
+
+<%
+(@item.original_groups.size...1).each {@item.original_groups.build}
+%>
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:parent_id) %><%= required %></th>
+    <td><%= f.select :parent_id, options_for_select(@item.parent_group_options, @item.parent_id), :include_blank => true %></td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %><%= required %></th>
+    <td><%= f.text_field :code, :style => 'width: 200px;' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:name) %><%= required %></th>
+    <td><%= f.text_field :name, :style => 'width: 200px;' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:original_groups) %></th>
+    <td>
+      <table class="index" id="options">
+        <tr>
+          <th>所属</th>
+          <th>削除</th>
+        </tr>
+        <%= f.fields_for :original_groups do |f2| %>
+          <% item = f2.object %>
+          <tr>
+            <td><%= f2.select :group_id, options_for_select(@item.group_options, item.group_id), :include_blank => true %></td>
+            <td><%= f2.check_box :_destroy %><%= f2.label :_destroy, '削除する' %><%= f2.hidden_field :group_change_id, :value => @group_change.id %></td>
+          </tr>
+        <% end %>
+      </table>
+      <%= tag :input, :type => :button, :value => '追加', :id => 'add' %>
+    </td>
+  </tr>
+</table>
+
+<%= f.hidden_field :company_id %>
+<%= f.hidden_field :group_change_id %>

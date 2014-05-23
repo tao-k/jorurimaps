@@ -1,0 +1,18 @@
+
+<table class="show">
+  <tr>
+    <th colspan="4">おすすめ設定</th>
+  </tr><tr>
+
+      <%@items.each_with_index do |item,i|
+      checked = false
+      checked = true if item.is_recommend == 1
+      %>
+      <td>
+      <%= check_box_tag "ids[]", item.id, checked , :id=>"ids_map_#{item.id}" %>
+      <label for="<%="ids_map_#{item.id}"%>"><%=item.title%></label>
+      </td>
+    <%if (i + 1).modulo(4) == 0%></tr><tr><%end%>
+    <%end%>
+  </tr>
+</table>

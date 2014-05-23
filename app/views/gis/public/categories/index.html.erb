@@ -1,0 +1,19 @@
+<div id="categories">
+  <div class="pieceHeader">
+    <div class="categoryTitle">分野</div>
+  </div>
+
+  <div class="pieceBody">
+  <%header_menu_piece_list.each do |menu|
+        next if menu[:class]=="top"%>
+      <div class="category <%=menu[:class]%>">
+    <div class="cateTitle"><a href="/gis/category/<%=menu[:class]%>/"><%=menu[:title]%></a></div>
+    <div class="children">
+      <div class="children1"><a href="/gis/category/<%=menu[:class]%>/"><%=menu[:title]%>の新着情報</a></div>
+    </div>
+  </div>
+  <%end%>
+  <!-- /pieceBody -->
+  </div>
+  <!-- /categories -->
+</div>

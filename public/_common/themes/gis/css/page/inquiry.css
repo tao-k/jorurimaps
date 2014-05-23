@@ -1,0 +1,199 @@
+@charset "UTF-8";
+@import "/_common/themes/gis/css/base/init.css";
+@import "/_common/themes/gis/css/base/style.css";
+
+/*----- breadCrumbs -----*/
+#breadCrumbs {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 15px 30px 10px;
+  font-size: 90%;
+}
+* html #breadCrumbs {
+  width:expression(document.documentElement.clientWidth < 742? "740px" : document.documentElement.clientWidth > 1142? "1140px" : "auto");
+}
+
+/*------------------------------------------------
+ main
+------------------------------------------------*/
+#main {
+  margin-top: 0 !important;
+}
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- enqueteForm -----*/
+#enqueteForm {
+  margin-bottom: 20px;
+  padding: 10px 15px 20px;
+  border: solid 1px #858585;
+  border-radius: 3px;
+  box-shadow: 1px 3px 3px #C2C2C2;
+}
+:root #enqueteForm {
+  border-radius: 5px \0/; /* IE9 */
+}
+
+#enqueteForm h2.name {
+  margin-bottom: 10px;
+  padding: 5px 0 5px 5px;
+  border-bottom: solid 2px #077E3F;
+  font-size: 150%;
+  font-weight: bold;
+  -webkit-text-stroke-width: 0.1px;
+  -webkit-text-stroke-color: black;
+  -webkit-text-fill-color: black;
+}
+#enqueteForm .colmuns {
+  width: 90%;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+#enqueteForm .colmun {
+  width: 100%;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: dotted 1px #858585;
+  zoom: 1;
+}
+#enqueteForm .colmun:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+#enqueteForm .colmun .name {
+  float: left;
+  min-width: 100px;
+}
+#enqueteForm .colmun .field {
+  overflow: hidden;
+}
+#enqueteForm .colmun .field input {
+  border: solid 1px #858585;
+}
+#enqueteForm .colmun .field textarea {
+  width: 99%;
+  height: 150px;
+  border: solid 1px #858585;
+}
+#enqueteForm .submitters {
+  margin: 20px 0 10px;
+  text-align: center;
+}
+#enqueteForm .submitters input {
+  background-color: #F6F6F6;
+  background: -webkit-gradient(linear, left top, left bottom, from(#F6F6F6), to(#F6F6F6));
+  background: -webkit-linear-gradient(top, #F6F6F6, #F6F6F6);
+  border: solid 1px #C2C2C2;
+  border-radius: 3px;
+}
+:root #enqueteForm .submitters input {
+  border-radius: 5px \0/; /* IE9 */
+}
+
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+
+/*----- department,relation -----*/
+#department,
+#relation {
+  margin-bottom: 20px;
+}
+#department .pieceHeader,
+#relation .pieceHeader {
+  margin-bottom: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 23px;
+  background-image: url(/_common/themes/gis/images/ic/tl_ic_link.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+#department .pieceHeader h2,
+#relation .pieceHeader h2 {
+  font-size: 100%;
+  font-weight: bold;
+  -webkit-text-stroke-width: 0.1px;
+  -webkit-text-stroke-color: black;
+  -webkit-text-fill-color: black;
+}
+#department .pieceBody,
+#relation .pieceBody {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#department ul li,
+#relation ul li {
+  margin-bottom: 3px;
+  padding-left: 10px;
+  background-image: url(/_common/themes/gis/images/ic/ic_dot_01.gif);
+  background-repeat: no-repeat;
+  background-position: left 0.6em;
+}
+
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+@media only screen and (max-width: 799px) {
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- breadCrumbs -----*/
+#breadCrumbs {
+  display: none;
+}
+
+/*----- enqueteForm -----*/
+#enqueteForm {
+  margin-top: 15px;
+}
+#enqueteForm .colmuns {
+  width: 95%;
+}
+#enqueteForm .colmun .name {
+  float: none;
+  margin-bottom: 5px;
+}
+#enqueteForm .colmun .field input {
+  max-width: 90%;
+  height: 30px;
+}
+#enqueteForm .colmun .field textarea {
+  max-width: 90%;
+}
+#enqueteForm .submitters input {
+  height: 42px;
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+
+/*----- department,relation -----*/
+#department ul li,
+#relation ul li {
+  background-position: left 1.5em;
+  border-bottom: solid 1px #C2C2C2;
+}
+#department ul li a,
+#relation ul li a {
+  display: block;
+  padding: 10px 0;
+}
+
+}
+
+
+/*=============================================================
+ PC向けスタイル
+=============================================================*/
+@media only screen and (min-width: 800px) {
+
+}

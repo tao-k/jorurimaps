@@ -1,0 +1,33 @@
+
+  <!-- about -->
+  <!-- howto -->
+  <div id="howto">
+    <h2><a href="/gis/howto.html">ご利用方法等</a></h2>
+  </div>
+  <!-- /howto -->
+  <!-- /about -->
+
+
+
+    <!-- qrInfo -->
+    <div id="qrInfo" class="piece">
+      <!-- qrCode -->
+      <div class="piece" id="qrCode">
+      <div class="pieceContainer">
+        <div class="pieceHeader"><h2>スマートフォン</h2></div>
+        <div class="pieceBody">
+          <p>QRコードを読み込んでサイトにアクセスできます。</p>
+          <%=image_tag(portal_qr_code(Core.full_uri, 80), :title=>"QRコード", :alt=>"QRコード")%>
+        </div>
+      </div>
+      </div>
+    </div>
+    <!-- /qrInfo -->
+
+  <!-- relation -->
+  <%= render_show_cache("related_link_top", '/gis/public/common/related_link',{:kind=>"front", :category=>"top"}) %>
+  <!-- /relation -->
+
+
+
+

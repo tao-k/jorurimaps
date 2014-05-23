@@ -1,0 +1,9 @@
+背景地図<br />
+<%for item in base_layers
+checked = false
+checked = true if item.code == 'webtis_monotone'
+%>
+<%=radio_button_tag(:item_layer, 1 , checked, :id => item.code, :class=>"baseLayer")%>
+<label for="<%=item.code%>"><%=item.title%></label>
+<br />
+<%end%>

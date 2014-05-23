@@ -1,0 +1,106 @@
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $(function() {
+    $('#addRow').click(function(e) {
+      addTableLastRow($('#options'));
+    });
+    var num = 0;
+    function addTableLastRow(table) {
+      num = table.find('tr').length - 1;
+      var clone = table.find('tr:last').clone();
+      clone.find('input, label, select, textarea').each(function() {
+        var keys = ['id', 'name', 'for'];
+        for (var i=0; i<keys.length; i++) {
+          if(name.match(/rid/)){
+            continue;
+          }
+          var key = keys[i];
+          var value = $(this).attr(key);
+          if (key == "type"){
+            if (value == "hidden"){
+              $(this).remove();
+            }
+            if(key == "checkbox"){
+              if(name.match(/destroy/)){
+                $(this).remove();
+              }
+            }
+          }else{
+            if (value) {
+              $(this).attr(key, value.replace(/\d+/, num));
+            }
+            if($(this).attr("type")!="checkbox"){
+              $(this).val('');
+            }
+           }
+        }
+      });
+      table.append(clone);
+    }
+  });
+})(jQuery);
+//]]>
+</script>
+<h2><%= @item.locale(:facility_photos) %></h2>
+<table class="index" id="options">
+        <tr>
+          <th style="width: 250px;">画像ファイル</th>
+          <th>公開する</th>
+          <th>並び順</th>
+          <th>キャプション</th>
+          <th>削除</th>
+        </tr>
+          <%
+          num = 0
+          @photos.each_with_index{|photo, n|%>
+            <tr>
+              <td>
+                <%= hidden_field_tag "photo[_rid][#{n}]", photo.rid%>
+                <%
+                is_public_checked = false
+                if params[:photo]
+                  is_public_checked = true if params[:photo][:_state][n.to_s]
+                else
+                  is_public_checked = true if photo.web_state == "public"
+                end
+                checked = false
+                checked = true if params[:photo][:_destroy][n.to_s] if params[:photo][:_destroy] if params[:photo]
+                %>
+                <%=safe{image_tag(photo.public_photo_path, :width=>"#{photo.show_width}px")}%>
+              </td>
+              <td>
+                <%= check_box_tag "photo[_state][#{n}]", 1, is_public_checked  %>
+              </td>
+              <td>
+                <%= text_field_tag "photo[_sort_no][#{n}]", photo.sort_no, :size=>3  %>
+              </td>
+              <td>
+                <%= text_field_tag "photo[_caption][#{n}]", photo.caption, :style=>"width: 400px;"  %>
+              </td>
+              <td>
+                <%= check_box_tag "photo[_destroy][#{n}]", 1, checked  %>
+                <label for="<%="photo__destroy_#{n}"%>">削除する</label>
+              </td>
+            </tr>
+          <%num = n
+          } unless @photos.blank?
+          num = num == 0 ? 0 : num + 1-%>
+        <tr>
+          <td>
+            <%=file_field_tag "photo[upload][#{num}]"%>
+          </td>
+          <td><%= check_box_tag "photo[_state][#{num}]", 1, false  %></td>
+          <td>
+            <%= text_field_tag "photo[_sort_no][#{num}]", "", :size=>3 %>
+          </td>
+          <td>
+            <%= text_field_tag "photo[_caption][#{num}]", "", :style=>"width: 400px;"  %>
+          </td>
+          <td></td>
+        </tr>
+
+      </table>
+      <%= tag :input, :type => :button, :value => '画像登録フォームを追加', :id => 'addRow' %><br />
+      <br />

@@ -1,0 +1,21 @@
+<h2>個別地図</h2>
+<%if @maps.blank?%>
+<%=div_notice("個別地図は存在しません。")%>
+<%else%>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th style="width: 60px;">公開状況</th>
+    <th>名称</th>
+  </tr>
+<%for map in @maps%>
+<tr>
+<td class="showLink">
+  <%=link_to "詳細", url_for({:controller=>"gis/admin/maps", :action=>:show, :id=>map.id})%>
+</td>
+<td ><%= map.state_show %></td>
+<td><%=map.title%></td>
+</tr>
+<%end%>
+</table>
+<%end%>

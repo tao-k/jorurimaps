@@ -1,0 +1,319 @@
+
+<%= render :partial =>  'open_layer_list', :locals=>{:vector_layer_list =>vector_layer_list,:wms_url => wms_url}   rescue nil %>
+
+function initWFSLayer(){
+
+
+  <%@vector_layer_list.each do |layer|-%>
+  if (overlays['<%=layer%>']){
+    overlays['<%=layer%>'].setVisibility(false);
+  }
+  <% end unless @vector_layer_list.blank?-%>
+
+
+
+  overlays['vector']  = new OpenLayers.Layer.Vector("描画領域",
+  {
+    visibility: true,
+    group: "others",
+    projection: new OpenLayers.Projection("EPSG:900913"),
+    displayProjection: new OpenLayers.Projection("EPSG:4326")
+   }
+  );
+  map.addLayer(overlays['vector']);
+
+    selectControls['demo'] = new OpenLayers.Control.SelectFeature(
+      [
+      <%@vector_layer_list.each do |layer|-%>
+      overlays['<%=layer%>'],
+      <% end unless @vector_layer_list.blank?-%>
+      overlays['vector']
+      ],
+       {onSelect: onAedFeatureSelect, onUnselect: onFeatureUnselect});
+       map.addControl(selectControls['demo']);
+       selectControls['demo'].activate();
+}
+
+
+  function desplayDialog(){
+    confirmWin.show();
+  }
+
+Ext.onReady(function() {
+
+  Ext.QuickTips.init();
+
+  /* マップ設定 */
+  initMap();
+
+ /* ズームセレクタ設定 */
+ initAreaSelecter();
+
+ /*コントロールパネル作成*/
+  createCtrlPanel();
+
+  /* 描画用ウィンドウ作成  */
+  readyForDraw();
+
+  /*計測用ウィンドウ作成*/
+  readyForMeasure();
+
+   var i = 0;
+
+
+  /* map view */
+
+
+   printPanel = new Ext.Window({
+        id:'printPanel',
+        title:'印刷',
+        layout:'fit',
+        width:300,
+        height:200,
+        closeAction:'hide',
+        plain: true,
+        //minimizable: true,
+        maximizable: true,
+        collapsible: true,
+        closable: true,
+        items:
+          new Ext.Panel({
+            html:'<br /><br /><br />'
+          })
+      });
+   linkPanel = new Ext.Window({
+        id:'linkPanel',
+        title:'リンク',
+        layout:'fit',
+        width:300,
+        height:200,
+        closeAction:'hide',
+        plain: true,
+        //minimizable: true,
+        maximizable: true,
+        collapsible: true,
+        closable: true,
+        items:
+          new Ext.Panel({
+            html:'<textarea id="map_link_url" name="map_link_url" style="width: 280px; height: 180px;">'+ permalinkControl.base +'</textarea>'
+          })
+      });
+
+
+  outPutPanel = new Ext.Window({
+        id:'outPutPanel',
+        title:'データ出力',
+        layout:'fit',
+        width:300,
+        height:200,
+        closeAction:'hide',
+        plain: true,
+        //minimizable: true,
+        maximizable: true,
+        collapsible: true,
+        closable: true,
+        autoScroll:true,
+        contentEl: 'outPutFormDiv',
+        html: ''
+      });
+
+  var layerSlider = {
+        id: "layerOpacitySlider",
+        xtype: "gx_opacityslider",
+        layers: overlays,
+        changeVisibility: false,
+        aggressive: true,
+        horizontail: true,
+        width: 100,
+        plugins: new GeoExt.LayerOpacitySliderTip({template: '<div>透過度: {opacity}%</div>'})
+     };
+  var sliderLabel = {id: 'sliderLabel', text:'透過度：'}
+  var align = "->" ;
+  var messageUse = {text: "<%=safe{@map.title}%>のご利用上の注意", handler: desplayDialog}
+  mapPanel = new GeoExt.MapPanel({
+    border: true,
+    margins:'0 0 0 0',
+    width:'100px',
+    region: "center",
+    map:    map,
+    zoom: settings['initMapZoom'],
+    tbar: [areaSelector, toolbarItems],
+    bbar: [sliderLabel, layerSlider,align,messageUse]
+  });
+
+
+  layerPanel = new Ext.Panel({
+        id: 'layerPanel',
+        title:'レイヤー切替',
+        html:'',
+         width: '220px',
+        margins:'0 0 0 0',
+        autoScroll:true,
+        autoLoad: {
+                url: "<%= url_for({:action => :layer, :layers => @layers}) %>",
+                method: "GET",
+                text: "読み込み中...",
+                timeout: 60
+            }
+    });
+  mapToolPanel = new Ext.Panel({
+    title: '地名検索',
+    html: '',
+    margins:'0 0 0 0',
+    autoScroll:true,
+    id: 'mapToolTab',
+     width: '220px',
+    autoLoad: {
+        url: "/gis/geo_form.html",
+        method: "GET",
+        text: "読み込み中...",
+        timeout: 60
+    }
+
+  });
+
+  leftTabs = new Ext.TabPanel({
+    id: "toolTab",
+    activeTab: 0,
+    region: "west",
+    collapsible:true,
+    split:true,
+     width: '220px',
+    items: [
+      layerPanel,
+      mapToolPanel
+    ]
+  });
+
+
+
+  /* create view */
+  new Ext.Viewport({
+    layout:'border',
+    items:[
+      mapPanel,
+      leftTabs,
+      new Ext.Panel({
+        header: false,
+        contentEl: 'header',
+        margins:'0 0 0 0',
+        height: '55px',
+        region:'north',
+        collapsible:true,
+        collapseMode: "mini",
+        split:true,
+        autoHeight:false
+      }),
+      new Ext.Panel({
+          header: false,
+          contentEl: 'footer',
+          margins:'0 0 0 0',
+          region:'south',
+          collapsible:true,
+          collapseMode: "mini",
+          split:true,
+          autoHeight:true
+        })
+    ]
+  });
+
+
+  <%if @map%>
+  confirmWin = new Ext.Window( {
+           title:  'ご利用上の注意',
+           id: 'confirmWindow',
+           contentEl: 'confirmMessage',
+           modal:  true,
+           closable: false,
+           buttons: [{
+               xtype: 'button',
+               id: 'confirmOk',
+               text: '同意する',
+               baseCls : "colorBtn",
+               listeners: {
+                 click: function(){
+                   confirmWin.hide();
+                 }
+               }
+             },
+             {
+                 xtype: 'button',
+                 id: 'confirmNo',
+                 text: '同意しない',
+                 baseCls : "colorBtn",
+                 listeners: {
+                   click: function(){
+                     window.location = "/";
+                   }
+                 }
+               }]
+          } );
+      confirmWin.show();
+  <%end%>
+
+outPutConfirmWin = new Ext.Window( {
+           title:  'ライセンスについて',
+           id: 'outPutConfirmWindow',
+           contentEl: 'outPutConfirmWinMessage',
+           modal:  true,
+           closable: false,
+           buttons: [{
+               xtype: 'button',
+               id: 'outPutConfirmOk',
+               text: '同意する',
+               baseCls : "colorBtn",
+               listeners: {
+                 click: function(){
+                   outPutConfirmed = true;
+                   outPutConfirmWin.hide();
+                   outPutPanel.show();
+                 }
+               }
+             },
+             {
+                 xtype: 'button',
+                 id: 'outPutConfirmNo',
+                 text: '同意しない',
+                 baseCls : "colorBtn",
+                 listeners: {
+                   click: function(){
+                     //window.location = "/";
+                     outPutConfirmWin.hide();
+                   }
+                 }
+               }]
+          } );
+
+  /*WebKit用改行処理*/
+  /*var userAgent = window.navigator.userAgent.toLowerCase();
+  if (userAgent.match(/webkit/i)){
+    var replacedHtml = $(".baseLayersDiv").html().replace(/<br>/g, '<p><\/p>');
+    $(".baseLayersDiv").html(replacedHtml);
+  }*/
+
+
+
+  addLayerWin = new Ext.Window( {
+      title:  '追加レイヤー登録',
+      id: 'addLayerWin',
+      modal:  true,
+      closable: true,
+      width:600,
+      height:450,
+      closeAction:'hide',
+      html:'',
+      margins:'0 0 0 0',
+      autoScroll:true,
+      autoLoad: {
+              url: "<%=add_layer_window_url(@map)%>",
+              method: "GET",
+              text: "読み込み中...",
+              timeout: 60
+          }
+     } );
+
+
+});
+
+
+

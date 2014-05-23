@@ -1,0 +1,19 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:user_account) %></th>
+    <td><%= safe{@item.user.account} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:user_name) %></th>
+    <td><%= safe{@item.user.name} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:role_id) %></th>
+    <td><%= safe{@item.role.name} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:priv_id) %></th>
+    <td><%= safe{@item.priv.name} %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'system/admin/common/operator' %>
+
+<%= button_to '戻る', {:action => :index}, :method => :get %>

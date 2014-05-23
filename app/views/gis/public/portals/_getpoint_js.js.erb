@@ -1,0 +1,320 @@
+//円ツール
+  var measureProjection = new OpenLayers.Projection("EPSG:900913");
+OpenLayers.Geometry.Polygon.createGeodesicPolygon = function(origin, radius, sides, rotation, projection){
+
+    if (projection.getCode() !== "EPSG:4326") {
+        origin.transform(projection, new OpenLayers.Projection("EPSG:4326"));
+    }
+    var latlon = new OpenLayers.LonLat(origin.x, origin.y);
+
+    var angle;
+    var new_lonlat, geom_point;
+    var points = [];
+
+    for (var i = 0; i < sides; i++) {
+        angle = (i * 360 / sides) + rotation;
+        new_lonlat = OpenLayers.Util.destinationVincenty(latlon, angle, radius);
+        new_lonlat.transform(new OpenLayers.Projection("EPSG:4326"), projection);
+        geom_point = new OpenLayers.Geometry.Point(new_lonlat.lon, new_lonlat.lat);
+        points.push(geom_point);
+    }
+    var ring = new OpenLayers.Geometry.LinearRing(points);
+    return new OpenLayers.Geometry.Polygon([ring]);
+};
+
+function createClickControl(){
+  OpenLayers.Control.circleClick = OpenLayers.Class(OpenLayers.Control, {
+      defaultHandlerOptions: {
+          'single': true,
+          'double': false,
+          'pixelTolerance': 0,
+          'stopSingle': false,
+          'stopDouble': false
+      },
+
+      initialize: function(options) {
+          this.handlerOptions = OpenLayers.Util.extend(
+              {}, this.defaultHandlerOptions
+          );
+          OpenLayers.Control.prototype.initialize.apply(
+              this, arguments
+          );
+          this.handler = new OpenLayers.Handler.Click(
+              this, {
+                  'click': this.trigger
+              }, this.handlerOptions
+          );
+      },
+      CLASS_NAME: "OpenLayers.Control.circleClick",
+
+      trigger: function(e) {
+          var circleLonlat = map.getLonLatFromPixel(e.xy);
+          var circleOrigin = new OpenLayers.Geometry.Point(circleLonlat.lon, circleLonlat.lat);
+          var circleRadius = $("#circleRadius").val();
+          if(circleRadius){
+          }else{
+            circleRadius = 5;
+          }
+          var circleRadiusKm = circleRadius * 1000;
+          var circleNum = $("#circleNum").val();
+          if(circleNum){
+          }else{
+            circleNum = 1;
+          }
+          if(circleNum==1){
+            var circleout = new OpenLayers.Geometry.Polygon.createGeodesicPolygon(circleOrigin, circleRadiusKm , circleSides,45,measureProjection);
+            overlays['vector'].addFeatures(new OpenLayers.Feature.Vector(circleout));
+          }else{
+            var circleCollection = [];
+            var radiusMargin = circleRadiusKm / circleNum;
+            var firstRadius = circleRadiusKm ;
+            for(var i = 1; i <= circleNum; i++){
+              circleOrigin = new OpenLayers.Geometry.Point(circleLonlat.lon, circleLonlat.lat);
+              var newCircle = new OpenLayers.Geometry.Polygon.createGeodesicPolygon(circleOrigin, firstRadius , circleSides,45,measureProjection);
+              circleCollection.push(newCircle);
+              firstRadius = firstRadius - radiusMargin;
+            }
+            var gc_geometry = new OpenLayers.Geometry.Collection(circleCollection);
+            overlays['vector'].addFeatures([new OpenLayers.Feature.Vector(gc_geometry)]);
+          }
+
+      }
+  });
+}
+
+
+//計測ツール関連
+
+
+$(document).on('contextmenu', '.olMapViewport', function(e){
+    /*selectRightClick(e);
+    e.preventDefault();
+    return false;*/
+  });
+
+
+function selectRightClick(e){
+  if(!e){
+        var e = window.event;
+        e.returnValue = false;
+    }else{
+      e.preventDefault();
+    }
+    var feature = overlays['vector'].getFeatureFromEvent(e);
+    if (feature){
+      measureSelectedFeature(feature);
+    }
+    return false;
+}
+
+
+function measureSelectedFeature(feature){
+
+  var length, kmLength, area, kmArea;
+  var targetGeometry;
+  if(feature.geometry.CLASS_NAME=="OpenLayers.Geometry.Collection"){
+    targetGeometry = feature.geometry.components[0];
+  }else{
+    targetGeometry = feature.geometry;
+  }
+  try{
+    length = targetGeometry.getLength(measureProjection);
+    kmLength = length / 1000;
+  }catch( e ){
+    length = 0;
+  }
+  try{
+    area = targetGeometry.getGeodesicArea(measureProjection);
+    kmArea = area / 1000000;
+  }catch( e ){
+    area = 0;
+    kmArea =  0;
+  }
+
+
+  var msg = "";
+  if (area != 0 && area){
+    msg += "面積：" + kmArea + "平方キロメートル";
+  }else{
+    msg += "距離：" + kmLength + "キロメートル";
+  }
+  //drawControls["measure"].unselect(feature);
+  Ext.MessageBox.alert("計測結果", msg);
+
+}
+
+
+function setMeasureControl(){
+  // style the sketch fancy
+  var sketchSymbolizers = {
+      "Point": {
+          pointRadius: 4,
+          graphicName: "square",
+          fillColor: "white",
+          fillOpacity: 1,
+          strokeWidth: 1,
+          strokeOpacity: 1,
+          strokeColor: "#333333"
+      },
+      "Line": {
+          strokeWidth: 3,
+          strokeOpacity: 1,
+          strokeColor: "#ff0000"
+      },
+      "Polygon": {
+          strokeWidth: 2,
+          strokeOpacity: 1,
+          strokeColor: "#ff0000",
+          fillColor: "white",
+          fillOpacity: 0.3
+      }
+  };
+  var style = new OpenLayers.Style();
+  style.addRules([
+      new OpenLayers.Rule({symbolizer: sketchSymbolizers})
+  ]);
+  var styleMap = new OpenLayers.StyleMap({"default": style});
+
+  // allow testing of specific renderers via "?renderer=Canvas", etc
+  var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+  renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+
+  measureControls = {
+      line: new OpenLayers.Control.Measure(
+          OpenLayers.Handler.Path, {
+              persist: true,
+              geodesic: true,
+              handlerOptions: {
+                  layerOptions: {
+                      renderers: renderer,
+                      styleMap: styleMap
+                  }
+              }
+          }
+      ),
+      polygon: new OpenLayers.Control.Measure(
+          OpenLayers.Handler.Polygon, {
+              persist: true,
+              geodesic: true,
+              handlerOptions: {
+                  layerOptions: {
+                      renderers: renderer,
+                      styleMap: styleMap
+                  }
+              }
+          }
+      )
+  };
+
+  var control;
+  for(var key in measureControls) {
+      control = measureControls[key];
+      control.events.on({
+          "measure": handleMeasurements,
+          "measurepartial": handleMeasurements
+      });
+      map.addControl(control);
+  }
+}
+
+function handleMeasurements(event) {
+    var geometry = event.geometry;
+    var units = event.units;
+    var order = event.order;
+    var measure = event.measure;
+
+    var out = "";
+    if(order == 1) {
+        out += "" + measure + " " + units;
+    } else {
+        out += "" + measure + " " + units + "<sup>2</" + "sup>";
+    }
+    $("#output").html(out);
+}
+
+
+$(document).on("change", ".toggleMeasureControl", function(e){
+  var selected = $(this).val();
+  if(selected=="measure_point"){
+    set_mode();
+  }
+  for(key in measureControls) {
+    var control = measureControls[key];
+    if(selected == key) {
+      end_mode();
+      control.activate();
+    } else {
+      control.deactivate();
+    }
+  }
+  for(key in drawControls) {
+    var control = drawControls[key];
+    control.deactivate();
+  }
+  if (selected=="none"){
+    end_mode();
+  }
+});
+
+
+// 座標計測モードに切り替え
+var measureMarkers = null;
+function set_mode(){
+  $("#output").html("");
+  $('#outputPoint').val("");
+  $("#outputPointDiv").show();
+  if(measureMarkers==null){
+    measureMarkers = new OpenLayers.Layer.Markers("Markers");
+    map.addLayer(measureMarkers);
+  }
+
+  // イベントが登録済みか調べる
+  var listeners=map.events.listeners['click'];
+  if(listeners!=null){
+      for(var i=0,len=listeners.length;i<len;i++){
+          if(listeners[i].obj == map
+           && listeners[i].func == handleMapClick){
+              // 登録済み
+              return;
+          }
+      }
+  }
+
+  // Mapにクリックイベントを登録
+  map.events.register('click', map, handleMapClick);
+}
+
+// 座標計測モード終了
+function end_mode(){
+    // Mapからクリックイベントを削除
+    map.events.unregister('click', map, handleMapClick);
+    if(measureMarkers){
+      measureMarkers.clearMarkers();
+    }
+      $("#outputPointDiv").hide();
+}
+
+
+// clickイベント
+function handleMapClick(evt) {
+    // クリック地点の座標を取得
+    var lonlat = map.getLonLatFromViewPortPx(evt.xy).transform(
+      new OpenLayers.Projection("EPSG:900913"),
+      new OpenLayers.Projection("EPSG:4326")
+    );
+    var measureMarker = new OpenLayers.Marker(
+        new OpenLayers.LonLat(lonlat.lon, lonlat.lat).transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          new OpenLayers.Projection("EPSG:900913")
+        )
+      );
+    measureMarkers.clearMarkers(measureMarker);
+    measureMarkers.addMarker(measureMarker);
+    var lonLat = lonlat.lat + ',' + lonlat.lon;
+    $('#outputPoint').val(lonLat);
+
+}
+
+$(document).on('focus', '#outputPoint', function(e){
+  $(this).select();
+});

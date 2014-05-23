@@ -1,0 +1,7 @@
+<%= render :partial => 'search' %>
+<% if @items.blank? %>
+  <div class="notice">データは登録されていません。</div>
+<% else %>
+  <%= render :partial => 'show' %>
+  <%= render :partial => 'gis/admin/common/operator'%>
+<% end %>

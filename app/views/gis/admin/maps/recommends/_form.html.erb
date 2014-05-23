@@ -1,0 +1,28 @@
+<%=f.hidden_field :portal_id%>
+<h4>基本設定</h4>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%= f.radio_buttons :web_state, @item.web_status_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :class => 'string title' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %><%= required %></th>
+    <td><%= f.text_field :sort_no, :class => 'num IMEoff' %></td>
+  </tr>
+</table>
+
+<h4>検索用パラメータ設定</h4>
+<table class="show">
+  <tr>
+ <%@search_configs.each_with_index do |conf,i|
+   value = params[conf.field_id]
+   value = @item.column_flds[conf.field_id]  if @item.column_flds &&  @item.column_flds[conf.field_id]
+ %>
+   <th><%=conf.label%></th>
+   <td><%= portal_search_form_show(conf, value) %></td>
+ </tr>
+ <%end unless @search_configs.blank?%>
+
+</table>

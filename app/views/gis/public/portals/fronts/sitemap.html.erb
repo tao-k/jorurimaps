@@ -1,0 +1,12 @@
+<div id="contentPage">
+  <div class="pieceHeader">サイトマップ</div>
+  <div class="pieceBody">
+    <div class="sitemap">
+      <h2><%=link_to "トップページ", "/#{@map.code}"%></h2>
+      <h2><%=link_to "お問い合わせ", "/#{@map.code}/inquiry.html"%></h2>
+      <h2><%=link_to "サイトマップ", "/#{@map.code}/sitemap.html"%></h2>
+      <h2><%=link_to "更新情報一覧", portal_doc_url(@map) %></h2>
+      <h2><%=link_to "#{@map.title}について", "/#{@map.code}/about.html"%></h2>
+    </div>
+  </div>
+</div>

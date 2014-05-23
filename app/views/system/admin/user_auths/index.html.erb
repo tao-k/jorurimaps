@@ -1,0 +1,26 @@
+<%= render :partial => 'search' %>
+
+<% if @items.present? %>
+<div><%= @items.total_entries %>件登録しています。</div>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th>すだちくんID</th>
+    <th>氏名</th>
+    <th>ロール名</th>
+    <th>権限名</th>
+  </tr>
+  <% @items.each_with_index do |item, i| %>
+  <tr class="<%= cycle '', 'cycle' %>">
+    <td class="showLink"><%= link_to '詳細', {:action => :show, :id => item.id} %></td>
+    <td><%= safe{item.user.account} %></td>
+    <td><%= safe{item.user.name} %></td>
+    <td><%= safe{item.role.name} %></td>
+    <td><%= safe{item.priv.name} %></td>
+  </tr>
+  <% end %>
+</table>
+<%= paginate @items %>
+<% else %>
+<div>ユーザー権限の登録がありません。</div>
+<% end %>

@@ -1,0 +1,11 @@
+  <!-- adBannner -->
+  <div id="adBanner">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+    <%for item in portal_banners({:category=>category})%>
+    <%=link_to image_tag(item.file_uri, :alt=>item.title, :title=>item.title), item.url, :target=>"_blank"%>
+    <%end%>
+  </div>
+  </div>
+  </div>
+  <!-- /adBanner -->

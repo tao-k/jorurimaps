@@ -1,0 +1,9 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '新規登録', {:action => :new}, :method => :get%>
+<% when 'show' %>
+  <%= link_to '編集', {:action => :edit} %>
+  <%= link_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？'%>
+<% end %>
+</span>

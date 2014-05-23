@@ -1,0 +1,28 @@
+<h4>基本設定</h4>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= @item.web_status_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %></th>
+    <td><%= @item.sort_no %></td>
+  </tr>
+</table>
+
+<h4>検索用パラメータ設定</h4>
+<table class="show">
+  <tr>
+ <%@search_configs.each_with_index do |conf,i|
+   value = ""
+   value = @item.column_flds[conf.field_id]  if @item.column_flds &&  @item.column_flds[conf.field_id]
+ %>
+   <th><%=conf.label%></th>
+   <td><%= conf.field_value(value) %></td>
+ </tr>
+ <%end unless @search_configs.blank?%>
+
+</table>
+<%= render :partial => 'gis/admin/common/operator'%>

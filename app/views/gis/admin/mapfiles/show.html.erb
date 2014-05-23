@@ -1,0 +1,32 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= @item.state_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:file_name) %></th>
+    <td><%= @item.file_name %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr><tr>
+    <th><%= @item.locale(:caption) %></th>
+    <td><%= hbr @item.caption %></td>
+  </tr><tr>
+    <th><%= @item.locale(:body) %></th>
+    <td style="white-space: pre"><%= hbr @item.body %></td>
+  </tr><tr>
+    <th><%= @item.locale(:user_kind) %></th>
+    <td><%= @item.user_kind_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_group_id) %></th>
+    <td><%= safe{@item.admin_group.name}  %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_user_id) %></th>
+    <td><%= safe{@item.admin_user.name} %></td>
+  </tr>
+</table>
+<%= render :partial => 'gis/admin/common/operator'%>
+<%= render :partial => 'history_index' if @histories %>
+

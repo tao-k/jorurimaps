@@ -1,0 +1,20 @@
+<%
+change_type_options = System::UsersGroupChange.new.change_types
+%>
+
+<%= form_tag '', :method => :get, :class => 'search' do %>
+<table>
+  <tr>
+    <th>異動/退職</th>
+    <td><%= select_tag :change_type, options_for_select(change_type_options, params[:change_type]), :include_blank => true %></td>
+    <th>職員番号・氏名</th>
+    <td><%= text_field_tag :s_keyword, params[:s_keyword], :size => 30 %></td>
+    <th>表示行数</th>
+    <td><%= select_tag :limit, options_for_select(limit_options, params[:limit]) %></td>
+    <td class="submitters">
+      <%= submit_tag '検索',     :name => :search %>
+      <%= submit_tag 'リセット', :name => :reset %>
+    </td>
+  </tr>
+</table>
+<% end %>

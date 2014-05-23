@@ -1,0 +1,258 @@
+
+
+
+  function showListPop(chr_id,gis_layer) {
+    var map_code =  '<%=params[:map_code]%>'
+    var portal_layers = "";
+    if(portalLayers){
+      portal_layers = portalLayers.join(",");
+    }
+    var rid = '0';
+    if (chr_id) {
+      rid = chr_id;
+    }
+
+    var request_uri = getBaseUrl()  + "/" + rid + '/data?map_code=' + map_code+ "&portal_layers=" + portal_layers;
+
+    var popupId = "popup_" + gis_layer + "_"+ rid;
+    if(listPop[popupId]!=null){
+      listPop[popupId].show();
+      return ;
+    }
+    $.ajax({
+          url: request_uri,
+          async: true,
+          cache: false,
+          dataType:"xml",
+          error: function(){
+            //alert('Error loading CSV document');
+          },
+          success: function(xml){
+            resultHtml = parseAedResultXml(xml,gis_layer);
+            var pop_html = resultHtml.html;
+            var lon = resultHtml.lng;
+            var lat = resultHtml.lat;
+            lonlat = convLonLat(lon, lat);
+            listPop[popupId] = new OpenLayers.Popup.FramedCloud(popupId, lonlat, null, pop_html, null, true, null);
+            map.addPopup(listPop[popupId]);
+            if (resultHtml.photo0_path!=null && resultHtml.photo0_path!= ""){
+                listPop[popupId].setSize(new OpenLayers.Size(230,300));
+            }else{
+              listPop[popupId].setSize(new OpenLayers.Size(230,300));
+            }
+            afterLoad(resultHtml.photo0_path, resultHtml.photo1_path, resultHtml.photo2_path,resultHtml.otherPhotos,resultHtml.photo0_full_path,resultHtml.captions,resultHtml.originalPath, popupId);
+            listPop[popupId].show();
+         }
+        });
+  }
+
+function onAedFeatureSelect(feature) {
+
+    var map_code =  '<%=map_code%>'
+    var portal_layers = "";
+    if(portalLayers){
+      portal_layers = portalLayers.join(",");
+    }
+    var gis_layer = '0';
+    var rid = feature.attributes.rid;
+    if (feature.attributes.gis_layer) {
+      gis_layer = feature.attributes.gis_layer;
+    }
+    var layer_id;
+    if (feature.layer_id){
+      layer_id = feature.attributes.layer_id;
+    }
+    if(gis_layer==0){
+      return;
+    }
+    var request_uri = getBaseUrl()  + "/" + rid + '/data?layer_id=' + layer_id + '&map_code=' + map_code+ "&portal_layers=" + portal_layers;
+  var popupId = "popup_" + gis_layer + "_"+ rid;
+    if(listPop[popupId]!=null){
+      listPop[popupId].show();
+      return ;
+    }
+    $.ajax({
+          url: request_uri,
+          async: true,
+          cache: false,
+          dataType:"xml",
+          error: function(){
+            //alert('Error loading CSV document');
+          },
+          success: function(xml){
+            resultHtml = parseAedResultXml(xml,gis_layer);
+            var tlayer   = map.getLayer(feature.layer.id);
+            var tfeature = tlayer.getFeatureById(feature.id);
+            if (tfeature) {
+
+              closeBtn = '';
+              popupItem = resultHtml.html+ closeBtn;
+              var popup = new OpenLayers.Popup.FramedCloud(popupId,
+                tfeature.geometry.getBounds().getCenterLonLat(),
+                new OpenLayers.Size(230,400),
+                popupItem,
+                null,
+                true,
+                null);
+              popup.minSize = new OpenLayers.Size(230,300);
+              tfeature.popup = popup;
+              map.addPopup(popup);
+              if (resultHtml.photo1_path!=null && resultHtml.photo1_path!= ""){
+                  popup.setSize(new OpenLayers.Size(230,300));
+              }else{
+                popup.setSize(new OpenLayers.Size(230,250));
+              }
+              popup.show();
+              listPop[popupId] = popup;
+              afterLoad(resultHtml.photo0_path, resultHtml.photo1_path, resultHtml.photo2_path,resultHtml.otherPhotos, resultHtml.photo0_full_path,resultHtml.captions,resultHtml.originalPath, popupId);
+           }
+         }
+        });
+  }
+
+$('.lightbox_images').bind("contextmenu", function(e) {
+    return false;
+});
+
+function afterLoad(photo0_path,photo1_path, photo2_path, otherPhotos,photo0_full_path,captions,originalPath,popupId){
+  var slideShowHtml = '<div id="slide_'+ popupId + '">';
+    if(photo0_path){
+      var photo0_caption = '&lt;a href=&quot;javascript:void(0);&quot; onclick=&quot;window.open(&#39;' + originalPath[0]+ '&#39;)&quot;&gt;' +captions[0]+ '&lt;/a&gt;';
+      $("#" +popupId+"_contentDiv .photo0").html('<a href="'+photo0_path + '" class="lightBoxShow" id="'+ popupId +'_photo0"><img src="' + photo0_path + '" width="200px" ><br />拡大する</a>');
+      slideShowHtml += '<a rel="lightbox[' + popupId + ']" href="'+photo0_full_path + '" class="lightBoxShow" id="'+ popupId +'_photo0_slide" alt="'+  captions[0] + '" name="' + photo0_caption +'"><img src="' + photo0_full_path + '" width="200px" ></a>'
+    }
+    var n = 1;
+    var r = 1;
+    for(var i =0; i < otherPhotos.length; i++){
+      var photo_caption = '&lt;a href=&quot;javascript:void(0);&quot; onclick=&quot;window.open(&#39;' + originalPath[r]+ '&#39;)&quot;&gt;' +captions[r]+ '&lt;/a&gt;';
+      slideShowHtml += '<a rel="lightbox[' + popupId + ']" href="'+ otherPhotos[i] + '" class="lightBoxShow" id="'+ popupId +'_photo'+ n +'_slide" alt="'+  captions[r] + '" name="' + photo_caption +'"><img src="' + otherPhotos[i] + '" width="200px" ></a>'
+      n++;
+      r++;
+    }
+
+    slideShowHtml += '</div>';
+    $("#slideShow").append(slideShowHtml);
+
+     $('a', listPop[popupId].contentDiv).on('click', function(evt) {
+       var a_class = $(this).attr("class");
+       if (a_class && a_class.match(/lightBoxShow/)){
+        evt.preventDefault();
+        var slideAnchor = $(this).attr('id') + "_slide";
+         $("#" + slideAnchor).trigger("click");
+        return false;
+       }else{
+          return true;
+       }
+     });
+
+
+  }
+
+
+
+
+  function parseAedResultXml(xml,gis_layer){
+    var resultHtml = "";
+    var photo0_path = null;
+    var photo1_path = null;
+    var photo2_path = null;
+    var photo0_full_path = null;
+    var lat,lng;
+    var i = 0;
+    var otherPhotos = new Array();
+    var captions= new Array();
+    var originalPath= new Array();
+    var captions = new Array();
+    var originalPath = new Array();
+    $(xml).find("item").each(function(){
+      lat = $(this).find("lat").text();
+      lng = $(this).find("lng").text();
+      if(gis_layer=="ud_map_elevations"){
+        var point_name =$(this).find("point_name").text();
+        var address = $(this).find("address").text();
+        var height = $(this).find("height").text();
+        var assume = $(this).find("assume").text();
+        var average = $(this).find("average").text();
+        var survey_kind = $(this).find("survey_kind").text();
+        resultHtml = "<b>" + point_name + "</b><br />";
+        resultHtml += "所在地：" + address + "<br />";
+        resultHtml += "標高（T.P.m）：" + height + "<br />";
+        resultHtml += "測量種別：" + survey_kind + "<br />";
+        photo1_path = $(this).find("photo1_path").text();
+        photo2_path = $(this).find("photo2_path").text();
+        if (photo1_path){
+          resultHtml += '全景写真<br /><div class="photo1"></div>';
+        }
+        if (photo2_path){
+          resultHtml += '測定箇所写真<br /><div class="photo2"></div>';
+        }
+      }else if (gis_layer=="ud_map_aed_infos"){
+        var facility =$(this).find("facility").text();
+        var flood_depth =$(this).find("flood_depth").text();
+        var avg_alt =$(this).find("avg_alt").text();
+        resultHtml = "<b>" + point_name + "</b><br />";
+        resultHtml += "津波浸水深さ：" + flood_depth + "<br />";
+        resultHtml += "周囲の平均標高：" + avg_alt + "<br />";
+        photo1_path = $(this).find("photo1_path").text();
+        photo2_path = $(this).find("photo2_path").text();
+        if (photo1_path){
+          resultHtml += '全景写真<br /><div class="photo1"></div>';
+        }
+        if (photo2_path){
+          resultHtml += '測定箇所写真<br /><div class="photo2"></div>';
+        }
+      }else{
+          var name = $(this).find("name").text();
+          var tel = $(this).find("telephone_number").text();
+          var address = $(this).find("address").text();
+          show_path = $(this).find("show_path").text();
+          photo0_path =  $(this).find("photo0_path").text();
+          photo0_full_path=  $(this).find("photo0_full_path").text();
+          captions.push($(this).find("photo0_caption").text());
+          originalPath.push($(this).find("photo0_original_path").text());
+          lat =  $(this).find("lat").text();
+          lng =  $(this).find("lng").text();
+          resultHtml += '<div class="photo1"></div>';
+          resultHtml += name + "<br />" ;
+          if(address){
+            resultHtml += "住所：" + address + "<br />";
+          }
+          if(tel){
+            resultHtml += "電話番号：" + tel + "<br />";
+          }
+          for(i=0;i<=$(this).find("free_columns").length-1;i++){
+            var value = $(this).find("free_columns").eq(i).find("value").text()
+            if(value==""){
+              continue;
+            }
+            if (value.match(/http/)){
+              var setHtml = '<a href="' + value +  '" target="_blank">' + value + '</a>';
+            }else{
+              var setHtml = value;
+            }
+            resultHtml +=  $(this).find("free_columns").eq(i).find("key").text() + "：" + setHtml + "<br />";
+          }
+          if(show_path){
+            resultHtml += '<a href= "'+ show_path +'" target="_blank">詳細＞</a>';
+          }
+          resultHtml += '<br /><div class="photo0"></div>';
+          for(var n = 1; n <= 10; n++){
+            var otherPhotoPath = $(this).find("other_photo"+ n +"_path").text();
+            if (otherPhotoPath!=""){
+              otherPhotos.push(otherPhotoPath);
+              captions.push($(this).find("photo"+ n +"_caption").text());
+              originalPath.push($(this).find("other_photo"+ n +"_original_path").text());
+            }
+          }
+      }
+      i++;
+    });
+    return { html : resultHtml, photo0_path:photo0_path, photo1_path:photo1_path, photo2_path: photo2_path, lat: lat, lng: lng,otherPhotos: otherPhotos, photo0_full_path: photo0_full_path ,captions: captions, originalPath: originalPath};
+  }
+
+
+function onFeatureUnselect(feature) {
+  /* ここで現在選択しているFeature情報についてリセットなどを行う？ */
+//    alert("onFeatureUnselect");
+}
+

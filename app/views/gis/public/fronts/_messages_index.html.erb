@@ -1,0 +1,17 @@
+
+
+      <%unless short_messages.blank?%>
+      <!-- info -->
+      <div id="info">
+      <div id="infoWrapper">
+        <div class="left heightLine-group1">お知らせ</div>
+        <div class="right heightLine-group1">
+          <% short_messages.each_with_index do |msg, ind|
+           next if msg.blank?%>
+            <%= msg.html_safe %>
+          <% end%>
+        </div>
+      </div>
+      </div>
+      <!-- /info -->
+      <% end%>

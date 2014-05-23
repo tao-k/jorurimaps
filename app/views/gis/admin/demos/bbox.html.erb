@@ -1,0 +1,376 @@
+<%
+wms_url = Application.config(:wms_gateway_url, "localhost")
+%>
+<div id="countFeatures">Now Loading...</div>
+<div id="displayLatlng">Now Loading...</div>
+<script type="text/javascript" src="/openlayers/OpenLayers.js"></script>
+<script type="text/javascript" src="/_common/js/proj4js/lib/proj4js-combined.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+(function($) {
+  var map;
+  var overlays = new Object();
+  var baseLayers = new Object();
+  var layerStyles  = new Object();
+  var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+  var Rule = OpenLayers.Rule;
+  var selectControls = new Object();
+  var mapControls = [
+        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.ScaleLine(),
+        new OpenLayers.Control.ArgParser(),
+        new OpenLayers.Control.Attribution()
+      ];
+  $(function() {
+    var options = {
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection: new OpenLayers.Projection("EPSG:4326"),
+      units: "m",
+      numZoomLevels: 18,
+      maxResolution: 156543.0339,
+      controls : mapControls
+    };
+
+    map = new OpenLayers.Map("canvas", options);
+
+
+    baseLayers['gmap'] = new OpenLayers.Layer.Google("グーグルマップ", {visibility: false});
+    map.addLayer(baseLayers['gmap']);
+
+    baseLayers['gsat'] = new OpenLayers.Layer.Google(
+                  "グーグルマップ 衛星",
+                  {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 20,  transparent: 'true'}
+              );
+    map.addLayer(baseLayers['gsat']);
+    baseLayers['osm'] = new OpenLayers.Layer.OSM("オープンストリートマップ");
+    map.addLayer(baseLayers['osm']);
+
+    setCenter();
+    //wmsLayerSet();
+    wfsLayerSet();
+    //map.events.register("mousedown", map, mapSelectHandler);
+    //alert(map.getZoom());
+
+    //地図移動時のイベントを登録
+    map.events.register('moveend', map, handleMapMove);
+    //初期表示としてイベントを動作させる
+    map.events.triggerEvent('moveend');
+  });
+
+
+  function mapSelectHandler(evt){
+    alert(evt.this);
+  }
+
+  function wfsLayerSet(){
+
+  layerStyles['ud_facility'] = new OpenLayers.Style({
+    pointRadius: 10,
+    strokeWidth: 3,
+    strokeOpacity: 0.7,
+    strokeColor: "navy",
+    fillColor: "#55FF00",
+    fillOpacity: 1
+  }, {
+    rules: [
+        new Rule({
+            elseFilter: true,
+            symbolizer: {
+                externalGraphic: "/_common/themes/ud/images/ltblue-dot.png",
+        graphicWidth: 32,
+        graphicHeight: 32,
+        graphicXOffset: -16,
+        graphicYOffset: -32
+            }
+        })
+    ]
+  });
+
+  layerStyles['ud_elevations'] = new OpenLayers.Style({
+    pointRadius: 10,
+    strokeWidth: 3,
+    strokeOpacity: 0.7,
+    strokeColor: "navy",
+    fillColor: "#55FF00",
+    fillOpacity: 1
+  }, {
+    rules: [
+        new Rule({
+            elseFilter: true,
+            symbolizer: {
+                externalGraphic: "/_common/themes/ud/images/yellow-dot.png",
+        graphicWidth: 32,
+        graphicHeight: 32,
+        graphicXOffset: -16,
+        graphicYOffset: -32
+            }
+        })
+    ]
+  });
+
+
+  layerStyles['ud_aed_infos'] = new OpenLayers.Style({
+    pointRadius: 10,
+    strokeWidth: 3,
+    strokeOpacity: 0.7,
+    strokeColor: "navy",
+    fillColor: "#55FF00",
+    fillOpacity: 1
+  }, {
+    rules: [
+        new Rule({
+            elseFilter: true,
+            symbolizer: {
+                externalGraphic: "/_common/themes/ud/images/red-dot.png",
+        graphicWidth: 32,
+        graphicHeight: 32,
+        graphicXOffset: -16,
+        graphicYOffset: -32
+            }
+        })
+    ]
+  });
+    Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+    var myproj =new OpenLayers.Projection("EPSG:4326");
+     overlays['ud_map_facilities'] =new OpenLayers.Layer.Vector("ユニバーサルデザイン対応施設", {
+                styleMap: new OpenLayers.StyleMap({
+                "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+          graphicWidth: 35,
+          graphicHeight: 35
+                  }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: true,
+                strategies: [new OpenLayers.Strategy.BBOX()],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=mapfiles/ud_wfs.map",
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: "ud_map_facilities",
+                        outputFormat: "json_ud_facilities",
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+
+     map.addLayer(overlays['ud_map_facilities']);
+
+/* セレクトコントロールの追加 */
+     selectControls['demo'] = new OpenLayers.Control.SelectFeature(
+    [
+     overlays['ud_map_facilities']
+    ],
+     {onSelect: onFeatureSelect, onUnselect: onFeatureUnselect});
+     map.addControl(selectControls['demo']);
+     selectControls['demo'].activate();
+    //地図内の要素数カウント
+    //移動時に四隅の座標ゲット、再検索→再描画→カウント？
+     //overlays['ud_map_facilities'].events.register("loadend", overlays['convenience_store'], countFeature);
+     //countFeature(overlays['ud_map_facilities']);
+     //map.events.register("moveend", map, countFeature);
+    //地図移動時のイベントを登録
+    //map.events.register('move', map, countFeature);
+    //初期表示としてイベントを動作させる
+    //map.events.triggerEvent('move');
+
+  }
+
+  var countRequest = null;
+  function handleMapMove() {
+      // 地図の表示範囲を取得
+      var extent = map.getExtent();
+      // 地図座標に変換
+      extent.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+      var setText = "上" + extent.top + "/左" + extent.left + "/右" +extent.right+"/下" +extent.bottom;
+      $("#displayLatlng").html(setText);
+      var bboxParams = extent.left + "," + extent.top + ","+extent.right + "," +extent.bottom;
+      var request_uri = '<%= ud_demos_path %>/get_bbox?bbox=' + bboxParams ;
+       $("#countFeatures").html("Loading...");
+       if(countRequest!=null){
+         countRequest.abort();
+       }
+      countRequest = $.ajax({
+          url: request_uri,
+          async: true,
+          cache: false,
+          dataType:"text",
+          error: function(){
+            //alert('Error loading CSV document');
+          },
+          success: function(result){
+            $("#countFeatures").html("地図内に"+ result + "件表示");
+          },
+          timeout: function(){
+         }
+        });
+  }
+
+  function countMapFeatures(){
+    //
+  }
+
+  function countFeature(featureLength){
+    //$("#countFeatures").html("地図内に"+ this.features.length + "件表示");
+    $("#countFeatures").html("地図内に"+ featureLength + "件表示");
+  }
+
+
+  function setCenter() {
+    <%if @center%>
+    var centerLon = <%=@center.lng%>;
+    var centerLat = <%=@center.lat%>;
+    <%else%>
+    var centerLon = <%=Gis.defalut_position[:lng]%>
+    var centerLat = <%=Gis.defalut_position[:lat]%>
+    <%end%>
+    var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+      new OpenLayers.Projection("EPSG:4326"),
+      new OpenLayers.Projection("EPSG:900913")
+    );
+    map.setCenter(centerLonLat, 13);
+  }
+  function setMarker(lon, lat) {
+    var marker = new OpenLayers.Marker(
+      new OpenLayers.LonLat(lon, lat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      )
+    );
+    markers.addMarker(marker);
+  }
+  function onFeatureSelect(feature) {
+    var gis_layer = '0';
+    var rid = feature.attributes.rid;
+    if (feature.attributes.gis_layer) {
+      gis_layer = feature.attributes.gis_layer;
+
+    }
+    var request_uri = '<%= ud_demos_path %>/' + rid + '/feature?kind=' + gis_layer;
+    $.ajax({
+          url: request_uri,
+          async: true,
+          cache: false,
+          dataType:"xml",
+          error: function(){
+            //alert('Error loading CSV document');
+          },
+          success: function(xml){
+            resultHtml = parseResultXml(xml,gis_layer);
+            var tlayer   = map.getLayer(feature.layer.id);
+            var tfeature = tlayer.getFeatureById(feature.id);
+            var popupId = "popup_" + gis_layer + "_"+ rid;
+            if (tfeature) {
+              var popup = new OpenLayers.Popup.FramedCloud(popupId,
+                tfeature.geometry.getBounds().getCenterLonLat(),
+                new OpenLayers.Size(100,100),
+                resultHtml.html,
+                null,
+                true,
+                null);
+              popup.minSize = new OpenLayers.Size(100,100);
+              tfeature.popup = popup;
+              map.addPopup(popup);
+              if (gis_layer=="ud_map_elevations"){
+                popup.setSize(new OpenLayers.Size(210,450));
+              }else if(gis_layer=="ud_map_aed_infos"){
+                popup.setSize(new OpenLayers.Size(210,400));
+              }
+              popup.show();
+              afterLoad(resultHtml.photo1_path, resultHtml.photo2_path, popupId);
+           }
+         }
+        });
+  }
+
+  function afterLoad(photo1_path, photo2_path, popupId){
+    if(photo1_path){
+      $("#" +popupId+"_contentDiv .photo1").html('<img src="' + photo1_path + '" width="200px">');
+    }
+    if(photo2_path){
+      $("#" +popupId+"_contentDiv .photo2").html('<img src="' + photo2_path + '" width="200px">');
+    }
+  }
+
+  function parseResultXml(xml,gis_layer){
+    var resultHtml = "aaa";
+    var photo1_path = null;
+    var photo2_path = null;
+    var i = 0;
+    $(xml).find("item").each(function(){
+      if(gis_layer=="ud_map_elevations"){
+        var point_name =$(this).find("point_name").text();
+        var address = $(this).find("address").text();
+        var height = $(this).find("height").text();
+        var assume = $(this).find("assume").text();
+        var average = $(this).find("average").text();
+        resultHtml = "測定箇所名：" + point_name + "<br />";
+        resultHtml += "所在地：" + address + "<br />";
+        resultHtml += "測定標高：" + height + "<br />";
+        resultHtml += "周辺の想定：" + assume + "<br />";
+        resultHtml += "周辺の平均：" + average + "<br />";
+        photo1_path = $(this).find("photo1_path").text();
+        photo2_path = $(this).find("photo2_path").text();
+        if (photo1_path){
+          resultHtml += '全景写真<br /><div class="photo1"></div>';
+        }
+        if (photo2_path){
+          resultHtml += '測定箇所写真<br /><div class="photo2"></div>';
+        }
+      }else if (gis_layer=="ud_map_aed_infos"){
+        var facility =$(this).find("facility").text();
+        var flood_depth =$(this).find("flood_depth").text();
+        var avg_alt =$(this).find("avg_alt").text();
+        resultHtml = "名称：" + facility + "<br />";
+        resultHtml += "津波浸水深さ：" + flood_depth + "<br />";
+        resultHtml += "周囲の平均標高：" + avg_alt + "<br />";
+        photo1_path = $(this).find("photo1_path").text();
+        photo2_path = $(this).find("photo2_path").text();
+        if (photo1_path){
+          resultHtml += '全景写真<br /><div class="photo1"></div>';
+        }
+        if (photo2_path){
+          resultHtml += '測定箇所写真<br /><div class="photo2"></div>';
+        }
+      }else{
+        var name = $(this).find("name").text();
+        var kind = $(this).find("kind").text();
+        var weekday_start_time = $(this).find("weekday_start_time").text();
+        var weekday_end_time = $(this).find("weekday_end_time").text();
+        var holiday_start_time = $(this).find("holiday_start_time").text();
+        var holiday_end_time = $(this).find("holiday_end_time").text();
+        var address = $(this).find("address").text();
+        var show_path = $(this).find("show_path").text();
+        resultHtml = name + "（"+ kind +"）" + "<br />" ;
+        resultHtml +=  "平日：" + weekday_start_time + "／" + weekday_end_time + "<br />" ;
+        resultHtml +=  "祝休日：" + holiday_start_time + "／" + holiday_end_time + "<br />" ;
+        resultHtml += "住所：" + address + "<br />";
+        resultHtml += '<a href= "'+ show_path +'">詳細を確認する＞＞</a>';
+      }
+      i++;
+    });
+    return { html : resultHtml, photo1_path:photo1_path, photo2_path: photo2_path };
+  }
+
+  function onFeatureUnselect(feature) {
+    return true;
+  }
+
+})(jQuery);
+
+
+</script>
+<div id="canvas" style="width: 100%; height: 500px"></div>

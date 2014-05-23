@@ -1,0 +1,11 @@
+
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+  <%=link_to "トップページ", "/#{@map.code}/"%>  &gt;
+  <%=safe{link_to @item.name, @item.show_path(@map)}%>
+    </div>
+  </div>
+</div>
+</div>

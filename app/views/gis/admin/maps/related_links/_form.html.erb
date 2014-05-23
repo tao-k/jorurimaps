@@ -1,0 +1,20 @@
+
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:web_state) %><%= required %></th>
+    <td><%= f.radio_buttons :web_state, @item.web_state_select, :class => 'status' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :style=>"width: 80%;" %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:url) %><%= required %></th>
+    <td><%= f.text_field :url, :style=>"width: 80%;" %></td>
+  </tr>
+    <tr>
+    <th><%= @item.locale(:sort_no) %><%= required %></th>
+    <td><%= f.number_field :sort_no, :class => 'int', :min => 0, :max => 65536, :step => 1, :value => @item.sort_no, :style => 'width: 200px;' %></td>
+  </tr>
+</table>

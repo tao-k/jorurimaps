@@ -1,0 +1,181 @@
+div#canvas{
+  margin: 0 auto !important;
+}
+div#tabContainer {
+  margin: 5px;
+}
+ul#tabPanes li div.body{
+  border: none;
+}
+a.mapFuncBtn{
+  border:1px solid #000000;
+  padding: 10px 5px;
+  right:-2px;
+  background:#FFFFFF;
+  text-align: left;
+}
+
+ul#tabPanes li.a{
+  border:1px solid #000000;
+  padding:2px;
+  background:#E0E0E0;
+  text-align: right;
+  right:2px;
+}
+
+ul#tabPanes li span.closeBtn{
+  float: right;
+}
+
+a.confirmBtn{
+  border:1px solid #000000;
+  padding:2px;
+  background:#E0E0E0;
+}
+
+.dialog {
+    display: none;
+}
+
+#lean_overlay {
+    position: fixed;
+    z-index:100;
+    top: 0px;
+    left: 0px;
+    height:100%;
+    width:100%;
+    background: #000;
+    display: none;
+}
+#tabPanes li {
+  margin-bottom: 5px;
+}
+#tab2 .layerSet .layerTitle {
+  display: block;
+  padding: 12px 0 10px 40px;
+  background-image: url(/_common/themes/gis/images/ic_folder_w24_b.png);
+  background-position: 10px center;
+  background-repeat: no-repeat;
+  text-decoration: underline;
+}
+#tab2 .layerSet .open .layerTitle {
+  background-image: url(/_common/themes/gis/images/ic_folder_w24_a_.png);
+  background-position: 10px center;
+  background-repeat: no-repeat;
+}
+#tab2 .layerSet .folderMessage {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  background-image: url(/_common/themes/gis/images/ic/ic-folder_supplement.png);
+  background-repeat: no-repeat;
+  text-indent: -9999px;
+}
+#tab2 .layerSet .folderMessage:after {
+  content: ".";
+  position: absolute;
+  top: 0;
+  left: -8px;
+  display: block;
+  width: 1px;
+  background: #C2C2C2;
+}
+#tab2 .layerSet .current .layerBody {
+  margin: 0 !important;
+  padding: 0 0 10px 40px;
+  border-bottom: 1px solid #ADADAD;
+}
+#tab2 .layerSet .current .layerBody label,
+#tab2 .layerSet .current .body0 label {
+  display: block;
+  overflow: hidden;
+  color: #003399;
+  line-height: 2;
+  text-decoration: underline;
+}
+#tab2 .layerSet .current .layerBody br,
+#tab2 .layerSet .current .body0 br {
+  display: block;
+  margin-bottom: 20px;
+}
+#tab2 .layerSet .current .body0 {
+  clear: both;
+  padding:  10px 0 10px 15px;
+  border-left: 2px solid #ADADAD;
+  border-right: 2px solid #ADADAD;
+}
+#layerMenu #tab1 {
+  background: #FFFFFF;
+  padding: 10px 0 10px 15px;
+}
+#layerMenu #tab1 label {
+  color: #003399;
+  line-height: 3;
+  text-decoration: underline;
+}
+.explanatory {
+  background: #FFFFFF;
+  border: 2px solid #999999;
+  border-radius: 3px;
+}
+.explanatory hr {
+  display: none;
+}
+.explanatory {
+  margin: 0 15px;
+}
+.explanatory a.mapFuncBtn {
+  display: block !important;
+  padding: 10px 5px;
+  background: url(../images/ic/ic-arrow-accordionmenu_down.png) 96% center no-repeat, -moz-linear-gradient(top,  #ffffff 0%, #d6d0cd 100%),; /* FF3.6+ */
+  background: url(../images/ic/ic-arrow-accordionmenu_down.png) 96% center no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#d6d0cd)); /* Chrome,Safari4+ */
+  background: url(../images/ic/ic-arrow-accordionmenu_down.png) 96% center no-repeat, -webkit-linear-gradient(top,  #ffffff 0%,#d6d0cd 100%); /* Chrome10+,Safari5.1+ */
+  background: url(../images/ic/ic-arrow-accordionmenu_down.png) 96% center no-repeat, linear-gradient(to bottom,  #ffffff 0%,#d6d0cd 100%); /* W3C */
+  color: #000;
+  border: none;
+  font-size: 130%;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+}
+.explanatory a.open {
+  background: url(../images/ic/ic-arrow-accordionmenu_up.png) 96% center no-repeat #FFFFFF;
+}
+.explanatory br {
+  display: none;
+}
+.explanatory div div {
+  position: relative;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-top: solid 1px #999;
+}
+.explanatory div div:before {
+  content: ".";
+  position: relative;
+  top: -5px;
+  display: block;
+  height: 1px;
+  text-indent: -9999px;
+}
+.explanatory div div h4 {
+  margin: 0 0 5px 0;
+}
+.explanatory div div img {
+  max-width: 90%;
+  height: auto;
+}
+#confirmShow {
+  display: block;
+  margin: 10px auto 0;
+  padding: 5px 0;
+  background: #767676;
+  border: none;
+  color: #FFF;
+  text-align: center;
+  text-decoration: underline;
+}

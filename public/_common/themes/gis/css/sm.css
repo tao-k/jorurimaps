@@ -1,0 +1,478 @@
+@charset "UTF-8";
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  background-color: #F8F8F8;
+}
+
+/*------------------------------------------------
+ a-tool
+------------------------------------------------*/
+#a-tool {
+  display: none;
+}
+
+/*------------------------------------------------
+ container
+------------------------------------------------*/
+#container {
+  margin: 0 auto;
+}
+
+/*------------------------------------------------
+ header
+------------------------------------------------*/
+
+/*----- headerBody -----*/
+#header {
+  clear: both;
+}
+.logo {
+  margin: 5px 20px 3px 10px;
+}
+.logo h1 {
+  font-size: 200%;
+  line-height: 1.3;
+}
+.logo a {
+  display: block;
+  padding: 16px 0 15px 62px;
+  background: url(../images/header/joruri_city.png) no-repeat left 0.3em;
+  color: #333;
+  text-decoration: none;
+}
+.site-header-toogle {
+  float: right;
+  margin: 0 18px 5px 3px;
+}
+.site-header-toogle:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.site-header-toogle div {
+  float: right;
+  width: 44px;
+  height: 44px;
+}
+#toogle-menu a {
+  display: block;
+  width: 44px;
+  height: 0;
+  padding-top: 44px;
+  overflow: hidden;
+}
+#toogle-menu a {
+  background-image: url(/_common/themes/gis/images/header/btn-menu.png);
+  background-position: left top;
+  background-repeat: no-repeat;
+}
+#toogle-menu a.on {
+  background-image: url(/_common/themes/gis/images/header/btn-menu_current.png);
+}
+.menu {
+  float: right;
+  font-size: 80%;
+}
+.lowerMenu {
+  position: relative;
+}
+.searchContainer {
+  display: block;
+  width: 145px;
+  padding: 10px 60px 5px 10px;
+}
+input#search-box {
+  width: 100%;
+  height: 18px;
+  padding: 2px 2px 3px !important;
+  background: #FFF !important;
+  border: solid 1px #C2C2C2 !important;
+  border-radius: 0;
+}
+input#search-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  height: 25px !important;
+  padding: 0 0 0 18px;
+  background: url("../images/header/ic-search.png") no-repeat 3px center #fff;
+  border: solid 1px #C2C2C2;
+  border-radius: 0;
+  border-left: none;
+  text-align: left;
+  cursor: pointer;
+}
+@media screen and (-webkit-min-device-pixel-ratio:2) {
+input#search-button {
+  height: 37px;
+}
+}
+
+/*----- navi -----*/
+#navi {
+  clear: both;
+}
+.naviMenu li a {
+  display: block;
+  padding: 15px 10px;
+  border-bottom: solid 1px #fff;
+  background: #1B487A;
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+}
+
+/*------------------------------------------------
+  breadCrumbs
+------------------------------------------------*/
+#breadCrumbs {
+  display: none;
+}
+
+/*------------------------------------------------
+ main
+------------------------------------------------*/
+#main {
+  clear: both;
+  margin-top: 10px;
+}
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+#content {
+  padding: 0 10px;
+}
+
+/*----- docTab -----*/
+#docTab .wrapper {
+  position: relative;
+  margin-top: -1px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border: 1px solid #ADADAD;
+  background-color: #fff;
+}
+#docTab .wrapper:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 10px;
+  height: 58px;
+  background-color: #DDDDE1;
+}
+.title {
+  margin-bottom: 15px;
+  padding: 20px 0 0 20px;
+}
+.title h2 {
+  color: #1B487A;
+  font-size: 180%;
+  font-weight: bold;
+}
+.change {
+  display: none;
+}
+
+/*----- docTabs content（サムネイル表示） -----*/
+.shinchaku {
+  padding: 0 0 10px;
+  overflow: hidden;
+}
+.shinchaku:after {
+  content: ".";
+  display: block;
+  clear: both;
+  height: 0.1px;
+  font-size: 0.1em;
+  line-height: 0;
+  visibility: hidden;
+}
+.shinchaku li > div {
+  float: none;
+  width: auto;
+  margin: 0 auto 15px;
+  padding: 15px 20px;
+  border-top: solid 1px #ADADAD;
+  overflow: hidden;
+}
+.shinchaku li > div:first-child {
+  border-top: none;
+}
+.shinchaku .title {
+  display: block;
+  margin-bottom: 3px;
+  padding: 0 !important;
+  color: #333;
+  text-decoration: none;
+}
+.shinchaku .title:hover {
+  color: #D03D5F;
+  text-decoration: underline;
+}
+ul li div a.title span {
+  display: block;
+  padding: 1px 0 1px 2px;
+}
+ul li div a.recommendMap span {
+  padding: 1px 0 1px 25px;
+  padding: 2px 0 1px 25px\9;
+  background: url("../images/ic/ic_osusume-star.png") left center no-repeat;
+  font-size: 150%;
+}
+.shinchaku .img {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 3px;
+  background-color: #FAFAFA;
+  border: solid 1px #D6D6D6;
+  text-align: center;
+}
+.shinchaku .img a {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.shinchaku .img a img {
+  width: 100%;
+}
+.shinchaku .imgMini {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+}
+.shinchaku .text {
+  font-size: 95%;
+  overflow: hidden;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+/*----- docTabs content（一覧表示） -----*/
+.ichi .shinchaku li {
+  padding-top: 0;
+}
+.ichi .shinchaku li > div {
+  display: block;
+  position: relative;
+  float: none;
+  width: auto;
+  margin-right: 0;
+  padding-top: 5px;
+  padding-left: 45px;
+  padding-bottom: 5px;
+  border: none;
+  border-bottom: solid 1px #C2C2C2;
+  overflow: hidden;
+}
+.ichi .shinchaku li {
+  padding-top: 10px;
+  border-top: solid 1px #C2C2C2;
+  border-bottom: none;
+}
+.ichi .shinchaku .title {
+  float: left;
+  width: 180px;
+  margin-right: 15px;
+  padding-top: 0;
+  background: #FFF;
+  filter: none;
+  border: none;
+  color: #003399;
+  text-decoration: underline;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+.ichi .shinchaku .title:hover {
+  color: #D03D5F;
+}
+.ichi .shinchaku .img {
+  display: inline-block;
+  position: absolute;
+  top: 5%;
+  left: 10px;
+  background-color: transparent;
+  border: none;
+}
+.ichi .shinchaku .img a img {
+  display: none;
+}
+.ichi .shinchaku .img a span {
+  position: relative;
+}
+.ichi .shinchaku .img a span img {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+.ichi .shinchaku .text {
+  padding-right: 15px;
+  overflow: hidden;
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+
+/*----- relation -----*/
+#relation {
+  display: block;
+  margin-bottom: 20px;
+}
+#relation .pieceHeader {
+  margin-bottom: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 30px;
+  background-image: url(/_common/themes/gis/images/ic/tl_ic-link.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+#relation .pieceHeader h2 {
+  color: #1B487A;
+  font-size: 130%;
+  font-weight: bold;
+}
+#relation .pieceBody {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#relation ul li {
+  margin-bottom: 20px;
+  padding-left: 8px;
+}
+
+/*----- about,aboutBottom -----*/
+#about {
+  display: none;
+}
+#aboutBottom {
+  display: block;
+  margin-bottom: 20px;
+}
+#aboutBottom h2 {
+  font-size: 100%;
+  font-weight: normal;
+}
+#about a, #aboutBottom a {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 23px;
+  background-image: url(/_common/themes/gis/images/ic/tl_ic_infomation.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+/*----- pagination -----*/
+.pagination {
+  padding-top: 15px;
+  border-top: 1px solid #bbb;
+}
+.pagination span.separator {
+  display: none;
+}
+.pagination span.previous_page,
+.pagination span.next_page {
+  display: inline-block;
+  margin-right: 15px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  color: #C2C2C2;
+  font-size: 120%;
+  vertical-align: middle;
+}
+.pagination span.next_page {
+  margin-right: 0;
+  margin-left: 15px;
+}
+.pagination em.current {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 12px 16px;
+  border: solid 1px #1B487A;
+  background-color: #1B487A;
+  color: #FFF;
+  text-align: center;
+  vertical-align: top;
+}
+.pagination a {
+  display: inline-block;
+  margin: 0 5px 5px 0;
+  padding: 12px 16px;
+  background-color: #EDEDEF;
+  border: solid 1px #EDEDEF;
+  color: #333;
+  text-decoration: none;
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+#menu {
+  margin-bottom: 20px;
+  padding-top: 10px;
+}
+#menuBody {
+  padding: 0 20px;
+}
+.twitter {
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+.twitter iframe {
+  width: 100%;
+  height: 305px !important;
+}
+
+/*------------------------------------------------
+ adBanner
+------------------------------------------------*/
+#adBanner {
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+#adBanner a {
+  display: block;
+  width: 150px;
+  height: auto;
+  margin-bottom: 12px;
+}
+#adBanner a:after {
+  content: "";
+  height: 0;
+  display: block;
+}
+
+/*------------------------------------------------
+ footer
+------------------------------------------------*/
+#footer {
+  clear: both;
+  border-top: 1px solid #D6D6D6;
+}
+#address {
+  padding: 13px 15px;
+  border-bottom: 1px solid #D6D6D6;
+}
+#copyRight {
+  padding: 13px 15px;
+  text-align: left;
+  overflow: hidden;
+}
+#copyRight .pieceBody {
+  margin-bottom: 3px;
+}
+#copyRight .pieceFooter {
+  display: none;
+}

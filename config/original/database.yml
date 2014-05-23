@@ -1,0 +1,29 @@
+development:
+  adapter: postgis
+  encoding: utf8
+  reconnect: false
+  database: joruri_maps
+  username: joruri
+  password: pass
+  host: 127.0.0.1
+  template: template_postgis
+
+test:
+  adapter:
+  encoding:
+  reconnect:
+  database:
+  username:
+  password:
+  host:
+  template:
+
+production:
+  adapter:
+  encoding:
+  reconnect:
+  database:
+  username:
+  password:
+  host:
+  template:

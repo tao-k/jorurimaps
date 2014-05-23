@@ -1,0 +1,22 @@
+<%= init_tiny_mce :readonly => true %>
+
+<table class="show">
+  <tr>
+    <th>公開開始日時</th>
+    <td><%=h @item.release_at.strftime("%Y-%m-%d %H:%M") %></td>
+  </tr>
+  <tr>
+    <th>公開終了日</th>
+    <td><%=h @item.end_at.strftime("%Y-%m-%d %H:%M") %></td>
+  </tr>
+  <tr>
+    <th>並び順</th>
+    <td><%=h @item.sort_no.to_s %></td>
+  </tr>
+  <tr>
+    <th colspan="2">メッセージ</th>
+  </tr><tr>
+    <td colspan="2"><%= text_area_tag 'body', @item.body, :class => 'mceEditor', :style => 'width:100%' %></td>
+  </tr>
+</table>
+

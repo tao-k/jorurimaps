@@ -1,0 +1,19 @@
+<%if @item.csv_export.to_i != 1 && @item.kml_export.to_i != 1 && @item.kml_export_no_label.to_i != 1%>
+出力用フォームがありません。
+<%else%>
+<h4><%=@item.title%></h4>
+<%= form_for(:item, :url => {:action => :output, :id=>@item.id}, :html => {:method => :post, :multipart => true, :id=>"exportForm#{@item.id}", :class=>"outPutSubmit"}) do |f| %>
+<%if @item.csv_export.to_i == 1%>
+<%= f.submit 'CSV出力', :style => 'width: 120px;', :name => 'csv', :id=>"csvput#{@item.id}" %>
+<%end%>
+<%if @item.kml_export.to_i == 1%>
+<%= f.submit 'KML出力（ラベルあり）', :style => 'width: 120px;', :name => 'kml', :id=>"kmlput#{@item.id}" %>
+<%end%>
+<%if @item.kml_export_no_label.to_i == 1%>
+<%= f.submit 'KML出力（ラベルなし）', :style => 'width: 120px;', :name => 'kml_no_label' , :id=>"no_label_put#{@item.id}"%>
+<%end%>
+<hr />
+
+<% end %>
+
+<% end %>

@@ -1,0 +1,33 @@
+<div class="piece AdminMessage">
+<div class="pieceBody">
+
+<table class="show">
+  <tr>
+    <th>機能名</th>
+    <td><%= safe{@item.role_name.display_name} %></td>
+  </tr>
+  <tr>
+    <th>対象権限</th>
+    <td><%= safe{@item.priv_user.display_name} %></td>
+  </tr>
+  <tr>
+    <th>優先順位</th>
+    <td><%= @item.idx %></td>
+  </tr>
+  <tr>
+    <th>種別</th>
+    <td><%= @item.class_id_label %></td>
+  </tr>
+  <tr>
+    <th>ユーザ/グループ</th>
+    <td><%= @item.uid_label %></td>
+  </tr>
+  <tr>
+    <th>許可</th>
+    <td><%= @item.priv_label %></td>
+  </tr>
+</table>
+
+
+</div>
+</div>

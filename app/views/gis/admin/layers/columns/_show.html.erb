@@ -1,0 +1,13 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:show_fld) %></th>
+    <td><%= @item.show_fld_columns%></td>
+  </tr>
+  <%1.upto(50) do |n|
+    fld_name = "input_fld_#{n}"-%>
+  <tr>
+    <th><%= @item.locale(fld_name.to_sym) %></th>
+    <td><%= @item[fld_name.to_sym]%></td>
+  </tr>
+  <%end -%>
+</table>

@@ -1,0 +1,873 @@
+
+(function($) {
+
+<%
+ wms_url = Application.config(:wms_gateway_url, "localhost")
+ vector_layer_list = []
+%>
+
+  /* mapサーバ */
+  var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+
+  var map;
+  var gmap;
+  var features = new Object();
+  var overlays = new Object();
+  var layerStyles = new Object();
+  var selectControls = new Object();
+  var listPop = new Object();
+  var defaultZoomLevel = 12;
+  var baseLayers = new Object;
+  var Rule = OpenLayers.Rule;
+  var Filter = OpenLayers.Filter;
+  var kindFilters = new Object();
+  var kind_filter_xmls = new Object();
+  var kindLayerFilters = new Object();
+
+  var baseUrl = "/<%=params[:code]%>/" ;
+  var mapHeight;
+
+  Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+  var myproj =new OpenLayers.Projection("EPSG:4326");
+
+  var drawControls = {};
+  var strokeSelectWindow, fillSelectWindow;
+  var strokeColor = "FF0000";
+  var fillColor = "ffffff";
+  var iconConfig = {url: "/_common/themes/gis/images/red-dot.png", width : 32, height: 32, YOffset: -32};
+  var strokeWidth = 2;
+  var circleSides = 200;
+
+  var iconSet = {};
+  iconSet["red"] = { url: "/_common/themes/gis/images/red-dot.png", width : 32, height: 32, YOffset: -32};
+  iconSet["ltblue"] = { url: "/_common/themes/gis/images/ltblue-dot.png", width : 32, height: 32, YOffset: -32};
+  <% [1, 2, 3].each do |i|%>
+  iconSet["<%="ic_dot_a_00#{i}"%>"] = { url: "/_common/themes/gis/images/<%="ic_dot_a_00#{i}"%>.png", width : 32, height: 32, YOffset: -16};
+  iconSet["<%="ic_point_a_00#{i}"%>"] = { url: "/_common/themes/gis/images/<%="ic_point_a_00#{i}"%>.png", width : 32, height: 32, YOffset: -16};
+  iconSet["<%="ic_point_b_00#{i}"%>"] = { url: "/_common/themes/gis/images/<%="ic_point_b_00#{i}"%>.png", width : 32, height: 32, YOffset: -16};
+  iconSet["<%="ic_sign_00#{i}"%>"] = { url: "/_common/themes/gis/images/<%="ic_sign_00#{i}"%>.png", width : 32, height: 32, YOffset: -16};
+  <%end%>
+  <%1.upto(13){|num|
+    num = "%02d" % num
+    %>
+  iconSet["<%="ic_faci_0#{num}"%>"] = { url: "/_common/themes/gis/images/<%="ic_faci_0#{num}"%>.png", width : 32, height: 32, YOffset: -32};
+  <%}%>
+  <%1.upto(20){|num|
+    num = "%02d" % num
+    %>
+  iconSet["<%="ic_number_0#{num}"%>"] = { url: "/_common/themes/gis/images/<%="ic_number_0#{num}"%>.png", width : 32, height: 32, YOffset: -32};
+  <%}%>
+  $(function() {
+
+  var winHeight = $(window).height();
+  mapHeight = winHeight * 0.7;
+  $("#canvas").css("height", mapHeight + "px");
+  var winWidth = $(window).width();
+  var mapWidth = winWidth * 0.95;
+  $("#canvas").css("width", mapWidth + "px");
+  //    margin-top: -150px!important; /*negative half of height*/
+  //  margin-left: -200px!important; /*negative half of width*/
+ $("#canvas").css("padding-left", "5px");
+
+   var zoom = 18;
+    var options = {
+            div: 'canvas',
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            numZoomLevels: zoom,
+            maxResolution: 156543.0339,
+            controls: [
+                  new OpenLayers.Control.Attribution(),
+                  new OpenLayers.Control.TouchNavigation(),
+                  new OpenLayers.Control.Zoom()
+              ]
+        };
+    map = new OpenLayers.Map("canvas", options);
+
+
+    initBaseLayer(map);
+    initWMSLayer();
+    initWFSLayer();
+    setCenter();
+    //setDrawControl();
+  });
+
+
+
+  function setCenter() {
+    var centerLon = <%= @init_map[:center_lon] || Gis.defalut_position[:lng] %>;
+    var centerLat = <%= @init_map[:center_lat] || Gis.defalut_position[:lat]%>;
+    var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+      new OpenLayers.Projection("EPSG:4326"),
+      new OpenLayers.Projection("EPSG:900913")
+    );
+    map.setCenter(centerLonLat, defaultZoomLevel);
+  }
+
+
+$(document).on('click', ".mapTitle", function(e){
+  e.preventDefault();
+  var id = $(this).attr("id").replace(/mapTitle/,"");
+  var childTitle = $(".title" + id).length;
+  var isOpen = false;
+  for(var i = 0; i <= childTitle; i++){
+    var titleId = "#title" + id + "-"+ i;
+    var bodyId = "#body" + id+ "-" + i;
+    if($(titleId).css("display") == "none"){
+      $(titleId).show();
+      isOpen = true;
+    }else{
+      $(titleId).hide();
+      $(bodyId).hide();
+      $(titleId).removeClass("open");
+    }
+  }
+  if(isOpen){
+    $(this).addClass("open");
+  }else{
+    $(this).removeClass("open");
+  }
+});
+
+$(document).on('change', ".allCheck", function(e){
+  var id = $(this).attr("id").replace(/allCheck/, "");
+  var value = $(this).prop('checked');
+  var layerCheckList = $(".layerCheck" + id );
+  for(var i = 0; i< layerCheckList.length; i++){
+    var checkId = layerCheckList[i].id;
+    if(value){
+      $("#" + checkId).prop({'checked':'checked'});
+    }else{
+      $("#" + checkId).prop({'checked':false});
+    }
+    $("#" + checkId).trigger("change");
+  }
+});
+
+
+
+$(document).on("click", ".layerTitle", function(e){
+    e.preventDefault();
+    var id = $(this).attr("id").replace(/titleLink/,"");
+    var bodyId = "#body" + id;
+    $(bodyId).toggle();
+    var parentDiv = $("#"+$(this).attr("id")).parent("div");
+    if($(bodyId).css("display") == "none"){
+      parentDiv.removeClass("open");
+    }else{
+      parentDiv.addClass("open");
+    }
+  });
+
+  prevLayer = null;
+
+$(document).on("change", ".featureLayer", function(e){
+  var id = $(this).attr("id");
+  var overlayId = $("#"+id).val();
+  var value = $("#"+id).prop('checked');
+  if(overlays[overlayId]==null){
+    return;
+  }
+  if(value==true){
+    overlays[overlayId].setVisibility(true);
+  }else{
+    overlays[overlayId].setVisibility(false);
+  }
+  loadLegends(overlayId, value);
+});
+
+
+$(document).on("change", ".baseLayer", function(e){
+  var radioBtnSet = $(".baseLayer");
+  var value;
+   for(var i = 0; i < radioBtnSet.length; i++){
+       inputCheck = radioBtnSet[i];
+      inputId = inputCheck.id;
+      value = $("#" + inputId).prop('checked');
+     if(value==true){
+       map.setBaseLayer(baseLayers[inputId]);
+       }else{
+       }
+   }
+});
+
+
+$(document).on("click", ".selectMarker", function(e){
+  var value = $(this).val();
+  iconConfig.url = iconSet[value].url;
+  iconConfig.width = iconSet[value].width;
+  iconConfig.height = iconSet[value].height;
+  iconConfig.YOffset = iconSet[value].YOffset;
+});
+
+$(document).on("change", ".toggleDrawControl", function(e){
+
+  var selected = $(this).val();
+  for(key in drawControls) {
+    var control = drawControls[key];
+    if(selected == key) {
+      control.activate();
+      currentControl = key;
+    } else {
+      control.deactivate();
+    }
+  }
+  /*if(selected=="none"){
+    dragFeature.activate();
+  }else{
+    dragFeature.deactivate();
+  }*/
+  drawFormShow(selected);
+
+});
+
+function canselSketch(){
+    drawControls[currentControl].deactivate();
+    $("#" + currentControl + "Toggle").removeAttr("checked");
+    drawFormShow("none");
+  }
+
+
+
+$(document).on("click", "#deleteAll", function(e){
+  if (confirm("作成した図形をすべて削除します。この動作はもとに戻せません。")) {
+    overlays["vector"].removeAllFeatures();
+  }else{
+    //
+  }
+
+});
+
+
+$(document).on("click", "#canselBtn", function(e){
+  canselSketch();
+});
+
+function closeMarkerBox(){
+  $("#markerControl").dialog('close');
+}
+
+function drawFormShow(selected){
+  if(selected=="point"){
+    $("#markerControl").show();
+    $("#strokeColorControl").hide();
+    $("#fillColorControl").hide();
+    $("#radiusControl").hide();
+    //$("#markerControl").dialog({height: mapHeight, buttons: {"OK": closeMarkerBox}, modal: true});
+  }else if(selected=="line"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").hide();
+    $("#radiusControl").hide();
+    $("#strokeExplain").html("色を選択し、地図上の任意の点をクリックして線を作図してください。<br />ダブルクリックで作図を終了します。");
+  }else if(selected == "polygon"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").show();
+    $("#radiusControl").hide();
+    $("#strokeExplain").html("色を選択し、地図上の任意の点をクリックして図形を作図してください。<br />ダブルクリックで作図を終了します。");
+  }else if(selected == "drag"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").show();
+    $("#radiusControl").hide();
+    $("#strokeExplain").html('色を選択し、地図上の任意の点からドラッグで円を作図してください。');
+  }else if(selected=="click"){
+    $("#markerControl").hide();
+    $("#strokeColorControl").show();
+    $("#fillColorControl").show();
+    $("#radiusControl").show();
+    $("#strokeExplain").html('色を選択し、地図上の任意の点をクリックして円を作図してください。');
+  }else{
+    $("#markerControl").hide();
+    $("#strokeColorControl").hide();
+    $("#fillColorControl").hide();
+    $("#radiusControl").hide();
+  }
+}
+
+function setDrawControl(){
+
+  overlays['vector']  = new OpenLayers.Layer.Vector('Vector Layer', {
+        styleMap: new OpenLayers.StyleMap({
+            temporary: OpenLayers.Util.applyDefaults({
+                pointRadius: 16
+            }, OpenLayers.Feature.Vector.style.temporary),
+            'default': OpenLayers.Util.applyDefaults({
+                pointRadius: 16,
+                strokeWidth: 3,
+            }, OpenLayers.Feature.Vector.style['default']),
+            select: OpenLayers.Util.applyDefaults({
+                pointRadius: 16,
+                strokeWidth: 3
+            }, OpenLayers.Feature.Vector.style.select)
+        })
+    });
+  map.addLayer(overlays['vector']);
+
+  var drawLayer = overlays['vector'] ;
+
+  drawControls = {};
+  drawControls["point"] = new OpenLayers.Control.DrawFeature(drawLayer, OpenLayers.Handler.Point);
+  drawControls["line"] =  new OpenLayers.Control.DrawFeature(drawLayer, OpenLayers.Handler.Path);
+  drawControls["polygon"] =  new OpenLayers.Control.DrawFeature(drawLayer, OpenLayers.Handler.Polygon);
+  //drawControls["delete"] =  new OpenLayers.Control.SelectFeature(drawLayer, {onSelect: removeSelectedFeature,onUnselect: onFeatureUnselect});
+  //drawControls["edit"] =  new OpenLayers.Control.SelectFeature(drawLayer, {onSelect: editFeature});
+  for(var key in drawControls) {
+      map.addControl(drawControls[key]);
+  }
+  drawLayer.events.register('beforefeatureadded', drawLayer, afterSketch);
+}
+
+
+
+function afterSketch(evt){
+  var edit_params = {};
+  if(evt.feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point"){
+      edit_params["url"] = iconConfig["url"];
+      edit_params["width"] = iconConfig["width"];
+      edit_params["height"] = iconConfig["height"];
+      edit_params["YOffset"] = iconConfig["YOffset"];
+  }else{
+    edit_params["fillColor"] = $("#selectedFill").val();
+    edit_params["strokeColor"] = $("#selectedStroke").val();
+    edit_params["strokeWidth"] = strokeWidth;
+  }
+  updateFeature(evt.feature, edit_params);
+  canselSketch();
+}
+
+function updateFeature(feature, edit_params){
+  //カラーピッカー、アイコンピッカー等で設定したプロパティをfeatureに適用する
+  var drawLayer = overlays['vector'];
+  var myFirstPointStyle = OpenLayers.Util.applyDefaults(myFirstPointStyle, OpenLayers.Feature.Vector.style['default']);
+  if(feature.geometry.CLASS_NAME == "OpenLayers.Geometry.Point"){
+      myFirstPointStyle.graphic = true;
+      myFirstPointStyle.externalGraphic = edit_params["url"];
+      myFirstPointStyle.graphicOpacity = 1;
+      myFirstPointStyle.graphicWidth = edit_params["width"];
+      myFirstPointStyle.graphicHeight = edit_params["height"];
+      myFirstPointStyle.graphicYOffset = edit_params["YOffset"];
+  }else{
+    if(feature.geometry.CLASS_NAME=="OpenLayers.Geometry.Collection"){
+    }else{
+      myFirstPointStyle.fillOpacity = 0.8;
+    }
+    myFirstPointStyle.strokeWidth = strokeWidth;
+    myFirstPointStyle.fillColor =  edit_params["fillColor"];
+    myFirstPointStyle.strokeColor =  edit_params["strokeColor"];
+  }
+  feature.style = myFirstPointStyle;
+  drawLayer.redraw();
+}
+
+
+/**
+ *  VM環境WMS呼び出し
+ */
+function initWMSLayer() {
+
+  <%if @map.portal_kind == 1%>
+
+      var resultIdList = $("#resultIdList").text().split(/,/);
+      var setFilterList = [];
+      for (var i = 0; i < resultIdList.length; i++){
+        var idFilder = new OpenLayers.Filter.Comparison({
+                    type: OpenLayers.Filter.Comparison.EQUAL_TO,
+                    property: "rid",
+                    value: resultIdList[i].toString()
+              });
+        setFilterList.push(idFilder)
+      }
+
+      resultIdsFilder = new OpenLayers.Filter.Logical({
+          type: OpenLayers.Filter.Logical.OR,
+          filters: setFilterList,
+          active: true
+      });
+
+  <%end%>
+
+  layerStyles['vector_layer'] = new OpenLayers.Style({
+        pointRadius: 10,
+        strokeWidth: 3,
+        strokeOpacity: 0.7,
+        strokeColor: "navy",
+        fillColor: "yellow",
+        fillOpacity: 1
+      }
+      <%icons = icon_select
+      if  icons%>
+      , {rules: [
+      <%icons.each_with_index{|icon, i|-%>
+
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "icon_id",
+                      value: "<%=icon.id%>"
+                  }),
+                symbolizer: {
+                    externalGraphic: "<%=icon.file_uri%>",
+                    graphicWidth: <%=icon.width%>,
+                    graphicHeight: <%=icon.height%>,
+                    graphicXOffset: -<%=icon.offset_x%>,
+                    graphicYOffset: -<%=icon.offset_y%>
+                       }})<%= icons.length - 1 == i ? nil : ',' -%>
+       <%}-%>]}
+       <%end-%>);
+
+
+<%
+map_list = [@map]
+layer_list = []
+map_list.each do |map|
+  folders = get_folders_from_item(map, "all")
+    folders.each do |folder|
+      layers = get_layers_from_item(folder,"all")
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end unless folders.blank?
+   layers = get_layers_from_item(map,"all")
+    if layers
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end
+end unless map_list.blank?
+
+layer_list.each do |item|
+  if item.kind == "file" || item.kind == "raster" || item.kind ==  "vector"
+    next if item.mapfile.blank?
+    layer_names = item.mapfile_layer_name.split(/,/)
+    if layer_names.size <= 1-%>
+    var layers = "<%=item.mapfile_layer_name%>";
+    <%else%>
+    var layers = [];
+    <%layer_names.each do |name|-%>
+      layers.push("<%=name%>");
+    <%
+      end
+    end
+  end
+if item.kind == "file" || item.kind == "raster"
+-%>
+overlays["<%=item.code%>"] = new OpenLayers.Layer.WMS(
+    "<%=item.title%>",
+    mapserverUrl,
+     {
+     map:"gis_mapfiles/<%=safe{item.mapfile.file_name}%>", //mapfileの場所指定
+     layers: layers,  //取得するレイヤー
+     version: '1.1.1', //サービスのバージョン
+     format: "image/png" //取得するファイル形式
+     },
+     {
+ isBaseLayer: false,
+ transparent: true,
+ visibility: false,
+ opacity: 0.8,
+ layerName: "<%=item.title%>"
+  }
+ );
+<%elsif item.kind ==  "vector"
+  next if !vector_layer_list.index(item.code).blank?
+  vector_layer_list << item.code -%>
+  kindFilters['<%=item.code%>']  = new OpenLayers.Filter.Logical({
+    type: OpenLayers.Filter.Logical.AND,
+    filters: [
+  new Filter.Comparison({
+                  type: "==",
+                  property: "state",
+                  value: "enabled"
+            }),
+  new Filter.Comparison({
+                  type: "==",
+                  property: "web_state",
+                  value: "public"
+            }),
+  new Filter.Comparison({
+                  type: "==",
+                  property: "layer_id",
+                  value: "<%=item.id%>"
+            }),
+
+             ]
+             });
+
+
+  kind_filter_xmls['<%=item.code%>'] = new OpenLayers.Format.XML();
+  kindLayerFilters['<%=item.code%>'] = kind_filter_xmls['<%=item.code%>'].write(new OpenLayers.Format.Filter().write(kindFilters['<%=item.code%>']));
+
+  overlays['<%=item.code%>'] =new OpenLayers.Layer.Vector("<%=item.title%>", {
+              styleMap: new OpenLayers.StyleMap({
+                "default": layerStyles['vector_layer'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              <%if @map.portal_kind == 1%>
+              visibility: true,
+              strategies: [new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.Filter({filter: resultIdsFilder, active: true})],
+              <%else%>
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              <%end%>
+              projection: myproj,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/<%=safe{item.mapfile.file_name}%>",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: layers,
+                      outputFormat: "json_" + layers,
+                      filter:kindLayerFilters['<%=item.code%>']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+<%elsif item.kind == "kml"-%>
+overlays["<%=item.code%>"] = new OpenLayers.Layer.Vector("<%=item.title%>", {
+    strategies: [new OpenLayers.Strategy.Fixed()],
+    protocol: new OpenLayers.Protocol.HTTP({
+      url: "<%=item.layer_data_file_path%>",
+      format: new OpenLayers.Format.KML({extractStyles: true,extractAttributes: true})
+    }),
+    projection: new OpenLayers.Projection("EPSG:4326"),
+    isBaseLayer: false,
+     transparent: true,
+     visibility: false,
+  });
+<%elsif item.kind == "gpx"-%>
+overlays["<%=item.code%>"] = new OpenLayers.Layer.Vector("<%=item.title%>", {
+    strategies: [new OpenLayers.Strategy.Fixed()],
+    protocol: new OpenLayers.Protocol.HTTP({
+      url: "<%=item.layer_data_file_path%>",
+      format: new OpenLayers.Format.GPX()
+    }),
+    style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: 0.5},
+    projection: new OpenLayers.Projection("EPSG:4326"),
+    isBaseLayer: false,
+     transparent: true,
+     visibility: false,
+  });
+<%else
+  next
+end-%>
+map.addLayer(overlays["<%=item.code%>"]);
+<%end unless layer_list.blank?-%>
+
+
+}
+
+
+
+/* 表示中凡例ページ */
+var currentLegned = null;
+/* 凡例ページコンテナ */
+var loadedLegends = new Object();
+var loadLegendRequest = new Object();
+
+function loadLegends(overlayId, checked) {
+
+  var layerName = "legend_" + overlayId;
+    if (checked) {
+    //凡例チェック
+    if($('#' + layerName).html()!=null){
+      return;
+    }
+    if (loadedLegends[layerName]) {
+      currentLegned = layerName;
+      //存在する場合、表示用データに設定
+      $('#legendPanel_set').append(loadedLegends[layerName]);
+
+    } else {
+      //存在しない場合、dmsへリクエスト
+      if(loadLegendRequest[layerName]!=null){
+        loadLegendRequest[layerName].abort();
+      }
+      var request_uri = baseUrl + overlayId + '/legend';
+      loadLegendRequest[layerName] = $.ajax({
+          url   :request_uri,
+          type: 'post',
+          method: 'post',
+          data:{
+              layer_name :layerName
+          },
+          success:function(result){
+            if(result!="凡例がありません。" && $('#' + layerName).html()==null){
+              var legendHtml = '<div id="' + layerName + '">' + result + '</div>';
+              loadedLegends[layerName] = legendHtml;
+              $('#legendPanel_set').append(legendHtml);
+            }
+          currentLegned = layerName;
+          },
+          failure:function(result,opt){
+              alert("凡例の取得に失敗");
+          }
+      });
+    }
+    //凡例パネル再描画
+  } else {
+    //チェック解除の場合
+    $('#' + layerName).remove();
+  }
+}
+
+
+
+/**
+ * ベースレイヤーセット
+ */
+function initBaseLayer(m) {
+  var base;
+<%for item in base_layers
+if item.kind =~ %r(webtis)
+  next-%>
+<%elsif item.kind == "osm"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.OSM("<%=item.title%>");
+
+<%elsif item.kind == "gmap"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google("<%=item.title%>", {visibility: false});
+  base = baseLayers['<%=item.code%>'];
+<%elsif item.kind == "gsat"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google( "<%=item.title%>", {type: google.maps.MapTypeId.SATELLITE});
+<%elsif item.kind == "g_hybrid"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google("<%=item.title%>",{type: google.maps.MapTypeId.HYBRID});
+<%elsif item.kind == "g_physcal"-%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.Google( "<%=item.title%>",{type: google.maps.MapTypeId.TERRAIN});
+<%else%>
+  baseLayers['<%=item.code%>'] = new OpenLayers.Layer.WMS(
+      "<%=item.title%>",
+      "<%=item.url%>",
+       {format: "image/png"},
+       {isBaseLayer: true,visibility: false,layerName:"<%=item.code%>"});
+<%end-%>
+<%if @baselayer && @baselayer == item.code%>
+base = baseLayers['<%=item.code%>'];
+<%end%>
+m.addLayer(baseLayers['<%=item.code%>']);
+<%end-%>
+if(base){
+  m.setBaseLayer(base);
+}
+}
+
+
+function initWFSLayer(){
+
+
+  <%vector_layer_list.each do |layer|-%>
+  if(overlays['<%=layer%>']){
+    overlays['<%=layer%>'].setVisibility(false);
+  }
+
+  <% end if !vector_layer_list.blank? && @map.portal_kind != 1-%>
+
+  overlays['vector']  = new OpenLayers.Layer.Vector("描画領域",
+  {
+    visibility: true,
+    group: "others",
+    projection: new OpenLayers.Projection("EPSG:900913"),
+    displayProjection: new OpenLayers.Projection("EPSG:4326")
+   }
+  );
+  map.addLayer(overlays['vector']);
+
+
+    selectControls['demo'] = new OpenLayers.Control.SelectFeature(
+      [
+      <%vector_layer_list.each do |layer|-%>
+      overlays['<%=layer%>'],
+      <% end unless vector_layer_list.blank?-%>
+      overlays['vector']
+
+      ],
+       {onSelect: onAedFeatureSelect, onUnselect: onFeatureUnselect});
+       map.addControl(selectControls['demo']);
+       selectControls['demo'].activate();
+}
+
+
+$(document).on("click", ".listBox a.markerLink",function(e){
+  e.preventDefault();
+  var linkId = $(this).attr("id");
+  var markerId = linkId.replace(/_link/, "");
+  markerId = markerId.replace(/marker_/, "");
+  showListPop(markerId)
+  return false;
+});
+
+
+  function showListPop(chr_id) {
+    var map_code =  '<%=params[:map_code]%>'
+    var rid = '0';
+    if (chr_id) {
+      rid = chr_id;
+    }
+    var gis_layer = "vector_layer";
+    var request_uri = baseUrl  + "/" + chr_id + '/data'+ '?map_code=' + map_code;
+    var popupId = "popup_" + gis_layer + "_"+ rid;
+    if(listPop[popupId]!=null){
+      listPop[popupId].show();
+      return ;
+    }
+    $.ajax({
+          url: request_uri,
+          async: true,
+          cache: false,
+          dataType:"xml",
+          error: function(){
+            //alert('Error loading CSV document');
+          },
+          success: function(xml){
+            resultHtml = parseAedResultXml(xml,gis_layer);
+            if (resultHtml.lat && resultHtml.lng){
+              var centerLonLat = new OpenLayers.LonLat(resultHtml.lng, resultHtml.lat).transform(
+                new OpenLayers.Projection("EPSG:4326"),
+                new OpenLayers.Projection("EPSG:900913")
+              );
+              map.setCenter(centerLonLat)
+            }
+            $("#popupText").html('<div id = "' + popupId +'">' + resultHtml.html);
+            $("#popupText").prepend('<a href="#'+ popupId + '" class="closePop">×</a></div>')
+            //listPop[feature.id] = {feature:feature, layer:feature.layer};
+            var targetOffset = $("#canvas").offset().top;
+            $('html,body').animate({ scrollTop: targetOffset }, 'fast');
+            afterLoad(resultHtml.photo0_path, resultHtml.photo1_path, resultHtml.photo2_path, popupId);
+         }
+        });
+  }
+
+var featureInfoPop;
+var listPop = new Object;
+function onAedFeatureSelect(feature) {
+    var map_code =  '<%=params[:map_code]%>'
+    var gis_layer = '0';
+    var rid = feature.attributes.rid;
+    if (feature.attributes.gis_layer) {
+      gis_layer = feature.attributes.gis_layer;
+
+    }
+    var layer_id;
+    if (feature.layer_id){
+      layer_id = feature.attributes.layer_id;
+    }
+    var request_uri = baseUrl  + rid + '/data?layer_id=' + layer_id + '&map_code=' + map_code;
+    $.ajax({
+          url: request_uri,
+          async: true,
+          cache: false,
+          dataType:"xml",
+          error: function(){
+            //alert('Error loading CSV document');
+          },
+          success: function(xml){
+            resultHtml = parseAedResultXml(xml,gis_layer);
+            var tlayer   = map.getLayer(feature.layer.id);
+            var tfeature = tlayer.getFeatureById(feature.id);
+            var popupId = "popup_" + gis_layer + "_"+ rid;
+            if (tfeature) {
+              $("#popupText").html('<div id = "' + popupId +'">' + resultHtml.html);
+              $("#popupText").prepend('<a href="#'+ popupId + '" class="closePop">×</a></div>')
+              listPop[popupId] = {feature:feature, layer:feature.layer};
+              var targetOffset = $("#popupText").offset().top;
+              $('html,body').animate({ scrollTop: targetOffset }, 'fast');
+              afterLoad(resultHtml.photo0_path, resultHtml.photo1_path, resultHtml.photo2_path, popupId);
+           }
+         }
+        });
+  }
+
+$(document).on("click", ".closePop", function(e){
+  e.preventDefault();
+  /*var featureId = $(this).attr("href");
+  featureId = featureId.replace(/#/, "");
+  if(listPop[featureId]){
+    selectControls['demo'].unselect(listPop[featureId].feature);
+    delete listPop[featureId];
+  }*/
+  $("#popupText").html("");
+  var targetOffset = $("#canvas").offset().top;
+  $('html,body').animate({ scrollTop: targetOffset }, 'fast');
+});
+
+function afterLoad(photo0_path,photo1_path, photo2_path, popupId){
+    if(photo0_path){
+      $("#" +popupId+" .photo0").html('<img src="' + photo0_path + '" width="200px">');
+    }
+    if(photo1_path){
+      $("#" +popupId+" .photo1").html('<img src="' + photo1_path + '" width="200px">');
+    }
+    if(photo2_path){
+      $("#" +popupId+" .photo2").html('<img src="' + photo2_path + '" width="200px">');
+    }
+  }
+
+
+  function parseAedResultXml(xml,gis_layer){
+    var resultHtml = "";
+    var photo0_path = null;
+    var photo1_path = null;
+    var photo2_path = null;
+    var lat,lng
+    var i = 0;
+    $(xml).find("item").each(function(){
+      lat = $(this).find("lat").text();
+      lng = $(this).find("lng").text();
+
+      var name = $(this).find("name").text();
+      var tel = $(this).find("telephone_number").text();
+      var address = $(this).find("address").text();
+      show_path = $(this).find("show_path").text();
+      photo0_path =  $(this).find("photo0_path").text();
+      lat =  $(this).find("lat").text();
+      lng =  $(this).find("lng").text();
+      resultHtml += '<div class="photo1"></div>';
+      resultHtml += '<div class="title">' + name + "</div>" ;
+      if(address){
+        resultHtml += "住所：" + address + "<br />";
+      }
+      if(tel){
+        resultHtml += "電話番号：" + tel + "<br />";
+      }
+      for(i=0;i<=$(this).find("free_columns").length-1;i++){
+        var value = $(this).find("free_columns").eq(i).find("value").text()
+        if (value.match(/http/)){
+          var setHtml = '<a href="' + value +  '" target="_blank">' + value + '</a>';
+        }else{
+          var setHtml = value;
+        }
+        resultHtml +=  $(this).find("free_columns").eq(i).find("key").text() + "：" + setHtml + "<br />";
+      }
+      if(show_path){
+        resultHtml += '<a href= "'+ show_path +'" target="_blank" class="showLink">詳細＞</a>';
+      }
+      resultHtml += '<br /><div class="photo0"></div>';
+
+      i++;
+    });
+    return { html : resultHtml, photo0_path:photo0_path, photo1_path:photo1_path, photo2_path: photo2_path, lat:lat, lng: lng };
+  }
+
+
+
+
+
+function onFeatureUnselect(feature) {
+  /* ここで現在選択しているFeature情報についてリセットなどを行う？ */
+//    alert("onFeatureUnselect");
+}
+
+
+
+})(jQuery);

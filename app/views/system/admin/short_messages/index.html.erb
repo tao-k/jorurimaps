@@ -1,0 +1,21 @@
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th style="width: 60px;">ID</th>
+    <th style="width: 60px;">並び順</th>
+    <th style="width: 240px;">公開日時</th>
+    <th style="width: ;">メッセージ</th>
+  </tr>
+
+  <% for item in @items %>
+  <tr <%= item.in_release_end? ? "" : "class=cycle" %>>
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item) %></td>
+    <td><%=h item.id %></td>
+    <td><%=h item.sort_no %></td>
+    <td><%=h item.release_at.strftime('%Y-%m-%d %H:%M') %> ～ <%=h item.end_at.strftime('%Y-%m-%d %H:%M') %></td>
+    <td><%=h item.no_tag_body %></td>
+  </tr>
+  <% end %>
+</table>
+
+<%= paginate @items %>

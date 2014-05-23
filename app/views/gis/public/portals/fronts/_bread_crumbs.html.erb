@@ -1,0 +1,16 @@
+
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+  <%=link_to "トップページ", "/#{@map.code}/"%> &gt;
+  <%case params[:action]
+  when 'about'%>
+  <%= link_to "#{@map.title}について", portal_about_url(@map)%>
+  <%when 'sitemap'%>
+  <%= link_to "サイトマップ", "/#{safe{@map.code}}/sitemap.html"%>
+  <%end%>
+    </div>
+  </div>
+</div>
+</div>

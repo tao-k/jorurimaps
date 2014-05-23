@@ -1,0 +1,93 @@
+<%
+user_id = Site.user.id
+group_id = Site.user_group.id
+user_id = @item.admin_user_id unless @item.admin_user_id.blank?
+group_id = @item.admin_group_id unless @item.admin_group_id.blank?
+users = System::User.get_user_select(group_id)
+groups = System::Group.find(:all, :conditions=>"state='enabled' and level_no = 3", :order => [:level_no,:code].join(',') )
+
+%>
+
+<h4>管理者区分</h4>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:user_kind) %><%= required %></th>
+    <td><%= radio f, 'user_kind', @item.user_kind_select %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_group_id) %></th>
+    <td><%= f.select(:admin_group_id, Gis.options_for_select(groups.collect{|x| ["(#{x.code})#{x.name}", x.id]}, group_id) )  %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_user_id) %></th>
+    <td>
+    <%= f.select(:admin_user_id, Gis.options_for_select(users, user_id)) %></td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $('#item_admin_group_id').change( function() {
+    g_id = $("#item_admin_group_id").val();
+    document.body.style.cursor = 'wait';
+
+  $.ajax({
+      url: '<%=url_for({:action=>:user_fields})%>.xml?g_id='+ g_id,
+      type: 'GET',
+      dataType: 'xml',
+      async: true,
+      data: {
+        "_method": "get"
+      },
+       success: function(data, text_status, xhr){
+         $('#item_admin_user_id > option').remove();
+         parseXml(data);
+      },
+      error: function(xhr, text_status, err_thrown){
+            //console.log(err_thrown + ' ファイルダウンロードに失敗しました');
+        }
+    });
+
+    document.body.style.cursor = 'default';
+  });
+
+  function parseXml(xml){
+    ret = "";
+    var i = 0;
+    $(xml).find("item").each(function(i){
+        var key = $(this).find("name").text();
+        var value = $(this).find("user_id").text();
+        var addOption = $('<option>').html(key).val(value);
+        $('#item_admin_user_id').append(addOption);
+      });
+      return ret;
+  }
+
+  $( 'input[name="item[user_kind]"]:radio' ).change( function() {
+    var idx = $(this).val();
+    sel_class(idx);
+  });
+
+  $(document).ready(function (){
+    var idx = $('input[name="item[user_kind]"]:checked').val();
+    sel_class(idx);
+  });
+
+  function sel_class(idx) {
+    switch (idx) {
+    case '1':
+      $('#item_admin_user_id').removeAttr("disabled");
+      $('#item_admin_group_id').removeAttr("disabled");
+      break;
+    case '2':
+      $('#item_admin_user_id').attr("disabled", "disabled");
+      $('#item_admin_group_id').removeAttr("disabled");
+      break;
+    }
+  }
+
+})(jQuery);
+//]]>
+</script>

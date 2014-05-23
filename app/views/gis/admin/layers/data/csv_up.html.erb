@@ -1,0 +1,39 @@
+
+<p>データ一覧をCSVファイルで登録します。</p>
+<p>記事番号のないデータは新規登録となります。</p>
+<%= form_for(:item, :url => {:action => :csv_up}, :html => {:method => :post, :multipart => true}) do |f| %>
+<%= hidden_field_tag :do, 'up' %>
+<table class="show">
+<tr>
+  <th>種別</th>
+  <td>
+    <%= f.radio_button :kind, "csv", {:checked => true, :class=>"fileTypeSelect"}%><label for="item_kind_csv">CSVファイル</label>
+    <%= f.radio_button :kind, "zip", {:checked => false, :class=>"fileTypeSelect"}%><label for="item_kind_zip">ZIPファイル（一括アップロード）</label>
+  </td>
+</tr>
+<tr>
+  <th>ファイル</th>
+  <td>
+    <%= f.file_field :file, :accept=>".csv", :id=>"uploadFileFiled" %>
+    <%= f.submit 'データ登録', :style => 'width: 120px;' %>
+  </td>
+</tr>
+</table>
+<% end %>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $(".fileTypeSelect").change(function(e) {
+    var val = $(this).attr("value");
+    if(val=="csv"){
+      $("#uploadFileFiled").attr("accept", ".csv");
+    }else{
+      $("#uploadFileFiled").attr("accept", ".zip");
+    }
+  });
+
+})(jQuery);
+//]]>
+</script>

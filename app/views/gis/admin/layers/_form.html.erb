@@ -1,0 +1,149 @@
+<%= f.hidden_field :tmp_id%>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= f.radio_buttons :state, @item.state_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:public_state) %></th>
+    <td><%= f.radio_buttons :public_state, @item.public_state_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %><%= required %></th>
+    <td><%= f.text_field :code, :class => 'IMEoff title' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :class => 'title' %></td>
+  </tr><tr id="kindTr">
+    <th><%= @item.locale(:kind) %><%= required %></th>
+    <td><%= f.radio_buttons :kind, @item.layer_kind_select, :class => 'status' %></td>
+  </tr>
+  <tr id="setUpTr">
+    <th><%= @item.locale(:is_internal) %><%= required %></th>
+    <td><%= f.radio_buttons :is_internal, @item.is_internal_select, :class => 'status' %></td>
+  </tr>
+  <tr id="opacityTr" style="<%=@item.opacity_row_style%>">
+    <th><%= @item.locale(:opacity) %></th>
+    <td><%= f.select :opacity, @item.opacity_select, :selected => @item.opacity_level %></td>
+  </tr>
+  <tr id="exportTr">
+    <th><%= @item.locale(:export) %></th>
+    <td>
+      <%=f.check_box(:csv_export, {}, 1,0)%><label for="item_csv_export"><%=@item.locale(:csv_export)%></label>
+      <%=f.check_box(:kml_export, {}, 1,0)%><label for="item_kml_export"><%=@item.locale(:kml_export)%></label>
+      <%=f.check_box(:kml_export_no_label, {}, 1,0)%><label for="item_kml_export_no_label"><%=@item.locale(:kml_export_no_label)%></label>
+    </td>
+  </tr>
+  <tr id="slideTr">
+    <th><%= @item.locale(:is_slideshow) %></th>
+    <td><%=f.check_box(:is_slideshow, {}, 1,0)%><label for="item_is_slideshow">利用する</label></td>
+  </tr>
+  <tr id="external_row" style="<%=@item.external_row_style%>">
+    <th><%= @item.locale(:url) %><%= required %></th>
+    <td><%= f.text_area :url, :style=>"width: 600px; height: 150px;"  %></td>
+  </tr>
+  <tr id="internal_row1" style="<%=@item.internal_row1_style%>">
+    <th><%= @item.locale(:mapfile_id) %></th>
+    <td><%= f.select :mapfile_id, mapfile_options({:include_blank=>true})%></td>
+  </tr>
+  <tr id="internal_row2" style="<%=@item.internal_row2_style%>">
+    <th><%= @item.locale(:mapfile_layer_name) %><%= required %></th>
+    <td><%= f.text_field :mapfile_layer_name, :class => 'IMEoff title' %></td>
+  </tr>
+  <tr id="fileUpload" style="<%=@item.file_upload_style%>">
+    <th><%= @item.locale(:upload) %></th>
+    <td><%= f.file_field :upload %></td>
+  </tr>
+  <tr id="trSrid" style="<%=@item.srid_style%>">
+    <th><%= @item.locale(:srid) %><%= required %></th>
+    <td><%= f.select :srid, @item.srid_select, :selected => @item.srid %></td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:layer_legend)%></th>
+    <td><%= f.text_area :layer_legend, :class => 'string body mceEditor' %></td>
+  </tr>
+</table>
+<%= init_tiny_mce %>
+<%=render(:partial => 'gis/admin/layers/legend_files/form', :locals => {:f => f, :item => @item})%>
+<%= render :partial => 'gis/admin/common/users_field_form', :locals => {:f => f} %>
+
+<%= render :partial => 'gis/admin/common/form_manager', :locals => {:f => f} %>
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $("#setUpTr input").change(function(e) {
+    var set_up_kind = $( this ).val();
+    var layer_kind = $('#kindTr input[name="item[kind]"]\:checked').val();
+    setDisplayShow(layer_kind, set_up_kind);
+  });
+
+ $("#kindTr input").change(function(e) {
+   var layer_kind = $( this ).val();
+   var set_up_kind =  $('#setUpTr input[name="item[is_internal]"]:checked').val();
+   setDisplayShow(layer_kind, set_up_kind);
+ });
+ function setDisplayShow(layer_kind, set_up_kind){
+   if(layer_kind=="gpx" || layer_kind == "kml"|| layer_kind == "file"){
+     if (set_up_kind==0){
+       $("#external_row").show();
+       $("#fileUpload").hide();
+       $("#exportTr").hide();
+     }else{
+       $("#external_row").hide();
+       $("#fileUpload").show();
+       $("#exportTr").show();
+     }
+     if(layer_kind=="file"){
+       $("#trSrid").show();
+       $("#internal_row1").show();
+     }else{
+       $("#trSrid").hide();
+       $("#internal_row1").hide();
+     }
+     $("#opacityTr").show();
+
+     $("#internal_row2").hide();
+     $("#slideTr").hide();
+
+   }else{
+     $("#slideTr").hide();
+     if (set_up_kind==0){
+      $("#external_row").show();
+      $("#internal_row1").hide();
+      if(layer_kind=="file"){
+        $("#fileUpload").show();
+      }else{
+        $("#fileUpload").hide();
+      }
+      $("#internal_row2").hide();
+      $("#exportTr").hide();
+     }else{
+       $("#external_row").hide();
+       $("#internal_row1").show();
+       $("#internal_row2").hide();
+       $("#exportTr").show();
+     }
+     if(layer_kind=="vector"){
+       $("#opacityTr").hide();
+       $("#internal_row1").hide();
+       $("#slideTr").show();
+     }else{
+       $("#opacityTr").show();
+     }
+     $("#fileUpload").hide();
+
+   }
+ }
+
+  $("form").submit(function() {
+    var layer_kind = $('#kindTr input[name="item[kind]"]\:checked').val();
+    if($("#item_upload").val()=="" && (layer_kind=="gpx" || layer_kind == "kml")){
+      return false;
+    }else{
+      return true;
+    }
+
+  });
+
+
+})(jQuery);
+//]]>
+</script>

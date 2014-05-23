@@ -1,0 +1,30 @@
+<%= form_for :item, :url => {:action => :new_csv_confirm}, :html => {:id => 'itemForm'} do |f| %>
+  <%= f.error_messages %>
+  <%= render :partial => 'form_csv', :locals => {:f => f} %>
+  <%= button_tag '戻る', :type => :button, :onclick => "document.location='#{url_for(:action => :index)}';" %>
+  <%= f.submit '入力内容を確認する' %>
+<% end %>
+
+
+<h1 class="csv">登録用CSV</h1>
+<%= link_to 'サンプルダウンロード', '/_common/themes/system/files/csvs/users_group_changes_sample.csv' %>
+
+<table class="csv">
+<tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th></tr>
+<tr><th>1</th><td>異動/退職</td><td>職員番号</td><td>異動日/退職日</td><td>第1階層所属コード</td><td>第2階層所属コード</td><td>第3階層所属コード</td><td>第4階層所属コード</td><td>参集集計</td><td>表示順
+<tr><th>2</th><td>異動</td><td>user1</td><td>2012-11-20</td><td>002</td><td></td><td></td><td></td><td>1</td><td>1
+<tr><th>3</th><td>異動</td><td>user2</td><td>2012-11-20</td><td>002</td><td>002001</td><td></td><td></td><td>0</td><td>2
+<tr><th>4</th><td>退職</td><td>user3</td><td>2012-11-20</td><td></td><td></td><td></td><td></td><td></td><td>
+</table>
+
+<ul class="csv">
+<li>異動/退職：「異動」または「退職」を設定してください。</li>
+<li>職員番号：異動者または退職者の職員番号を設定してください。</li>
+<li>異動日/退職日：異動または退職する日を設定して下さい。</li>
+<li>第1階層所属コード：異動者の異動後の第1階層所属コードを設定してください。</li>
+<li>第2階層所属コード：異動者の異動後の第2階層所属コードを設定してください。</li>
+<li>第3階層所属コード：異動者の異動後の第3階層所属コードを設定してください。</li>
+<li>第4階層所属コード：異動者の異動後の第4階層所属コードを設定してください。</li>
+<li>参集集計：異動者を参集集計に加える場合は「1」、加えない場合は「0」を設定して下さい。</li>
+<li>表示順：異動者の表示順を半角数字で入力して下さい。</li>
+</ul>

@@ -1,0 +1,92 @@
+
+<%= f.hidden_field :tmp_id%>
+<%= init_tiny_mce %>
+<%
+groups = System::Group.find(:all, :conditions=>"state='enabled' and level_no = 3", :order => [:level_no,:code].join(',') )
+%>
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:published_at) %><%= required %></th>
+    <td><%= f.calendar_date_select :published_at, :time => true, :value => safe{@item.published_at.strftime("%Y-%m-%d %H:%M")} %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:web_state) %><%= required %></th>
+    <td><%= f.radio_buttons :web_state, @item.web_state_select, :class => 'status' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:is_tweet) %><%= required %></th>
+    <td><%= f.radio_buttons :is_tweet, @item.is_tweet_select, :class => 'status' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_area :title, :style=>"width: 80%; height: 90px" %></td>
+  </tr>
+  <tr>
+    <th colspan="2"><%= @item.locale(:body) %><%= required %></th>
+  </tr>
+  <tr>
+    <td colspan="2"><%= f.text_area :body, :class => 'string body mceEditor' %></td>
+  </tr>
+  </table>
+  <%=render(:partial => 'system/admin/social_updates/attach_files/form', :locals => {:f => f, :item => @item})%>
+  <table class="show">
+  <tr>
+    <th><%= @item.locale(:inquiry_group_id) %></th>
+    <td><%= f.select :inquiry_group_id, Gis.options_for_select(groups.collect{|x| ["(#{x.code})#{x.name}", x.id]}, @item.inquiry_group_id), :style=>"width: 80%;" %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:charge) %></th>
+    <td><%= f.text_field :charge, :style=>"width: 80%;" %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:tel) %></th>
+    <td><%= f.text_field :tel, :style=>"width: 80%;" %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:fax) %></th>
+    <td><%= f.text_field :fax, :style=>"width: 80%;" %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:mail_to) %></th>
+    <td><%= f.text_field :mail_to, :style=>"width: 80%;" %></td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $('#item_inquiry_group_id').change( function() {
+    g_id = $("#item_inquiry_group_id").val();
+    document.body.style.cursor = 'wait';
+
+  $.ajax({
+      url: '<%=url_for({:action=>:get_info})%>.xml?g_id='+ g_id,
+      type: 'GET',
+      dataType: 'xml',
+      async: true,
+      data: {
+        "_method": "get"
+      },
+       success: function(data, text_status, xhr){
+
+          ret = "";
+          var i = 0;
+          $(data).find("item").each(function(i){
+              var mail_addr = $(this).find("mail_addr").text();
+              $('#item_mail_to').val(mail_addr);
+            });
+
+      },
+      error: function(xhr, text_status, err_thrown){
+            //console.log(err_thrown + ' ファイルダウンロードに失敗しました');
+        }
+    });
+
+    document.body.style.cursor = 'default';
+  });
+
+})(jQuery);
+//]]>
+</script>

@@ -1,0 +1,78 @@
+
+  <div class="listBox" id="shisetsu">
+    <a href="javascript:void(0);" id="listPrev">前へ</a>
+      <%
+      id_list = []
+      div_count = 0
+      @items.each_with_index do |item, i|
+        id_list << item.id
+        if @layers_count[item.layer_id.to_s].blank?
+          @layers_count[item.layer_id.to_s] = 1
+        else
+          @layers_count[item.layer_id.to_s] += 1
+        end
+        open_div = false
+        open_div = true if i % 5 == 0
+        close_div = false
+        close_div =  true if i % 5 == 0 && i != 0
+        open_div_show = "display: none;"
+        open_div_show = "" if i == 0
+        div_count+=1 if close_div
+      %>
+      <%if close_div%></div><%end%>
+      <%if open_div%><div id="markerList<%=div_count%>" class="markerListPage" style="<%=open_div_show%>"><%end%>
+      <span><a href="javascript:void(0);" class="markerLink" id="marker_<%=item.id%>_link"><%=item.name%></a><br></span>
+
+      <%end%>
+      </div>
+    <a href="javascript:void(0);" id="listNext" class="active">次へ</a>
+  <div id="resultIdList" style="display: none;"><%=id_list.join(",")%></div>
+</div>
+
+
+<script type="text/javascript">
+
+
+//<![CDATA[
+(function($) {
+  var currentList = 0;
+  var maxList = <%=div_count%>;
+  $("#listPrev").click(function (e) {
+    e.preventDefault();
+    var nextList= currentList - 1;
+    if (nextList==0){
+      $("#listPrev").removeClass("active");
+      $("#listNext").addClass("active");
+    }else if(nextList == - 1){
+      $("#listPrev").removeClass("active");
+      $("#listNext").addClass("active");
+      return;
+    }else{
+      $("#listPrev").addClass("active");
+      $("#listNext").addClass("active");
+    }
+      $("#markerList" + currentList).hide();
+      $("#markerList" + nextList).show();
+      currentList = currentList - 1;
+  });
+
+  $("#listNext").click(function (e) {
+    e.preventDefault();
+    var nextList = currentList + 1;
+    if (nextList == maxList){
+      $("#listPrev").addClass("active");
+      $("#listNext").removeClass("active");
+    }else if(nextList == maxList + 1 ){
+      $("#listPrev").addClass("active");
+      $("#listNext").removeClass("active");
+      return;
+    }else{
+      $("#listPrev").addClass("active");
+      $("#listNext").addClass("active");
+    }
+      $("#markerList" + currentList).hide();
+      $("#markerList" + nextList).show();
+      currentList = currentList + 1;
+  });
+})(jQuery);
+</script>

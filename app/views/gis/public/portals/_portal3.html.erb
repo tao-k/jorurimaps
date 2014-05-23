@@ -1,0 +1,21 @@
+<!-- contentArticleDoc -->
+      <div id="contentArticleDoc">
+        <div class="header">
+          <h1>外部サイト（<%=@map.title%>）へのリンク</h1>
+        </div>
+
+        <div class="body">
+        <div><img src="<%=map_tumb_path(@map)%>" alt="" /></div>
+        <p>&nbsp;</p>
+        <p>リンク先のページは外部サイトとなります。</p>
+        <p><%=link_to @map.link_url, @map.link_url unless @map.link_url.blank?%></p>
+        <%if @map.is_display_message == 1%>
+        <p>&nbsp;</p>
+        <hr />
+        <p>&nbsp;</p>
+        <%=safe{@map.message.html_safe} %>
+        <%end%>
+        </div>
+
+      </div>
+      <!-- /contentArticleDoc -->

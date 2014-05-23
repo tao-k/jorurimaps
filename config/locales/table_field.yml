@@ -1,0 +1,703 @@
+################################################################################
+# commons
+t1_finished:
+  1: 完了
+t1_read:
+  1: 既読
+t1f0:
+  1: はい
+  0: いいえ
+t1f0_kyoka_fuka:
+  1: 許可
+  0: 不可
+t1f2:
+  1: true
+  2: false
+t1f2_marubatsu:
+  1: ○
+  2: ×
+t1f2_do:
+  1: する
+  2: しない
+t1f2_ed:
+  1: enabled
+  2: disabled
+t1f2_edj:
+  1: 有効
+  2: 無効
+gw_prop_state:
+  0: 有効
+  1: 無効
+gw_prop_delete_state:
+  0: 未
+  1: 済
+common_states:
+  draft: 下書き
+  recognized: 公開待ち
+  public: 公開中
+  closed: 非公開
+gw_prop_other_states:
+  public: 公開中
+  closed: 非公開
+jp_states:
+  1: 北海道
+  2: 青森県
+  3: 岩手県
+  4: 宮城県
+  5: 秋田県
+  6: 山形県
+  7: 福島県
+  8: 茨城県
+  9: 栃木県
+  10: 群馬県
+  11: 埼玉県
+  12: 千葉県
+  13: 東京都
+  14: 神奈川県
+  15: 新潟県
+  16: 富山県
+  17: 石川県
+  18: 福井県
+  19: 山梨県
+  20: 長野県
+  21: 岐阜県
+  22: 静岡県
+  23: 愛知県
+  24: 三重県
+  25: 滋賀県
+  26: 京都府
+  27: 大阪府
+  28: 兵庫県
+  29: 奈良県
+  30: 和歌山県
+  31: 鳥取県
+  32: 島根県
+  33: 岡山県
+  34: 広島県
+  35: 山口県
+  36: 徳島県
+  37: 香川県
+  38: 愛媛県
+  39: 高知県
+  40: 福岡県
+  41: 佐賀県
+  42: 長崎県
+  43: 熊本県
+  44: 大分県
+  45: 宮崎県
+  46: 鹿児島県
+  47: 沖縄県
+sexes:
+  1: 男
+  2: 女
+age_classes:
+  1: 20歳未満
+  2: 20歳代
+  3: 30歳代
+  4: 40歳代
+  5: 50歳代
+  6: 60歳以上
+job_classes:
+  1: 農林水産業
+  2: 自営業
+  3: 会社・団体職員
+  4: 主婦
+  5: その他
+has_willings:
+  1: 希望する
+  2: 希望しない
+is_draft:
+  1: 草稿
+  2: 完成稿
+published_classes:
+  1: 公開
+
+################################################################################
+# WDB 簡易データベース
+################################################################################
+wdb_databases:
+  id: x
+  name: 内部名称
+  title: 表示名称
+  description: 説明
+  unid: x
+  created_at: d:登録日
+  updated_at: d:更新日
+
+wdb_connection_specs:
+  id: x
+  name: 名前
+  value: 値
+  param_type: 型
+  sort_no: 表示順
+  database_id: データベースID
+  created_at: d:登録日時
+  updated_at: d:更新日時
+
+
+wdb_database_attrs:
+  id: x
+  name: 名前
+  value: 値
+  database_id: データベースID
+  sort_no: 表示順
+  created_at: d:登録日時
+  updated_at: d:更新日時
+
+
+wdb_table_fields:
+  id: x
+  name: 名前
+  title: 表示名称
+  field_type: 型
+  description: 説明
+  sort_no: 表示順
+  table_id: テーブルID
+  created_at: d:登録日時
+  updated_at: d:更新日時
+
+
+wdb_tables:
+  id: x
+  name: 名前
+  title: 表示名称
+  description: 説明
+  database_id: データベースID
+  sort_no: 表示順
+  created_at: d:登録日時
+  updated_at: d:更新日時
+
+# intras
+intra_messages:
+  id: x
+  unid: x
+  state: r:状態:common_states
+  created_at: x
+  updated_at: x
+  published_at: 日時
+  title: タイトル
+  body: 本文
+
+# system_cores
+system_group_nexts:
+  _common:
+    id: x
+    group_update_id: 変更情報ID
+    operation: r:引継区分:system_group_nexts_state
+    old_group_id: 引継元所属ID
+    old_code: 引継元所属コード
+    old_name: 引継元所属名
+    created_at: d:実行日時
+    updated_at: d:最終更新日時
+  index:
+    _cols: operation:old_code:old_name:updated_at
+  show:
+    _cols: operation:old_code:old_name:updated_at
+system_group_updates:
+  _common:
+    id: x
+    parent_code: 上位所属コード
+    parent_name: 上位所属名
+    level_no: 階層
+    code: 所属コード
+    name: 所属名
+    state: r:変更区分:system_group_updates_state
+    start_at: D:適用開始日
+    group_id: x
+    created_at: d:実行日時
+    updated_at: d:最終更新日時
+  index:
+    _cols: start_at:_parent_ou:_group_ou:state:updated_at
+#    _cols: start_at:parent_code:parent_name:level_no:code:name:state:updated_at
+    _parent_ou: 親所属
+    _group_ou: 所属
+  show:
+#    _cols: start_at:_parent_ou:_group_ou:state:updated_at
+    _cols: start_at:parent_code:parent_name:level_no:code:name:state:updated_at
+    _parent_ou: 親所属
+    _group_ou: 所属
+system_group_change_pickups:
+  _common:
+    id: x
+    target_at: D:抽出対象日
+    created_at: d:実行日時
+    updated_at: d:最終更新日時
+  index:
+    _cols: target_at:updated_at
+  show:
+    _cols: target_at:updated_at
+system_group_changes:
+  _common:
+    id: x
+    state: r:作業工程:system_group_change_state
+    target_at: D:抽出対象日（最新抽出時のみ表示）
+    created_at: d:初回実行日時
+    updated_at: d:最終実行日時
+  index:
+    _cols: state:updated_at:created_at:target_at
+  show:
+    _cols: state:updated_at:created_at:target_at
+system_groups:
+  _common:
+    id: x
+    parent_id: dbraw:親グループ:system_groups:name:id
+    state: r:状態:system_states
+    created_at: x
+    updated_at: x
+    level_no: 階層レベル
+    version_id: x
+    code: コード
+    name: 名前
+    name_en: 名前(英)
+    email: メールアドレス
+    start_at: D:適用開始日
+    end_at: D:適用終了日
+    sort_no: 表示順
+    ldap_version: LDAPバージョン
+    ldap: r:LDAP同期:system_users_ldaps
+  index:
+    _cols: code:name:email:start_at:end_at:ldap:state
+  show:
+    _cols: state:code:name:name_en:email:sort_no:start_at:end_at:level_no:_groups
+#    _cols: state:code:name:name_en:email:sort_no:start_at:end_at:level_no:parent_id
+    _groups: グループ
+  index_for_user:
+    _cols: state:_groups:start_at:level_no:parent_id
+#    _cols: state:code:name:version_id:level_no:parent_id
+    _groups: グループ
+system_group_history_temporaries:
+  _common:
+#    _cols: state:code:name:name_en:email:level_no:parent_id
+    id: x
+    parent_id: dbraw:親グループ:system_groups:name:id
+    state: r:状態:system_states
+    created_at: x
+    updated_at: x
+    level_no: 階層レベル
+    version_id: x
+#    version_id: dbraw:適用開始日:system_group_versions:start_at:id
+    code: コード
+    name: 名前
+    name_en: 名前(英)
+    email: メールアドレス
+    start_at: D:適用開始日
+    end_at: D:適用終了日
+    sort_no: 表示順
+    ldap_version: LDAPバージョン
+    ldap: r:LDAP同期:system_users_ldaps
+  index:
+    _cols: _parent_ou:code:name:start_at:end_at:_group_updates:_group_nexts
+    _parent_ou: 上位所属
+    _group_updates: 変更分類
+    _group_nexts: 引継分類
+  index_select:
+    _cols: code:name:start_at:end_at:_group_updates:_group_nexts
+    _parent_ou: 上位所属
+    _group_updates: 変更分類
+    _group_nexts: 引継分類
+  show:
+    _cols: state:code:name:name_en:email:sort_no:start_at:end_at:level_no:_groups
+#    _cols: state:code:name:name_en:email:sort_no:start_at:end_at:level_no:parent_id
+    _groups: グループ
+  index_for_user:
+    _cols: state:_groups:start_at:level_no:parent_id
+    _groups: グループ
+system_languages:
+  id: x
+  state: r:状態:system_states
+  created_at: x
+  updated_at: x
+  sort_no: 並び順
+  name: 内部名称
+  title: 表示名称
+system_roles:
+  id: x
+  table_name: 権限ロール名
+  priv_name: 対象権限
+  idx: 優先順位
+  class_id: r:種別:system_role_classes
+  uid: ユーザ/グループ
+  #uid: dbraw:ユーザID_グループID:system_users:name:id
+  priv: r:許可:t1f0_kyoka_fuka
+  created_at: x
+  updated_at: x
+  role_name_id: x
+system_role_classes:
+#  0: all
+#  1: user
+#  2: group
+#  3: project
+  0: すべて
+  1: ユーザ
+  2: グループ
+system_states:
+  enabled: 有効
+  disabled: 無効
+system_users:
+  _common:
+    id: x
+    state: r:状態:system_states
+    created_at: x
+    updated_at: x
+    code: ID
+    ldap: r:LDAP:system_users_ldaps
+    ldap_version: LDAPバージョン
+    auth_no: r:権限:system_users_auth_nos
+    name: 名前
+    name_en: 名前(英)
+    password: パスワード
+    email: メールアドレス
+    remember_token: x
+    remember_token_expires_at: x
+    _groups: グループ
+    official_position: 役職
+    assigned_job: 担当
+  index:
+    _cols: code:name:name_en:official_position:email:_groups:ldap:state
+  show:
+    _cols: state:id:name:name_en:email:official_position:assigned_job
+  show_for_public:
+    _cols: code:state:ldap:name:name_en:email:official_position:assigned_job
+system_users_groups:
+  _common:
+    rid: rid
+    created_at: x
+    updated_at: x
+    user_id: dbraw:ユーザー:system_users:name:id
+    group_id: dbraw:グループ:system_group_temporaries:name:id
+    job_order: r:本務・兼務:system_ugs_job_orders
+    start_at: D:配属開始日
+    end_at: D:配属終了日
+    _rid: 詳細
+    user_code: ID
+    group_code: x
+    _group: グループ
+    _user_mail: メール
+    _user_ldap: LDAP
+    _user_state: r:状態:system_states
+    _user_post: 役職
+  index:
+    _cols: _rid:user_code:user_id:_user_post:_user_mail:job_order:_user_ldap:_user_state
+  show:
+    _cols: user_id:_group:_user_post:job_order:start_at:end_at:_user_state
+    _groups: グループ
+  index_for_users:
+    _cols: rid:_groups:start_at:end_at:job_order:_g_start_at:_g_end_at:_level:_parent_name
+#    _version_id: D:適用開始日
+    _groups: グループ
+    _g_start_at: D:適用開始日
+    _g_end_at: D:適用終了日
+    _level: 階層
+    _parent_name: 上位所属
+  index_for_public_users:
+    _cols: _groups:start_at:end_at:job_order:_g_start_at:_g_end_at:_level:_parent_name
+#    _version_id: D:適用開始日
+    _groups: グループ
+    _g_start_at: D:適用開始日
+    _g_end_at: D:適用終了日
+    _level: 階層
+    _parent_name: 上位所属
+system_users_group_histories:
+  _common:
+    rid: rid
+    created_at: x
+    updated_at: x
+    user_id: dbraw:ユーザー:system_users:name:id
+    group_id: dbraw:グループ:system_groups:name:id
+    job_order: r:本務・兼務:system_ugs_job_orders
+    start_at: D:配属開始日
+    end_at: D:配属終了日
+    _rid: 詳細
+    user_code: ID
+    group_code: x
+    _group: グループ
+    _user_mail: メール
+    _user_ldap: LDAP
+    _user_state: r:状態:system_states
+  index:
+    _cols: _rid:user_code:user_id:_user_mail:job_order:start_at:end_at:_user_ldap:_user_state
+  show:
+    _cols: user_id:group_id:job_order:_user_state:start_at:end_at
+  index_for_users:
+    _cols: rid:_groups:start_at:end_at:job_order:_g_start_at:_g_end_at:_level:_parent_name
+#    _cols: _history:_groups:_u_start_at:_u_end_at:job_order:_g_start_at:_g_end_at:_level:_parent_name
+    _history: 詳細
+#    _version_id: D:適用開始日
+    _groups: グループ
+    _g_start_at: D:適用開始日
+    _g_end_at: D:適用終了日
+    _level: 階層
+    _parent_name: 上位所属
+system_users_group_temporaries:
+  _common:
+    rid: rid
+    created_at: x
+    updated_at: x
+    user_id: dbraw:ユーザー:system_user_temporaries:name:id
+    group_id: dbraw:グループ:system_group_history_temporaries:name:id
+    job_order: r:本務・兼務:system_ugs_job_orders
+    start_at: D:配属開始日
+    end_at: D:配属終了日
+    _rid: 詳細
+    user_code: ID
+    group_code: x
+    _group: グループ
+    _user_mail: メール
+    _user_ldap: LDAP
+    _user_state: r:状態:system_states
+    _user_post: 役職
+  index:
+    _cols: _rid:user_code:user_id:_user_post:_user_mail:job_order:_user_ldap:_user_state
+  show:
+    _cols: user_id:_group:_user_post:job_order:start_at:end_at:_user_state
+    _groups: グループ
+system_ugs_job_orders:
+  0: 本務
+  1: 兼務
+  9: 仮所属
+system_users_auth_nos:
+  0: なし
+  1: 投稿者
+  2: 作成者
+  3: 編集者
+  4: 設計者
+  5: 管理者
+system_users_ldaps:
+  0: 非同期
+  1: 同期
+  2: LDAPのみ
+system_group_versions:
+  id: ID
+  created_at: x
+  updated_at: x
+  version: 年度
+  start_at: D:適用開始日
+system_idconversions:
+  id: ID
+  created_at: x
+  updated_at: x
+  tablename: 変換対象
+  converted_at: d:変換実施日
+
+public_office_office_types:
+  1: 県庁舎
+  2: 役所・役場
+  3: 支所
+info_progress_status:
+  all: すべて
+  yet: 開始前
+  going: 実施中
+  finish: 終了
+info_target_types:
+  all: 全員
+  company: 会社
+deployment_states:
+  first: 第1次体制
+  second: 第2次体制
+  third: 第3次体制（災害対策本部）
+announce_types:
+  02 : 避難準備情報
+  03 : 避難勧告
+  04 : 避難指示
+  05 : 警戒区域設定
+gis_layer_data_csv_export:
+  id: 記事番号
+  area_show: 市町村
+  web_state_show: 公開状態
+  name: タイトル
+  address: 住所
+  lat: 緯度
+  lng: 経度
+  icon_kind: アイコン
+  photo1: 写真1
+  photo2: 写真2
+  photo3: 写真3
+  photo4: 写真4
+  photo5: 写真5
+  photo6: 写真6
+  photo7: 写真7
+  photo8: 写真8
+  photo9: 写真9
+  photo10: 写真10
+gis_layer_data_csv:
+  id: 記事番号
+  area_show: 市町村
+  web_state_show: 公開状態
+  name: タイトル
+  address: 住所
+  lat: 緯度
+  lng: 経度
+  icon_kind: アイコン
+  photo1: 写真1
+  photo2: 写真2
+  photo3: 写真3
+  photo4: 写真4
+  photo5: 写真5
+  photo6: 写真6
+  photo7: 写真7
+  photo8: 写真8
+  photo9: 写真9
+  photo10: 写真10
+  input_fld_1: 自由項目1
+  input_fld_2: 自由項目2
+  input_fld_3: 自由項目3
+  input_fld_4: 自由項目4
+  input_fld_5: 自由項目5
+  input_fld_6: 自由項目6
+  input_fld_7: 自由項目7
+  input_fld_8: 自由項目8
+  input_fld_9: 自由項目9
+  input_fld_10: 自由項目10
+  input_fld_11: 自由項目11
+  input_fld_12: 自由項目12
+  input_fld_13: 自由項目13
+  input_fld_14: 自由項目14
+  input_fld_15: 自由項目15
+  input_fld_16: 自由項目16
+  input_fld_17: 自由項目17
+  input_fld_18: 自由項目18
+  input_fld_19: 自由項目19
+  input_fld_20: 自由項目20
+  input_fld_21: 自由項目21
+  input_fld_22: 自由項目22
+  input_fld_23: 自由項目23
+  input_fld_24: 自由項目24
+  input_fld_25: 自由項目25
+  input_fld_26: 自由項目26
+  input_fld_27: 自由項目27
+  input_fld_28: 自由項目28
+  input_fld_29: 自由項目29
+  input_fld_30: 自由項目30
+  input_fld_31: 自由項目31
+  input_fld_32: 自由項目32
+  input_fld_33: 自由項目33
+  input_fld_34: 自由項目34
+  input_fld_35: 自由項目35
+  input_fld_36: 自由項目36
+  input_fld_37: 自由項目37
+  input_fld_38: 自由項目38
+  input_fld_39: 自由項目39
+  input_fld_40: 自由項目40
+  input_fld_41: 自由項目41
+  input_fld_42: 自由項目42
+  input_fld_43: 自由項目43
+  input_fld_44: 自由項目44
+  input_fld_45: 自由項目45
+  input_fld_46: 自由項目46
+  input_fld_47: 自由項目47
+  input_fld_48: 自由項目48
+  input_fld_49: 自由項目49
+  input_fld_50: 自由項目50
+gis_layer_data_photo_csv:
+  id: 記事番号
+  area_show: 市町村
+  web_state_show: 公開状態
+  name: タイトル
+  address: 住所
+  lat: 緯度
+  lng: 経度
+  icon_kind: アイコン
+  photo1: 写真1
+  photo2: 写真2
+  photo3: 写真3
+  photo4: 写真4
+  photo5: 写真5
+  photo6: 写真6
+  photo7: 写真7
+  photo8: 写真8
+  photo9: 写真9
+  photo10: 写真10
+  input_fld_1: 自由項目1
+  input_fld_2: 自由項目2
+  input_fld_3: 自由項目3
+  input_fld_4: 自由項目4
+  input_fld_5: 自由項目5
+  input_fld_6: 自由項目6
+  input_fld_7: 自由項目7
+  input_fld_8: 自由項目8
+  input_fld_9: 自由項目9
+  input_fld_10: 自由項目10
+  input_fld_11: 自由項目11
+  input_fld_12: 自由項目12
+  input_fld_13: 自由項目13
+  input_fld_14: 自由項目14
+  input_fld_15: 自由項目15
+  input_fld_16: 自由項目16
+  input_fld_17: 自由項目17
+  input_fld_18: 自由項目18
+  input_fld_19: 自由項目19
+  input_fld_20: 自由項目20
+  input_fld_21: 自由項目21
+  input_fld_22: 自由項目22
+  input_fld_23: 自由項目23
+  input_fld_24: 自由項目24
+  input_fld_25: 自由項目25
+  input_fld_26: 自由項目26
+  input_fld_27: 自由項目27
+  input_fld_28: 自由項目28
+  input_fld_29: 自由項目29
+  input_fld_30: 自由項目30
+  input_fld_31: 自由項目31
+  input_fld_32: 自由項目32
+  input_fld_33: 自由項目33
+  input_fld_34: 自由項目34
+  input_fld_35: 自由項目35
+  input_fld_36: 自由項目36
+  input_fld_37: 自由項目37
+  input_fld_38: 自由項目38
+  input_fld_39: 自由項目39
+  input_fld_40: 自由項目40
+  input_fld_41: 自由項目41
+  input_fld_42: 自由項目42
+  input_fld_43: 自由項目43
+  input_fld_44: 自由項目44
+  input_fld_45: 自由項目45
+  input_fld_46: 自由項目46
+  input_fld_47: 自由項目47
+  input_fld_48: 自由項目48
+  input_fld_49: 自由項目49
+  input_fld_50: 自由項目50
+gis_map_parent_category:
+  kurashi: くらし
+  fukushi: 健康・福祉
+  kyoikubunka: 教育・文化
+  kanko: 観光・魅力
+  sangyoshigoto: 産業・しごと
+  gyoseimachizukuri: 行政・まちづくり
+  bousai: 防災
+gis_banner_parent_category:
+  kurashi: くらし
+  fukushi: 健康・福祉
+  kyoikubunka: 教育・文化
+  kanko: 観光・魅力
+  sangyoshigoto: 産業・しごと
+  gyoseimachizukuri: 行政・まちづくり
+  bousai: 防災
+  top: トップ
+gis_link_parent_category:
+  kurashi: くらし
+  kyouikubunka: 教育・文化
+  kankoubussan: 観光・物産
+  sangyouroudou: 産業・労働
+  kendozukuri: 県土づくり
+  gyouseichiiki: 行政・地域
+  bousai: 防災
+  top: トップ
+  all: すべて
+  remarks: ご利用方法等
+gis_layer_data_open_csv:
+  area_show: 市町村
+  name: タイトル
+  address: 所在地
+  lat: 緯度
+  lng: 経度
+  photo1: 写真1
+  photo2: 写真2
+  photo3: 写真3
+  photo4: 写真4
+  photo5: 写真5
+  photo6: 写真6
+  photo7: 写真7
+  photo8: 写真8
+  photo9: 写真9
+  photo10: 写真10

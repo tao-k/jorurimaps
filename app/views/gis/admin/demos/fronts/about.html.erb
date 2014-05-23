@@ -1,0 +1,20 @@
+<div id="contentPage">
+  <div class="pieceHeader"><%=safe{@map.title}%>について</div>
+  <div class="pieceBody">
+    <%=safe{@map.message.html_safe}%>
+    <%if @items%>
+    <p>&nbsp;</p>
+    <hr />
+    <p>&nbsp;</p>
+    <h2>お問い合わせ</h2>
+    <%for item in @items%>
+      <p><%=safe{item.inquiry_department}%></p>
+      <%if item.charge%><p><%=item.charge%></p><%end%>
+      <%if item.tel%><p>電話</span>：<%=item.tel%></p><%end%>
+      <%if item.fax%><p>ファクシミリ</span>：<%=item.fax%></p><%end%>
+      <%if item.mail_to%><p>E-Mail</span>：<a href="mailto:<%=item.mail_to%>"><%=item.mail_to%></a></p><%end%>
+      <br />
+    <%end%>
+    <%end%>
+  </div>
+</div>

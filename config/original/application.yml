@@ -1,0 +1,37 @@
+gis:
+  # MapServer URL
+  wms_gateway_url: "192.168.0.2"
+  wms_gateway_url_internal: "192.168.0.2"
+  #GoogleMapルート検索URL
+  google_map_route_url: "http://maps.google.co.jp/maps"
+  # Mapfile config
+  mapfile_directory: "/var/share/gis_mapfiles"
+  #twitterアカウント関連
+  tweet_consumer_key:
+  tweet_consumer_secret:
+  tweet_oauth_token:
+  tweet_oauth_token_secreat:
+  #ポイントデータ関連設定
+  mapfile_vector_layer: vector_layer
+  #承認メール送信者設定
+  recognize_sender: "JoruriMaps <joruri-maps@loalhost>"
+  #デフォルトの緯度経度
+  lng: 134.5589
+  lat: 34.065705
+  zoom: 10
+  #ホームページ設定
+  public_title: ジョールリ市
+  association_name: ジョールリ市
+  copyright: "Copyright©2014　ジョールリ市統合型Web GIS All Rights Reserved. "
+  custom_search_engine_id: ""
+sys:
+  # ログイン画面フッター文字
+  login_footer: ''
+  # 携帯向けフッター文字
+  mobile_footer: ''
+  # セッション保持期限（H）
+  session_expiration: 24
+  # 携帯向けセッション保持期限（H）
+  session_expiration_for_mobile: 1
+  # PCサイト/携帯サイト強制表示
+  force_site: ''

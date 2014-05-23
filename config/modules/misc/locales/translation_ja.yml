@@ -1,0 +1,133 @@
+ja:
+  activerecord:
+    attributes:
+      misc/search_column:
+        portal_id: 個別地図
+        column_flds: 検索対象項目
+        label: 検索ラベル
+        form_type: フォーム種別
+        form_show: プレビュー
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        deleted_at: 削除日
+        deleted_user: 削除者
+        deleted_group: 削除者所属
+      misc/social_update:
+        map_id: 個別地図
+        web_state: 公開状態
+        title: タイトル
+        body: 本文
+        published_at: 公開日時
+        user_kind: 管理種別
+        admin_user_id: 管理ユーザ
+        admin_group_id: 管理所属
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        deleted_at: 削除日
+        deleted_user: 削除者
+        deleted_group: 削除者所属
+        inquiry_group_id: 問い合わせ先所属
+        mail_to: メールアドレス
+        tel: 電話番号
+        fax: FAX番号
+        charge: 担当
+      misc/portal_link:
+        title: タイトル
+        url: URL
+        sort_no: 並び順
+        web_state: 公開状態
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        deleted_at: 削除日
+        deleted_user: 削除者
+        deleted_group: 削除者所属
+      misc/portal_photo:
+        web_state: "公開状態"
+        title: "管理用タイトル"
+        caption: "キャプション"
+        upload: "画像ファイル"
+        sort_no: "並び順"
+      misc/portal_recommend:
+        web_state: 公開状態
+        state: 公開状態
+        title: タイトル
+        sort_no: 並び順
+        url: リンクURL
+        column_flds: 検索用パラメータ
+        created_at: 作成日
+        created_user: 作成者所属
+        created_group: 作成者
+        updated_at: 更新日
+        updated_user: 更新者所属
+        updated_group: 更新者
+        deleted_at: 削除日
+        deleted_user: 削除者所属
+        deleted_group: 削除者
+      misc/inquiry:
+        sort_no: 並び順
+        inquiry_group_id: 問い合わせ先所属
+        mail_to: メールアドレス
+        tel: 電話番号
+        fax: FAX番号
+        charge: 担当
+  controller:
+    gis/admin/maps/searches:
+      title: 検索フォーム設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    gis/admin/maps/social_updates:
+       title: 更新情報管理
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    gis/admin/maps/related_links:
+       title: 関連リンク設定
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    gis/admin/maps/portal_photos:
+       title: ポータル写真設定
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    gis/admin/maps/recommends:
+       title: おすすめ検索設定
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    gis/admin/maps/inquiries:
+        title: お問い合わせ先設定
+        action:
+          show: 詳細
+          new: 新規登録
+          create: 新規登録
+          edit: 編集
+          update: 編集

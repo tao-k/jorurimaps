@@ -1,0 +1,12 @@
+
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+  <%=link_to "トップページ", "/#{@map.code}/"%>  &gt;
+  <%=link_to "更新情報一覧", portal_doc_url(@map)%>
+  <%if @item%> &gt; <%=link_to @item.title, portal_doc_url(@map, @item)%><%end%>
+    </div>
+  </div>
+</div>
+</div>

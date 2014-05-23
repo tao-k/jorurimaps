@@ -1,0 +1,12 @@
+<!-- relation -->
+      <div id="relation">
+        <div class="pieceHeader"><h2>関連リンク</h2></div>
+        <div class="pieceBody">
+          <ul>
+            <%related_links({:kind=>kind, :category => category}).each do |link|%>
+            <li><%=link_to link[:title], link[:url], :target=>"_blank"%></li>
+            <%end%>
+          </ul>
+        </div>
+      </div>
+      <!-- /relation -->

@@ -1,0 +1,25 @@
+<%
+group_options = @company.group_options
+(@item.user_groups.size...10).each do 
+  @item.user_groups.build(
+    :company_id => @company.id, 
+    :count_flag => 'count')
+end
+%>
+<table class="index" id="options">
+  <tr>
+    <th><%= System::UsersGroup.new.locale(:group_id) %></th>
+    <th>削除</th>
+  </tr>
+  <%= f.fields_for :user_groups do |f2| %>
+  <% item = f2.object %>
+  <tr class="option">
+    <td>
+      <%= f2.select :group_id, options_for_select(group_options, item.group_id), {:include_blank => true} %>
+      <%= f2.hidden_field :company_id %>
+      <%= f2.hidden_field :count_flag %>
+    </td>
+    <td><%= f2.check_box :_destroy %><%= f2.label :_destroy, '削除する' %></td>
+  </tr>
+  <% end %>
+</table>

@@ -1,0 +1,86 @@
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $(function() {
+    $('#addLayer').click(function(e) {
+      addTableLastRow($('#layerOptions'));
+    });
+    var num = 0;
+    function addTableLastRow(table) {
+      num = $('#layerOptions tr').length;
+      var clone = table.find('tr:last').clone();
+      clone.find('input, label, select, textarea').each(function() {
+        var keys = ['id', 'name', 'for', 'type'];
+        for (var i=0; i<keys.length; i++) {
+          var key = keys[i];
+          var value = $(this).attr(key);
+          if (key == "type"){
+            if (value == "hidden"){
+              $(this).remove();
+            }
+          }else{
+            if (value) {
+              $(this).attr(key, value.replace(/\d+/, num));
+            }
+            if($(this).attr("type")!="checkbox"){
+              $(this).val('');
+            }
+          }
+
+        }
+      });
+      table.append(clone);
+    }
+  });
+})(jQuery);
+//]]>
+</script>
+<h2><%= @item.locale(:layers) %></h2>
+  <table class="index" id="layerOptions">
+    <tr>
+      <th style="width: 250px;">レイヤー</th>
+      <th>並び順</th>
+      <th>重なり順</th>
+      <th>削除</th>
+    </tr>
+    <%if @a_layers.blank?%>
+      <tr>
+        <td>
+
+          <%= select_tag "layer[_layer_id][0]",  grouped_options_for_select(layer_grouped_options, nil, "　　　") %>
+        </td>
+        <td>
+          <%= text_field_tag "layer[_sort_no][0]", "", :size=>3 %>
+        </td>
+        <td>
+          <%= text_field_tag "layer[_layer_order][0]", "", :size=>3 %>
+        </td>
+        <td></td>
+      </tr>
+    <%else%>
+      <%@a_layers.each_with_index{|a_layer, n|
+        checked = false
+        checked = true if params[:layer][:_destroy][a_layer.id.to_s.to_sym] if params[:layer][:_destroy] if params[:layer]
+      %>
+        <tr>
+          <td>
+            <%= hidden_field_tag "layer[_rid][#{n}]", a_layer.rid%>
+            <%= select_tag "layer[_layer_id][#{n}]",  grouped_options_for_select(layer_grouped_options,  a_layer.layer_id, "　　　") %>
+          </td>
+          <td>
+            <%= text_field_tag "layer[_sort_no][#{n}]", a_layer.sort_no, :size=>3  %>
+          </td>
+          <td>
+            <%= text_field_tag "layer[_layer_order][#{n}]", a_layer.layer_order, :size=>3  %>
+          </td>
+          <td>
+            <%= check_box_tag "layer[_destroy][#{n}]", 1, checked  %>
+            <label for="<%="layer__destroy_0"%>">削除する</label>
+          </td>
+        </tr>
+      <%}%>
+    <%end%>
+
+  </table>
+  <%= tag :input, :type => :button, :value => '＋', :id => 'addLayer' %><br />

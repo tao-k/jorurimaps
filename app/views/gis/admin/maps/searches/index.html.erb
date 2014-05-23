@@ -1,0 +1,25 @@
+<%if @items.blank?%>
+<%else%>
+<table class="index">
+
+  <tr>
+    <th>詳細</th>
+    <th>フォーム種別</th>
+    <th>ラベル</th>
+    <th>更新日</th>
+    <th>更新者</th>
+  </tr>
+
+  <% for item in @items %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item) %></td>
+    <td ><%= item.form_type_show %></td>
+    <td ><%= item.label %></td>
+    <td><%= safe{item.updated_at.strftime("%Y-%m-%d")} %></td>
+    <td><%=item.updated_user%></td>
+  </tr>
+  <% end %>
+
+</table>
+<% end %>
+<%= paginate @items %>

@@ -1,0 +1,22 @@
+<div id="header">
+<div id="headerBody">
+<div class="piece">
+<h1>
+<%=link_to "JoruriMaps","/_admin"%>
+</h1>
+<div class="personal">
+<span class="department"><%= Site.user_group.name if Site.user_group %></span>
+<span class="name"><%= Site.user.display_name %></span>
+</div>
+<div class="logout">
+<a href="/_admin/logout">ログアウト</a>
+</div>
+<div class="previousLogin">前回ログイン日時　<%= Site.user.previous_login_date ?
+     Site.user.previous_login_date.strftime('%Y-%m-%d %H:%M') :
+     '---' %> </div>
+<div class="publicMenu">
+<a href="/" target="_blank">公開画面</a>
+</div>
+</div>
+</div>
+</div>

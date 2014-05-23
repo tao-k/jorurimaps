@@ -1,0 +1,30 @@
+<%= render :partial => 'search' %>
+<% if @items.blank? %>
+  <div class="notice">データは登録されていません。</div>
+<% else %>
+  <table class="index">
+    <tbody>
+      <tr>
+        <th>詳細</th>
+        <th>公開状態</th>
+        <th>市町村</th>
+        <th>タイトル</th>
+        <th style="width: 80px;">更新日</th>
+        <th>更新者</th>
+      </tr>
+      <% @items.each do |item| -%>
+        <tr class="<%= cycle '', 'cycle' %>">
+          <td class="showLink">
+            <%= link_to '詳細', {:action => :show, :id => item.rid} %>
+          </td>
+          <td style="width: 80px;"><%= safe{item.web_state_show} -%></td>
+          <td><%= safe{item.area_show} -%></td>
+          <td><%= item.name -%></td>
+          <td><%= safe{item.updated_at.strftime("%Y-%m-%d")} %></td>
+          <td><%=item.updated_user%></td>
+        </tr>
+      <% end -%>
+    </tbody>
+  </table>
+  <%= paginate @items %>
+<% end %>

@@ -1,0 +1,467 @@
+@charset "UTF-8";
+@import "/_common/themes/gis/css/portal1/base/init.css";
+@import "/_common/themes/gis/css/portal1/base/style.css";
+
+/*------------------------------------------------
+
+ main
+------------------------------------------------*/
+#wrapper {
+  margin-bottom: 0 !important;
+}
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- banner -----*/
+#banner {
+  margin: 0 auto 20px;
+}
+#banner img {
+  width: 100%;
+  max-width: 950px;
+  height: auto;
+}
+
+/*----- docInfo -----*/
+#docInfo {
+  margin-bottom: 20px;
+}
+#docInfo .pieceHeader h2 {
+  margin-bottom: 15px;
+  padding-left: 3px;
+  border-bottom: 3px solid #0053AE;
+  font-size: 160%;
+  font-weight: bold;
+}
+#docInfo .info {
+  padding: 0 15px;
+}
+#docInfo .info li {
+  margin-bottom: 5px;
+  padding-left: 13px;
+  background-image: url(/_common/themes/gis/images/ic/ic-dot_list.png);
+  background-repeat: no-repeat;
+  background-position: left 0.6em;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+#docInfo .info li {
+  background-position: left 0.3em;
+}
+}
+#docInfo .next {
+  padding-right: 15px;
+  text-align: right;
+}
+
+/*----- areaSearch -----*/
+#areaSearch {
+  display: none;
+}
+
+/*----- shisetsuSearch -----*/
+#shisetsuSearch {
+  margin-bottom: 15px;
+}
+#shisetsuSearch .pieceHeader .switch {
+  display: none;
+}
+#shisetsuSearch .pieceHeader {
+  margin-bottom: 2px;
+  border-radius: 3px;
+  border-right: 1px solid #adadad;
+  border-bottom: 1px solid #adadad;
+  overflow: hidden;
+}
+#shisetsuSearch .pieceHeader h2:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display:block;
+  width: 48px;
+  height: 100%;
+  background-color: #0053AE;
+  background-image: url(/_common/themes/gis/images/ic_sm/tl_ic-search.png);
+  background-position: 5px center;
+  background-repeat: no-repeat;
+}
+#shisetsuSearch .pieceHeader h2 {
+  position: relative;
+  padding: 10px 0 8px 65px;
+  background-color: #D1E7FF;
+  font-size: 160%;
+  font-weight: bold;
+}
+#shisetsuSearch .pieceBody {
+  padding: 10px 15px;
+  background-color: #F3F3F5;
+  border-bottom: 1px solid #C2C2C2;
+}
+#shisetsuSearch .pieceBody .columns {
+  margin-bottom: 10px;
+}
+#shisetsuSearch .pieceBody .column {
+  clear: both;
+  display: inline-block;
+  *display: inline;
+  margin-bottom: 10px;
+  vertical-align: top;
+  zoom: 1;
+}
+#shisetsuSearch .pieceBody .columns .no1 {
+  margin-right: 20px;
+}
+#shisetsuSearch .pieceBody .column .name {
+  display: inline-block;
+  /display: inline;
+  margin-right: 5px;
+  vertical-align: middle;
+  zoom: 1;
+}
+#shisetsuSearch .pieceBody .column .field {
+  display: inline-block;
+  /display: inline;
+  vertical-align: middle;
+  zoom: 1;
+}
+#shisetsuSearch .pieceBody .column .field input,
+#shisetsuSearch .pieceBody .column .field select {
+  padding: 1px;
+  border: solid 1px #999;
+}
+#shisetsuSearch .pieceBody .footMenu .left {
+  float: left;
+  width: 60%;
+}
+#shisetsuSearch .pieceBody .submitters {
+  margin: 0;
+  overflow: hidden;
+  zoom: 1;
+}
+#shisetsuSearch .pieceBody .submitters span {
+  display: inline-block;
+  /display: inline;
+  margin-bottom: 5px;
+  border: 1px solid #999999;
+  border-radius: 6px;
+  background: rgb(255,255,255); /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlMGUwZTAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(224,224,224,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(224,224,224,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e0e0e0',GradientType=0 ); /* IE6-8 */
+  cursor: pointer;
+  overflow: hidden;
+  zoom: 1;
+}
+* html #shisetsuSearch .pieceBody .submitters span {
+  background-color: #e0e0e0;
+  zoom: 1;
+}
+#shisetsuSearch .pieceBody .submitters input {
+  width: 296px;
+  margin: 0;
+  padding: 7px 15px 7px 35px;
+  /padding: 2px 15px 2px 35px;
+  border: 3px solid #FFFFFF;
+  border-radius: 6px;
+  background-image: url(/_common/themes/gis/images/ic/ic-arrow_02.png);
+  background-repeat: no-repeat;
+  background-position: 5px center;
+  background-color: transparent;
+  color: #003298;
+  font-size: 120%;
+  font-weight: bold;
+  text-align: left;
+  text-decoration: underline;
+  cursor: pointer;
+  zoom: 1;
+}
+
+/*----- quickSearch ----*/
+#quickSearch .pieceBody {
+  margin-bottom: 8px;
+}
+
+/*----- recommend -----*/
+#recommend .pieceHeader .switch {
+  display: none;
+}
+#recommend .pieceHeader {
+  margin-bottom: 2px;
+  border-radius: 3px;
+  border-right: 1px solid #adadad;
+  border-bottom: 1px solid #adadad;
+  overflow: hidden;
+}
+#recommend .pieceHeader h2:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display:block;
+  width: 48px;
+  height: 100%;
+  background-color: #0053AE;
+  background-image: url(/_common/themes/gis/images/ic/tl_ic-favorite.png);
+  background-position: 4px center;
+  background-repeat: no-repeat;
+}
+#recommend .pieceHeader h2 {
+  position: relative;
+  padding: 10px 0 8px 65px;
+  background-color: #D1E7FF;
+  font-size: 160%;
+  font-weight: bold;
+}
+#recommend .pieceBody {
+  padding: 10px 15px;
+  background-color: #F3F3F5;
+  border-bottom: 1px solid #C2C2C2;
+}
+#recommend .pieceBody ul {
+  text-align: justify;
+}
+#recommend .pieceBody li {
+  display: inline-block;
+  *display: inline;
+  width: 32.33%;
+  *margin-right: 5px;
+  margin-bottom: 8px;
+  border: solid 1px #999999;
+  border-radius: 6px;
+  background: rgb(255,255,255); /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlMGUwZTAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(224,224,224,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(224,224,224,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(224,224,224,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e0e0e0',GradientType=0 ); /* IE6-8 */
+  -ms-filter:"progid:DXImageTransform.Microsoft.gradient(GradientType=0,startcolorstr=#ffffff, endcolorstr=#e0e0e0))";
+  zoom: 1;
+  text-align: left;
+  vertical-align: top;
+  overflow: hidden;
+}
+* html #recommend .pieceBody li {
+  background-color: #e0e0e0;
+  zoom: 1;
+}
+#recommend .pieceBody li a {
+  display: block;
+  padding: 6px 5px 8px;
+  border: 3px solid #fff;
+  border-radius: 6px;
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+  text-align: center;
+}
+#recommend .pieceBody li a img {
+  display: none;
+}
+
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+@media only screen and (max-width: 799px) {
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- banner -----*/
+#banner {
+  display: none;
+}
+
+/*----- docInfo -----*/
+#docInfo {
+  margin: 0 10px 20px;
+}
+#docInfo .pieceHeader h2 {
+  margin-bottom: 20px;
+  font-size: 170%;
+}
+#docInfo .info {
+  padding: 0 5px;
+}
+#docInfo .info li {
+  margin-bottom: 20px;
+}
+#docInfo .info li span {
+  display: none;
+}
+#docInfo .next {
+  padding-top: 5px;
+  text-align: center;
+}
+
+/*----- quickSearch ----*/
+#quickSearch .pieceBody .submitters {
+  width: 100%;
+  text-align: center;
+}
+#quickSearch .pieceBody .submitters span {
+  width: 98%;
+}
+#quickSearch .pieceBody .submitters input {
+  padding: 12px 60px 12px 30px;
+  font-size: 135%;
+}
+#quickSearch .pieceBody .submitters p {
+  text-align: center;
+}
+/*----- areaSearch -----*/
+#areaSearch {
+  display: block;
+  margin-bottom: 10px;
+  padding: 18px 15px;
+  background-color: #D6D6D6;
+}
+#areaSearch .pieceContainer {
+  background: #5c5c5c;
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVjNWM1YyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  #5c5c5c 0%, #000000 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5c5c5c), color-stop(100%,#000000));
+  background: -webkit-linear-gradient(top,  #5c5c5c 0%,#000000 100%);
+  background: -o-linear-gradient(top,  #5c5c5c 0%,#000000 100%);
+  background: -ms-linear-gradient(top,  #5c5c5c 0%,#000000 100%);
+  background: linear-gradient(to bottom,  #5c5c5c 0%,#000000 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5c5c5c', endColorstr='#000000',GradientType=0 );
+  border: solid 1px #333;
+  border-radius: 5px;
+}
+#areaSearch .pieceBody {
+  background-image: url(/_common/themes/gis/images/main_sm/ic-area_search.png);
+  background-repeat: no-repeat;
+  background-position: 8px center;
+  line-height: 66px;
+}
+#areaSearch .pieceBody a {
+  display: block;
+  padding-left: 70px;
+  color: #FFF;
+  font-size: 150%;
+  text-decoration: none;
+}
+#shisetsuSearch {
+  margin-bottom: 5px;
+}
+#shisetsuSearch .pieceHeader {
+  position: relative;
+  border-right: none;
+  border-radius: 0;
+}
+#shisetsuSearch .pieceHeader h2 {
+  padding: 10px 0 8px 58px;
+  font-size: 170%;
+}
+#shisetsuSearch .pieceHeader .switch {
+  display:block !important;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-image: url(/_common/themes/gis/images/main_sm/btn-arrow_close.png);
+  background-repeat: no-repeat;
+  background-position: 98% center;
+  text-indent: -9999px;
+}
+#shisetsuSearch .pieceHeader .open {
+  background-image: url(/_common/themes/gis/images/main_sm/btn-arrow_open.png);
+}
+#shisetsuSearch .pieceBody {
+  padding: 15px;
+}
+#shisetsuSearch .pieceBody .column {
+  display: block;
+  margin: 0 0 20px;
+
+}
+#shisetsuSearch .pieceBody .no3 .field select {
+  width: 50%;
+}
+#shisetsuSearch .pieceBody .footMenu .left {
+  float: none;
+  width: 100%;
+}
+#shisetsuSearch .pieceBody .footMenu .now {
+  float: none;
+  font-size: 120%;
+  font-weight: normal;
+}
+#shisetsuSearch .pieceBody .footMenu .nowInfo {
+  float: none;
+  width: 100%;
+}
+#shisetsuSearch .pieceBody .footMenu .nowInfo .tl {
+  float: left;
+}
+#shisetsuSearch .pieceBody .submitters {
+  width: 100%;
+  text-align: center;
+}
+#shisetsuSearch .pieceBody .submitters span {
+  width: 98%;
+}
+#shisetsuSearch .pieceBody .submitters input {
+  width: 100%;
+  font-size: 135%;
+}
+#shisetsuSearch .pieceBody .submitters p {
+  text-align: center;
+}
+#recommend {
+  margin-bottom: 10px;
+}
+#recommend .pieceHeader {
+  position: relative;
+  border-right: none;
+  border-radius: 0;
+}
+#recommend .pieceHeader h2 {
+  padding: 10px 0 8px 58px;
+  font-size: 170%;
+}
+#recommend .pieceHeader .switch {
+  display:block !important;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-image: url(/_common/themes/gis/images/main_sm/btn-arrow_close.png);
+  background-repeat: no-repeat;
+  background-position: 98% center;
+  text-indent: -9999px;
+}
+#recommend .pieceHeader .open {
+  background-image: url(/_common/themes/gis/images/main_sm/btn-arrow_open.png);
+}
+#recommend .pieceBody {
+  padding: 18px 15px
+}
+#recommend .pieceBody li {
+  width: 100%;
+}
+#recommend .pieceBody li a {
+  padding: 12px 5px 10px;
+}
+#recommend .pieceBody li a img {
+  display: none;
+}
+}

@@ -1,0 +1,18 @@
+
+  <div id="docInfo" class="piece">
+    <div class="pieceContainer">
+      <div class="pieceHeader"><h2>更新情報</h2></div>
+      <div class="pieceBody">
+        <%social_update_lists.each do |update|%>
+        <div class="info">
+          <div class="day"><%=safe{update.strftime("%Y-%m-%d")}%></div>
+          <%=link_to update.title, update_public_uri(update)%>
+        </div>
+        <%end unless social_update_lists.blank?%>
+        <div class="next">
+          <a href="/doc/index.html">更新情報の一覧へ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+

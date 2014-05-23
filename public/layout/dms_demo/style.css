@@ -1,0 +1,4 @@
+@charset "UTF-8";
+@import "/_common/themes/gw/css/portal_1column.css";
+@import "/_common/themes/gw/css/gwboard/iconfile.css";#header h1 {    background-image: url("/_common/themes/dms/files/header/header-left.gif");    background-position: left top;    float: left;    height: 55px;    vertical-align: top;    width: 390px;}#header h1 a {    display: block;    height: 0 !important;    outline: 0 none;    overflow: hidden;    padding-top: 55px;    vertical-align: top;    width: 390px;}#headerBody .personal {    float: left;    line-height: 55px;    overflow: hidden;    text-overflow: ellipsis;    width: 25%;}
+#banner {  clear: both;  cursor: default;  padding-top: 2px;}.headerMenu li {  float: left;  width: 120px;  height:1%;  padding: 10px 5px 10px 5px;  text-align: center;  white-space: nowrap;}

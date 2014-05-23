@@ -1,0 +1,188 @@
+@charset "UTF-8";
+@import "/_common/themes/gis/css/base/init.css";
+@import "/_common/themes/gis/css/base/style.css";
+
+/*------------------------------------------------
+ main
+------------------------------------------------*/
+#main {
+  margin: 30px auto 0 !important;
+}
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- banner -----*/
+#banner {
+  margin-bottom: 20px;
+}
+#banner img {
+  width: 100%;
+  height: auto;
+  max-width: 950px;
+}
+
+/*----- docInfo -----*/
+#docInfo:after {
+  content: "";
+  clear: both;
+  display: table;
+  height: 0;
+}
+#docInfo {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 20px 20px 15px 30px;
+  border: 1px solid #ADADAD;
+  background-color: #fff;
+  box-shadow: 0px 5px 3px -3px #C2C2C2;
+}
+#docInfo .pieceHeader:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 10px;
+  height: 58px;
+  background-color: #DDDDE1;
+}
+#docInfo .pieceHeader {
+  float: left;
+}
+#docInfo .pieceHeader h2 {
+  color: #1B487A;
+  font-size: 160%;
+  font-weight: bold;
+}
+#docInfo .pieceBody {
+  padding: 3px 0 0 25px;
+  overflow: hidden;
+}
+#docInfo .info {
+  margin-bottom: 10px;
+  padding-left: 12px;
+  background-image: url("/_common/themes/gis/images/ic/ic-dot_01.png");
+  background-position: left 0.4em;
+  background-repeat: no-repeat;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#docInfo .next {
+  text-align: right;
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+
+/*----- howto -----*/
+#howto {
+  display: block;
+  margin-bottom: 15px;
+  padding: 6px 0 4px 30px;
+  background-image: url(/_common/themes/gis/images/ic/tl_ic-handle.png);
+  background-position: left 0.2em;
+  background-repeat: no-repeat;
+}
+#howto h2 {
+  font-size: 110%;
+  font-weight: bold;
+}
+
+/*----- qrCode -----*/
+#qrCode {
+  margin-bottom: 15px;
+}
+#qrCode .pieceHeader {
+  padding: 6px 0 4px 30px;
+  background-image: url(../../images/ic/tl_ic-smartphone.png);
+  background-position: left 0.2em;
+  background-repeat: no-repeat;
+}
+#qrCode .pieceHeader h2 {
+  color: #1B487A;
+  font-size: 110%;
+  font-weight: bold;
+}
+#qrCode .pieceBody {
+  padding: 5px;
+  font-size: 90%;
+  font-weight: bold;
+  text-align: center;
+}
+#qrCode .pieceBody p {
+  margin-bottom: 10px;
+  text-align: left;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+#qrCode .pieceBody p {
+  line-height: 1.5;
+}
+}
+#qrCode img {
+  vertical-align: middle;
+}
+
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+@media only screen and (max-width: 799px) {
+
+/*------------------------------------------------
+ main
+------------------------------------------------*/
+#main {
+  margin: 10px auto 0 !important;
+}
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- docInfo -----*/
+#docInfo {
+  padding: 20px 10px 15px 20px;
+}
+#docInfo .pieceHeader {
+  float: none;
+  margin-bottom: 20px;
+}
+#docInfo .pieceHeader h2 {
+  font-size: 180%;
+}
+#docInfo .pieceBody {
+  padding: 0 0 0 5px;
+}
+#docInfo .info {
+  margin-bottom: 20px;
+}
+#docInfo .next {
+  padding-top: 5px;
+  text-align: center;
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+
+/*----- howto -----*/
+#howto h2 {
+  font-size: 130%;
+}
+
+/*----- qrCode -----*/
+#qrCode .pieceHeader h2 {
+  font-size: 130%;
+}
+#qrCode .pieceBody {
+  text-align: left;
+}
+
+/*----- qrCode -----*/
+#qrCode {
+  display: none;
+}
+}

@@ -1,0 +1,9 @@
+
+<div id="makeMeScrollable<%=params[:id]%>" class="makeMeScrollable" width="400px">
+<%for item in @items
+photo_items = item.get_public_photos(1)
+next if photo_items.blank?
+%>
+<a href="javascript:void(0);" class="markerLink" id="marker_<%=item.rid%>_link"><%=image_tag(photo_items[0].thumbnail_public_photo_path, :height=>"150px")%></a>
+<%end%>
+</div>

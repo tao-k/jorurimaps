@@ -1,0 +1,11 @@
+<%
+controller_title = translate_controller
+action_title = translate_action
+%>
+<div class="navi">
+<%= link_to 'トップページ', '/' %>
+&gt; <%= link_to '地図情報データベース',   {:controller => '/gis/admin/fronts'} %>
+&gt; <%= link_to @map.title,   {:controller => '/gis/admin/maps', :action=>:show, :id => @map.id} %>
+&gt; <%= link_to controller_title, {:controller => params[:controller]} %>
+<%= " > #{action_title}" if action_title.present? %>
+</div>

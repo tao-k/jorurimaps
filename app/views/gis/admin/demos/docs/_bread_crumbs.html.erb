@@ -1,0 +1,12 @@
+
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+  <%=link_to "トップページ", url_for({:controller=>"/gis/admin/demos", :action=>:show, :id=>@map.code})%>  &gt;
+  <%=link_to "更新情報一覧", url_for({:controller=>"/gis/admin/demos/docs", :action=>:index, :demo_id=>@map.code})%>
+  <%if @item%> &gt; <%=link_to @item.title, url_for({:controller=>"/gis/admin/demos/docs", :action=>:show, :demo_id=>@map.code, :id=>@item.id})%><%end%>
+    </div>
+  </div>
+</div>
+</div>

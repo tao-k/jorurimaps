@@ -1,0 +1,914 @@
+@charset "UTF-8";
+
+/*
+ * legend
+ */
+.mapLegends .legend .legendIcon {width: 16px; height: 16px; }
+.legend { float:left; padding-left: 5px;}
+.legendFooter { clear:both; }
+#legendPanel .x-window-header {
+  position: relative;
+}
+#legendPanel .x-window-header:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 60px;
+  width: 100%;
+  height: 0;
+  padding-top: 13px;
+  background-image: url(/_common/themes/gis/images/bg_stripe_b.gif);
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+
+#legendPanel .x-window-header:after {
+  content: "凡例";
+  position: relative;
+  float: left;
+  line-height: 17px;
+  padding-right: 4px;
+  font-weight: bold;
+  background-color: #F3F3F5;
+}
+#legendPanel .x-window-header-text {
+  display: none;
+}
+#legendPanel .x-window-ml {
+  padding-left: 0;
+}
+#legendPanel .x-window-mr {
+  padding-right: 0;
+}
+#legendPanel .x-window-mc {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+#legendPanel .x-window-bc {
+  height: 0;
+}
+#legendPanel .x-panel-body {
+  padding: 8px 5px;
+}
+
+
+/*
+ * timeline for map
+ */
+.chronologies h2 {color: black; font-weight:bold;}
+.chronologies h2.share_methanes_create {color: #FF0000 }
+.chronologies h2.share_methanes_update {color: #E36600 }
+.chronologies h2.share_human_damages_create {color: #FF0000 }
+.chronologies h2.share_human_damages_update {color: #E36600 }
+.chronologies .share_methanes_create .create {color: #FF0000 }
+.chronologies .share_methanes_update .update {color: #E36600 }
+.chronologies .share_human_damages_create .create {color: #FF0000 }
+.chronologies .share_human_damages_update .update {color: #E36600 }
+
+.chronologies a {color: #0000FF }
+.chronologies div { padding: 2px }
+.chronologies .chronology .author {color: #666666 }
+
+
+/*
+ * print
+ */
+#printPanel .x-window-header {
+  position: relative;
+}
+#printPanel .x-window-header:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 60px;
+  width: 100%;
+  height: 0;
+  padding-top: 13px;
+  background-image: url(/_common/themes/gis/images/bg_stripe_b.gif);
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+#printPanel .x-window-header:after {
+  content: "印刷パネル";
+  position: relative;
+  float: left;
+  line-height: 17px;
+  padding-right: 4px;
+  font-weight: bold;
+  background-color: #F3F3F5;
+}
+#printPanel .x-window-header-text {
+  display: none;
+}
+#printPanel .x-window-ml {
+  padding-left: 0;
+}
+#printPanel .x-window-mr {
+  padding-right: 0;
+}
+#printPanel .x-window-mc {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+#printPanel .x-window-bc {
+  height: 0;
+}
+#printPanel .x-panel-body {
+  padding: 8px 5px;
+}
+
+
+/*
+ * draw tool
+ */
+#drawPanel .x-window-header {
+  position: relative;
+}
+
+#drawPanel .x-window-header:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 60px;
+  width: 100%;
+  height: 0;
+  padding-top: 13px;
+  background-image: url(/_common/themes/gis/images/bg_stripe_b.gif);
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+#drawPanel .x-window-header:after {
+  content: "作図パネル";
+  position: relative;
+  float: left;
+  line-height: 17px;
+  padding-right: 4px;
+  font-weight: bold;
+  background-color: #F3F3F5;
+}
+#drawPanel .x-window-header-text {
+  display: none;
+}
+.drawFeatureTool {
+  padding: 8px 5px;
+  color: #333;
+  font-size: 14px;
+}
+.drawFeatureTool .labelText{
+  color: #333;
+}
+#drawPanel .x-window-ml {
+  padding-left: 0;
+}
+#drawPanel .x-window-mr {
+  padding-right: 0;
+}
+#drawPanel .x-window-mc {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+#drawPanel .x-window-bc {
+  height: 0;
+}
+#drawPanel .x-panel-body {
+  padding: 8px 5px;
+}
+
+
+/*
+ * link
+ */
+#linkPanel .x-window-header {
+  position: relative;
+}
+#linkPanel .x-window-header:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 60px;
+  width: 100%;
+  height: 0;
+  padding-top: 13px;
+  background-image: url(/_common/themes/gis/images/bg_stripe_b.gif);
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+#linkPanel .x-window-header:after {
+  content: "リンクパネル";
+  position: relative;
+  float: left;
+  line-height: 17px;
+  padding-right: 4px;
+  font-weight: bold;
+  background-color: #F3F3F5;
+}
+#linkPanel .x-window-header-text {
+  display: none;
+}
+#linkPanel .x-window-ml {
+  padding-left: 0;
+}
+#linkPanel .x-window-mr {
+  padding-right: 0;
+}
+#linkPanel .x-window-mc {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+#linkPanel .x-window-bc {
+  height: 0;
+}
+#linkPanel .x-panel-body {
+  padding: 8px 5px;
+}
+
+
+/*
+ * help
+ */
+#helpPanel .x-window-header {
+  position: relative;
+}
+#helpPanel .x-window-header:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 60px;
+  width: 100%;
+  height: 0;
+  padding-top: 13px;
+  background-image: url(../images/bg_stripe_b.gif);
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+#helpPanel .x-window-header:after {
+  content: "ヘルプパネル";
+  position: relative;
+  float: left;
+  line-height: 17px;
+  padding-right: 4px;
+  font-weight: bold;
+  background-color: #F3F3F5;
+}
+#helpPanel .x-window-header-text {
+  display: none;
+}
+#helpPanel .x-window-ml {
+  padding-left: 0;
+}
+#helpPanel .x-window-mr {
+  padding-right: 0;
+}
+#helpPanel .x-window-mc {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+#helpPanel .x-window-bc {
+  height: 0;
+}
+#helpPanel .x-panel-body {
+  padding: 8px 5px;
+}
+
+
+/*
+ * measurePanel
+ */
+#measurePanel .x-window-header {
+  position: relative;
+}
+#measurePanel .x-window-header:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 60px;
+  width: 100%;
+  height: 0;
+  padding-top: 13px;
+  background-image: url(/_common/themes/gis/images/bg_stripe_b.gif);
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+#measurePanel .x-window-header:after {
+  content: "計測パネル";
+  position: relative;
+  float: left;
+  line-height: 17px;
+  padding-right: 4px;
+  font-weight: bold;
+  background-color: #F3F3F5;
+}
+#measurePanel .x-window-header-text {
+  display: none;
+}
+#measurePanel .x-window-ml {
+  padding-left: 0;
+}
+#measurePanel .x-window-mr {
+  padding-right: 0;
+}
+#measurePanel .x-window-mc {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+#measurePanel .x-window-bc {
+  height: 0;
+}
+#measurePanel .x-panel-body {
+  padding: 8px 5px;
+}
+
+
+/*
+ * baseLayerList
+ */
+
+#baseLayerList {
+  padding: 8px 5px;
+  color: #333;
+  font-size: 14px;
+}
+
+
+#mapContainer {
+  width :100%;
+}
+#mapShow{
+  height: 650px;
+}
+
+#header div.printHeader{
+  color: #000000;
+}
+#layerDisplay {
+  background: none repeat scroll 0 0 #FFFFFF;
+  width: 20%;
+  height: 650px;
+  float:left;
+  overflow: auto;
+}
+#mapdisplay {
+  float:right;
+  width: 80%;
+  height: 650px;
+}
+.clearfix:after {
+  display:block;
+  clear:both;
+  height:0px;
+  visibility:hidden;
+  content:".";
+}
+.clearfix {
+  min-height: 1px;
+}
+* html .clearfix {
+  height: 1px;
+  height: auto;
+  overflow: hidden;
+}
+.layerSet{
+  color: #000000;
+}
+
+
+/*header*/
+.x-panel-body {
+  border: none !important;
+}
+#header {
+}
+#header #headerContainer {
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNGUxZGQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  #ffffff 0%, #e4e1dd 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e4e1dd)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ffffff 0%,#e4e1dd 100%); /* Chrome10+,Safari5.1+ */
+  background: linear-gradient(to bottom,  #ffffff 0%,#e4e1dd 100%); /* W3C */
+  background-color: #E4E1DD;
+  border-bottom: solid 1px #999;
+}
+#header #headerBody {
+  position: relative;
+  padding-left: 10px;
+  overflow: hidden;
+}
+#header #headerBody .piece {
+  margin: 0;
+}
+#header h1 {
+  min-height: 42px;
+  padding: 2px 0 0 10px !important;
+  font-size: 210%;
+  font-family: "Hiragino Kaku Gothic Pro","ヒラギノ角ゴ Pro W3",Meiryo,"メイリオ","MS PGothic","ＭＳ　Ｐゴシック",sans-serif;
+  font-weight: bold;
+}
+#header h1 img {
+  display: inline-block;
+  position: absolute;
+  top: 15%;
+  left: 10px;
+  margin-right: 10px;
+  padding-bottom: 5px;
+}
+/* portal1 header */
+.logo {
+  margin-left: 0;
+}
+.logo h1 {
+  margin-right: 0 !important;
+  padding: 0 0 0 10px !important;
+}
+.logo h1 a {
+  color: #000000;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* rightMenu */
+.rightMenu {
+  margin: 15px 0 10px 0;
+  overflow: hidden;
+}
+.rightMenu h1 {
+  float: left;
+  margin-right: 0 !important;
+  padding: 0 0 0 10px !important;
+}
+.rightMenu img {
+  float: left;
+  width: 100%;
+  max-width: 45px;
+  height: auto;
+}
+
+/* /portal1 header */
+
+#header .department {
+  float: left;
+  line-height: 67px;
+  white-space: nowrap;
+}
+#header .tokushimahp {
+  position: absolute;
+  top: 7px;
+  right: 5px;
+  display: block;
+  width: 159px;
+  height: 0;
+  padding-top: 20px;
+  background-image: url(/_common/themes/gis/images/kenHP_a.gif);
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+.linkMenu {
+  padding: 10px 0;
+  background: #EBEBEB;
+}
+.sougouGIs {
+  display: block;
+  width: 217px;
+  height: 0;
+  margin: 0 auto 10px;
+  padding-top: 28px;
+  background-image: url(/_common/themes/gis/images/bn_gisportal.png);
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+.sougouGIs:after {
+  content: ".";
+  display: block;
+  background: #EBEBEB;
+  text-indent: -9999px;
+}
+
+.pref {
+  display: block;
+  width: 217px;
+  height: 28px;
+  margin: 0 auto;
+  background-image: url(/_common/themes/gis/images/bn-tokushima_pref.gif);
+  background-repeat: no-repeat;
+  text-indent: -9999px;
+}
+#header #breadCrumbs {
+  padding: 5px 10px;
+  border-bottom: solid 1px #999;
+}
+#header #breadCrumbs a {
+  color: #003399;
+}
+
+/*-----------------------------------------
+main
+-----------------------------------------*/
+/*-- confirmMessage --*/
+#confirmMessage  {
+  width: auto;
+  padding: 15px 15px 0;
+  background: #767676;
+}
+.jspScrollable {
+  width: auto;
+}
+.jspContainer {
+    overflow: hidden;
+    position: relative;
+    width: auto !important;
+}
+.jspPane {
+    position: absolute;
+    left: 0;
+    right: 25px;
+    width: auto !important;
+    padding: 10px !important;
+}
+.jspVerticalBar {
+    background: none repeat scroll 0 0 #FF0000;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 16px;
+}
+.jspTrack {
+    background: none repeat scroll 0 0 #DDDDEE;
+    position: relative;
+}
+.jspDrag {
+    background: none repeat scroll 0 0 #BBBBDD;
+    cursor: pointer;
+    left: 0;
+    position: relative;
+    top: 0;
+}
+.jspVerticalBar *, .jspHorizontalBar * {
+    margin: 0;
+    padding: 0;
+}
+#confirmMessage .scroll {
+  paddin: 0 10px;
+}
+#confirmMessage .info {
+  position: relative;
+  width: auto !important;
+  height: 295px;
+  padding: 10px;
+  background: #FFFFFF;
+  overflow: scroll;
+  -webkit-overflow-scrolling:touch
+}
+#confirmMessage .info p {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#confirmMessage .info hr {
+  display: none;
+}
+#confirmMessage h2,
+#confirmMessage h3 {
+  margin: 5px 0 5px 0;
+}
+#confirmMessage h4 {
+/*
+  position: relative;
+  top: -10px;
+  left: -10px;
+  width: 100%;
+*/
+  padding: 15px 5px 15px 15px;
+  background: #ebebeb; /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ViZWJlYiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkNmQ2ZDYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  #ebebeb 0%, #d6d6d6 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ebebeb), color-stop(100%,#d6d6d6)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ebebeb 0%,#d6d6d6 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #ebebeb 0%,#d6d6d6 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #ebebeb 0%,#d6d6d6 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #ebebeb 0%,#d6d6d6 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebebeb', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-8 */
+  font-size: 130%;
+}
+#confirmMessage a {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #ffffff; /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlYmViZWIiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  #ffffff 0%, #ebebeb 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#ebebeb)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ffffff 0%,#ebebeb 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #ffffff 0%,#ebebeb 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #ffffff 0%,#ebebeb 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #ffffff 0%,#ebebeb 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ebebeb',GradientType=0 ); /* IE6-8 */
+  border: solid 1px #999;
+  border-radius: 3px;
+  color: #333;
+  font-weight: bold;
+}
+#confirmMessage a:hover {
+  background: #FFF;
+}
+#confirmMessage #btnContainer {
+  padding: 15px 0;
+  background: #ebebeb; /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ViZWJlYiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNkNmQ2ZDYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  #ebebeb 0%, #d6d6d6 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ebebeb), color-stop(100%,#d6d6d6)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ebebeb 0%,#d6d6d6 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #ebebeb 0%,#d6d6d6 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #ebebeb 0%,#d6d6d6 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #ebebeb 0%,#d6d6d6 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebebeb', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-8 */
+  text-align: center;
+}
+#confirmMessage a#closeMessage {
+  margin-right: 5px;
+}
+#canvas {
+  width: auto !important;
+  padding: 0 15px 0 !important;
+}
+#page-tourismTest-search #canvas {
+  padding: 15px 15px 0 !important;
+}
+
+/*--layerMenu--*/
+#layerMenu {
+  margin: 0 !important;
+  background: #767676;
+  padding: 10px 0;
+}
+#layerMenu .dropdown {
+  display: block !important;
+}
+#layerMenu .dropdown a {
+  display: block !important;
+  border: 2px solid #999999;
+  border-radisu: 3px;
+  background: #ffffff; /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjY2QyZTAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  #ffffff 0%, #ccd2e0 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#ccd2e0)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #ffffff 0%,#ccd2e0 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #ffffff 0%,#ccd2e0 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #ffffff 0%,#ccd2e0 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #ffffff 0%,#ccd2e0 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ccd2e0',GradientType=0 ); /* IE6-8 */
+  color: #0053AE;
+  font-size: 130%;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+}
+#layerMenu div.current {
+  border-bottom: 1px solid #ADADAD;
+  bordeer-radius: 0 0 3px 3px;
+}
+#layerMenu a.current {
+  border: 2px solid #ADADAD;
+  border-bottom: 1px solid #ADADAD;
+  border-radius: 3px 3px 0 0;
+  background: #FFFFFF !important;
+}
+#layerMenu #tabContainer {
+  margin: 0 0 15px;
+}
+#layerMenu #tabContainer .layerSet {
+  background: #FFFFFF;
+}
+#layerMenu .layerSet .layerTitleLink {
+  position: relative;
+  margin: 0 !important;
+  border-left: 2px solid #ADADAD;
+  border-right: 2px solid #ADADAD;
+  border-bottom: 1px solid #ADADAD;
+}
+#layerMenu .layerSet .open {
+  border-bottom: none;
+}
+#layerMenu #tabContainer .dropdown {
+  margin: 10px auto 0;
+}
+#layerMenu #tab1 {
+  border: 2px solid #ADADAD;
+  border-top: none;
+  bordeer-radius: 0 0 3px 3px;
+}
+
+/*--footer--*/
+#footer {
+  padding: 8px 15px !important;
+  border-top: solid 1px #999;
+}
+#footerBody {
+  padding-top: 0 !important;
+}
+#footerBody .copyright {
+  width: auto !important;
+  padding-right: 5px !important;
+  background-color: #fff !important;
+  text-align: center !important;
+}
+#footerBody .copyright:before {
+  color: #333;
+}
+#footerBody .copyright a {
+  position: absolute;
+  top: 0px;
+  right: 5px;
+}
+
+.dataLbl {
+    display: none;
+}
+
+.dataLayersDiv {
+    display: none;
+}
+
+/*-----------------------------------------
+portal1 css
+-----------------------------------------*/
+#page-tourismTest-search #main {
+  margin: 0 !important;
+  background: #767676;
+}
+#page-tourismTest-search #contentBody > br {
+  display: none;
+}
+#page-bousai #popupText {
+  display: none;
+}
+#popupText {
+  position: relative;
+  margin: 5px 15px;
+  background: #FFFFFF;
+  border-radius: 5px;
+}
+#popupText .closePop {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-block;
+  padding: 0 8px 3px;
+  background:#E0E0E0;
+  border:1px solid #999999;
+  border-radius: 4px;
+  font-size: 150%;
+  z-index: 100;
+}
+#popupText > div {
+  position: relative;
+  padding: 10px 40px 10px 10px;
+  border: 5px solid #B1C3E2;
+  border-radius: 5px;
+  line-height: 1.5;
+}
+#popupText .title {
+  font-size: 150%;
+  font-weight: bold;
+}
+#popupText .showLink {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  display: block;
+  width: 30px;
+  height: 30px;
+  font-size: 150%;
+  text-indent: -9999px;
+}
+#popupText .showLink:after {
+  content: "▼";
+  position: absolute;
+  top: 0;
+  display: block;
+  color: #B1C3E2;
+  text-indent: 0;
+  text-align: center;
+  -moz-transform: rotate(-90deg);
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+}
+#popupText > div img {
+  max-width: 100%;
+}
+#shisetsu {
+  margin: 0 15px 10px;
+  border: 2px solid #999999;
+  border-radius: 3px;
+}
+#listPrev:after {
+  content: "検索結果";
+  display: block;
+  position: absolute;
+  top: 7px;
+  left: 8px;
+  text-indent: 0;
+}
+#listPrev {
+  position: relative;
+  display: block !important;
+  padding: 7px 5px;
+  background: url(../images/ic/ic-arrow-pageslide_up-off.png) center center no-repeat, -moz-linear-gradient(top,  #ffffff 0%, #d6d0cd 100%),; /* FF3.6+ */
+  background: url(../images/ic/ic-arrow-pageslide_up-off.png) center center no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#d6d0cd)); /* Chrome,Safari4+ */
+  background: url(../images/ic/ic-arrow-pageslide_up-off.png) center center no-repeat, -webkit-linear-gradient(top,  #ffffff 0%,#d6d0cd 100%); /* Chrome10+,Safari5.1+ */
+  background: url(../images/ic/ic-arrow-pageslide_up-off.png) center center no-repeat, linear-gradient(to bottom,  #ffffff 0%,#d6d0cd 100%); /* W3C */
+  color: #000;
+  border: none;
+  font-size: 130%;
+  font-weight: bold;
+  text-align: center;
+  text-indent: -9999px;
+}
+#listPrev.active {
+  background: url(../images/ic/ic-arrow-pageslide_up.png) center center no-repeat, -moz-linear-gradient(top,  #ffffff 0%, #d6d0cd 100%),; /* FF3.6+ */
+  background: url(../images/ic/ic-arrow-pageslide_up.png) center center no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#d6d0cd)); /* Chrome,Safari4+ */
+  background: url(../images/ic/ic-arrow-pageslide_up.png) center center no-repeat, -webkit-linear-gradient(top,  #ffffff 0%,#d6d0cd 100%); /* Chrome10+,Safari5.1+ */
+  background: url(../images/ic/ic-arrow-pageslide_up.png) center center no-repeat, linear-gradient(to bottom,  #ffffff 0%,#d6d0cd 100%); /* W3C */
+}
+#listNext {
+  display: block !important;
+  padding: 7px 5px;
+  background: url(../images/ic/ic-arrow-pageslide_down-off.png) center center no-repeat, -moz-linear-gradient(top,  #ffffff 0%, #d6d0cd 100%),; /* FF3.6+ */
+  background: url(../images/ic/ic-arrow-pageslide_down-off.png) center center no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#d6d0cd)); /* Chrome,Safari4+ */
+  background: url(../images/ic/ic-arrow-pageslide_down-off.png) center center no-repeat, -webkit-linear-gradient(top,  #ffffff 0%,#d6d0cd 100%); /* Chrome10+,Safari5.1+ */
+  background: url(../images/ic/ic-arrow-pageslide_down-off.png) center center no-repeat, linear-gradient(to bottom,  #ffffff 0%,#d6d0cd 100%); /* W3C */
+  color: #000;
+  border: none;
+  font-size: 130%;
+  font-weight: bold;
+  text-align: center;
+  text-indent: -9999px;
+}
+#listNext.active {
+  background: url(../images/ic/ic-arrow-pageslide_down.png) center center no-repeat, -moz-linear-gradient(top,  #ffffff 0%, #d6d0cd 100%),; /* FF3.6+ */
+  background: url(../images/ic/ic-arrow-pageslide_down.png) center center no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#d6d0cd)); /* Chrome,Safari4+ */
+  background: url(../images/ic/ic-arrow-pageslide_down.png) center center no-repeat, -webkit-linear-gradient(top,  #ffffff 0%,#d6d0cd 100%); /* Chrome10+,Safari5.1+ */
+  background: url(../images/ic/ic-arrow-pageslide_down.png) center center no-repeat, linear-gradient(to bottom,  #ffffff 0%,#d6d0cd 100%); /* W3C */
+}
+
+#shisetsu > a.active:-child
+.markerListPage span {
+  display: block;
+}
+.markerListPage a {
+  display: block;
+  padding: 14px 0 12px 10px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #767676;
+  color: #000000;
+}
+.markerListPage a:hover {
+  text-decoration: none;
+}
+.markerListPage br {
+  display: none;
+}
+.backToTOp {
+  display: block;
+  width: 130px;
+  margin: 10px auto;
+  padding: 15px 40px;
+  border: 1px solid #0053AE;
+  border-radius: 12px;
+  background: url(../images/ic/ic-arrow_back.png) 10px center no-repeat, -moz-linear-gradient(top,  #3278bf 0%, #0053a4 100%); /* FF3.6+ */
+  background: url(../images/ic/ic-arrow_back.png) 10px center no-repeat, -webkit-gradient(linear, left top, left bottom, color-stop(0%,#3278bf), color-stop(100%,#0053a4)); /* Chrome,Safari4+ */
+  background: url(../images/ic/ic-arrow_back.png) 10px center no-repeat, -webkit-linear-gradient(top,  #3278bf 0%,#0053a4 100%); /* Chrome10+,Safari5.1+ */
+  background: url(../images/ic/ic-arrow_back.png) 10px center no-repeat, linear-gradient(to bottom,  #3278bf 0%,#0053a4 100%); /* W3C */
+  color: #FFFFFF !important;
+  font-size: 130%;
+  font-weight: bold;
+  text-align: center;
+}
+#page-tourismTest-search #layerMenu {
+  padding: 0 0 15px;
+}
+#page-tourismTest-search #layerMenu #tabContainer {
+  background-color: transparent;
+}
+#page-tourismTest-search #layerMenu #tabContainer .dropdown {
+  margin: 10px 0 0;
+}
+#page-tourismTest-search #layerMenu #tabContainer .layerSet .layerTitleLink {
+  margin: 0 0 10px;
+  background-color: #FFFFFF;
+}
+#page-tourismTest-search #layerMenu #tab1 {
+  background-color: #FFFFFF;
+}

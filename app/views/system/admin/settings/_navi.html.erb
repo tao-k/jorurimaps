@@ -1,0 +1,11 @@
+<%
+controller_title = translate_controller
+action_title = translate_action
+%>
+<div class="navi">
+<%= link_to 'トップページ', '/' %>
+&gt; <%= link_to 'システム管理',   {:controller => 'system/admin/tops'} %>
+&gt; <%= link_to '環境設定',       {:controller => 'system/admin/settings', :name => :mail_subsystem} %>
+&gt; <%= link_to @setting[:title], {:controller => 'system/admin/settings', :name => @setting[:name]} %>
+<%= " > #{action_title}" if action_title.present? %>
+</div>

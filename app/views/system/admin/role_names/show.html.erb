@@ -1,0 +1,28 @@
+<div class="piece AdminMessage">
+
+
+<div class="pieceBody">
+
+
+<table class="show">
+  <tr>
+    <th>機能名</th>
+    <td><%= @item.display_name %></td>
+  </tr>
+  <tr>
+    <th>機能コード</th>
+    <td><%= @item.table_name %></td>
+  </tr>
+  <tr>
+    <th>表示順</th>
+    <td><%= @item.sort_no %></td>
+  </tr>
+  <tr>
+    <th>割り当て権限名</th>
+    <td><%= Gis.join [System::RoleNamePriv.get_priv_names(@item.id)], '、' %></td>
+  </tr>
+</table>
+
+
+</div>
+</div>

@@ -1,0 +1,23 @@
+<table class="index">
+  
+  <tr>
+    <th style="text-align: center;">詳細</th>
+    <th style="width: 150px; text-align: center;">バージョン情報</th>
+    <th style="width: 150px; text-align: center;">作成日</th>
+    <th style=""></th>
+    <th style="width: 60px;"></th>
+  </tr>
+  
+  <% for item in @items %>
+  <tr class="<%= cycle '', 'cycle' %>">
+    <td class="showLink"><%= link_to '詳細', url_for(:action => :show, :id => item.version) %></td>
+    <td style="text-align: center;"><%= item.version %></td>
+    <td style="text-align: center;"><%= item.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+    <td></td>
+    <td style="text-align: center;"><%= link_to '削除', url_for(:action => :destroy, :id => item.version), :confirm => '削除してよろしいですか？', :method => :delete %></td>
+  </tr>
+  <% end %>
+
+</table>
+
+<%= paginate @items %>

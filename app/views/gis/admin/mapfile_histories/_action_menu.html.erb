@@ -1,0 +1,8 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+<% when 'show' %>
+  <%= button_to '戻る', {:controller => "gis/admin/mapfiles", :action => :show, :id =>@item.mapfile_id}, :method => :get%>
+  <%= button_to '復元', {:action => :restore} , :method => :get , :confirm => 'マップファイルをこのリビジョンに戻しますか？'%>
+<% end %>
+</span>

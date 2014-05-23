@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<link rel="shortcut icon" href="/images/favicon.ico"  />
+<title><%= Page.title || @page_title %> - <%= Site.title %></title>
+<%= javascript_include_tag :application %>
+<%=raw @js.map{|js| javascript_include_tag js}.join("\n") if @js %>
+<%=raw @dynamic_js.map{|js| javascript_include_tag url_for({:controller => js[:controller], :action => js[:action]})}.join("\n") if @dynamic_js %>
+<%= stylesheet_link_tag :application %>
+<%= stylesheet_link_tag '/layout/gis/base.css' %>
+<%= stylesheet_link_tag '/_common/themes/gis/css/print.css', :media=>'print' %>
+<%=raw @css.map{|css| stylesheet_link_tag css}.join("\n") if @css %>
+<%= yield :header %>
+</head>
+<body <%= Page.body_id %>>
+  <%= yield :header %>
+<div id="container">
+
+<!--ここからヘッダー-->
+<div id="header">
+<div id="headerBody">
+<%= render :partial => 'layouts/admin/gis/header' %>
+</div>
+</div>
+<!--ここまでヘッダー-->
+
+<!--ここからバナー-->
+<div id="banner">
+<div id="bannerBody">
+<%= render :partial => 'layouts/admin/gis/header_menus' %>
+</div>
+</div>
+<!--ここまでバナー-->
+
+<!--ここからナビ-->
+<div id="navi">
+<div id="naviBody">
+
+</div>
+</div>
+<!--ここまでナビ-->
+
+<!--ここからナビ2-->
+<div id="navi2">
+<div id="navi2Body">
+<%= render :partial => controller.controller_path + '/menu' rescue nil %>
+</div>
+</div>
+<!--ここまでナビ-->
+
+<!--ここからメインコンテンツ-->
+<div id="main">
+<div id="wrapper">
+<!--ここからコンテンツ-->
+<div id="content">
+<div id="contentContainer">
+<div id="contentHeader">
+<%= render :partial => controller.controller_path + '/title' rescue nil %>
+<%= render :partial => 'layouts/admin/gis/notice' %>
+</div>
+<div id="contentBody">
+<%= yield %>
+</div>
+<div id="contentFooter"></div>
+</div>
+</div>
+<!--ここまでコンテンツ-->
+<!--ここから左サイド-->
+<div id="menu">
+<div id="menuContainer">
+<div id="menuHeader"></div>
+<div id="menuBody">
+</div>
+<div id="menuFooter"></div>
+</div>
+</div>
+<!--ここまで左サイド-->
+</div>
+<!--ここから右サイド-->
+<div id="links">
+<div id="linksContainer">
+<div id="linksHeader"></div>
+<div id="linksBody">右サイド</div>
+<div id="linksFooter"></div>
+</div>
+</div>
+<!--ここまで右サイド-->
+</div>
+<!--ここまでメインコンテンツ-->
+
+<!--ここからフッター-->
+<div id="footer">
+<div id="footerContainer">
+<div id="footerHeader"></div>
+<div id="footerBody">
+<%= render :partial => 'layouts/admin/gis/footer' %>
+</div>
+<div id="footerFooter"></div>
+</div>
+</div>
+<!--ここまでフッター-->
+
+</div>
+</body>
+</html>

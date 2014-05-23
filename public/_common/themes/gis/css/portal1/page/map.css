@@ -1,0 +1,232 @@
+@charset "UTF-8";
+@import "/_common/themes/gis/css/portal1/base/init.css";
+@import "/_common/themes/gis/css/portal1/base/style.css";
+
+/*------------------------------------------------
+ main
+------------------------------------------------*/
+#main {
+  margin-top: 0 !important;
+}
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+#content {
+  float: none !important;
+  margin-right: 0 !important;
+}
+#contentBody {
+  padding-right: 0 !important;
+}
+
+/*----- contentMap -----*/
+#contentMap {
+  margin-bottom: 5px;
+}
+#contentMap .header {
+  position: relative;
+  margin: 15px 10px 30px;
+  padding: 10px 10px 10px 30px;
+  border-bottom: 1px solid #C2C2C2;
+}
+#contentMap .header h1 {
+  font-size: 150%;
+  font-weight: bold;
+}
+#contentMap .header h1:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 3px;
+  display: block;
+  width: 12px;
+  background-color: #0053AE;
+  border-radius: 3px;
+}
+#contentMap .body {
+  margin-bottom: 25px;
+  padding: 0 20px;
+}
+#contentMap .body h2 {
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  border-left: 10px solid #0053AE;
+  border-radius: 4px;
+  background-color: #D1E7FF;
+  font-weight: bold;
+}
+#contentMap .body p {
+  padding: 0 5px;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentMap .body table {
+  width: 100%;
+  margin: 0 0 10px;
+  word-wrap: break-word;
+  word-break: break-all;
+  table-layout: fixed;
+}
+#contentMap .body table th {
+  width: 25%;
+  padding: 8px 10px;
+  border: solid 1px #ADADAD;
+  border-right: none;
+  background-color: #D1E7FF;
+  text-align: left;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentMap .body table td {
+  padding: 8px 10px;
+  border: solid 1px #C2C2C2;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentMap .body table tr.dt td {
+  border-left: none;
+}
+#contentMap .body table tr.pic td {
+  padding: 10px;
+}
+#contentMap .body table tr.pic td img {
+  width: auto;
+  height: 120px;
+  margin-right: 2px;
+}
+#contentMap .body table tr.tx td {
+  padding: 10px;
+}
+#contentMap .body table tr.tx td div {
+  margin-bottom: 20px;
+}
+.back {
+  clear: both;
+  margin-bottom: 20px;
+  text-align: center;
+}
+#contentMap .body table tr.map td {
+  padding: 10px;
+}
+#contentMap .body table tr.map td iframe {
+  width: 100%;
+}
+
+div.toTop {
+  padding: 0 20px;
+  text-align: right;
+}
+div.toTop a {
+  display: inline-block;
+  /display: inline;
+  padding: 8px 10px;
+  background-color: #EBEBEB;
+  color: #000000;
+  text-decoration: none;
+}
+
+/*----- map ui -----*/
+.olControlPanZoomBar div:nth-of-type(1) {
+  position: absolute;
+  top: 4px !important;
+  left: 12px !important;
+  width: 28px !important;
+  height: 18px !important;
+}
+.olControlPanZoomBar div:nth-of-type(1) img{
+  width: 28px !important;
+  height: 18px !important;
+}
+div#OpenLayers.Control.PanZoomBar_79_panup {
+  width: 118px !important;
+  height: 18px !important;
+}
+
+.olControlPanZoomBar div:nth-of-type(2) {
+  top: 22px !important;
+  left: 2px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+.olControlPanZoomBar div:nth-of-type(2) img {
+  width: 24px !important;
+  height: 24px !important;
+}
+.olControlPanZoomBar div:nth-of-type(3) {
+  top: 22px !important;
+  left: 26px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+.olControlPanZoomBar div:nth-of-type(3) img {
+  width: 24px !important;
+  height: 24px !important;
+}
+.olControlPanZoomBar div:nth-of-type(4) {
+  top: 46px !important;
+  left: 12px !important;
+  width: 28px !important;
+  height: 18px !important;
+}
+.olControlPanZoomBar div:nth-of-type(4) img {
+  width: 28px !important;
+  height: 18px !important;
+}
+.olControlPanZoomBar div:nth-of-type(5) {
+  top: 66px !important;
+  left: 16px !important;
+  width: 25px !important;
+  height: 15px !important;
+}
+.olControlPanZoomBar div:nth-of-type(5) img {
+  width: 25px !important;
+  height: 15px !important;
+}
+.olControlPanZoomBar div:nth-of-type(6) {
+  top: 81px !important;
+  left: 16px !important;
+  width: 25px !important;
+  height: 155px !important;
+  background-repeat: repeat-y !important;
+}
+.olControlPanZoomBar div:nth-of-type(7) {
+  left: 15px !important;
+  width: 22px !important;
+  height: 10px !important;
+}
+.olControlPanZoomBar div:nth-of-type(7) img {
+  width: 22px !important;
+  height: 10px !important;
+}
+.olControlPanZoomBar div:nth-of-type(8) {
+  top: 236px !important;
+  left: 16px !important;
+  width: 25px !important;
+  height: 18px !important;
+}
+.olControlPanZoomBar div:nth-of-type(8) img {
+  width: 25px !important;
+  height: 18px !important;
+
+}
+
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+@media only screen and (max-width: 799px) {
+
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- contentMap -----*/
+#contentMap {
+  margin-top: 10px;
+}
+#contentMap .header {
+  margin: 15px 10px
+}

@@ -1,0 +1,20 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:zone_rid) %></th>
+    <td><%= safe{@item.zone.name} -%></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:city_code) %></th>
+    <td><%= @item.city_name -%></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:area) %></th>
+    <td><%= @item.area -%></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:public_status) %></th>
+    <td><%= System::Area.state_show(@item.public_status) -%></td>
+  </tr>
+</table>
+<%= render :partial => 'system/admin/common/operator' %>
+<%= button_to '戻る', {:action => :index}, :method => :get %>

@@ -1,0 +1,39 @@
+<%= form_tag url_for(:action => :create_csv), {:id => 'itemForm'} do %>
+  <%= error_messages_for :item %>
+  <table class="index">
+    <tr>
+      <th>行数</th>
+      <th>異動/退職</th>
+      <th>職員番号</th>
+      <th>氏名</th>
+      <th>異動日/退職日</th>
+      <th>異動先の所属</th>
+      <th>参集集計</th>
+      <th>表示順</th>
+      <th>エラー内容</th>
+    </tr>
+    <% @items.each_with_index do |item, i| %>
+    <tr class="<%= cycle '', 'cycle' %>">
+      <td><%= i+2 %></td>
+      <td><%= item.change_type_label %></td>
+      <td><%= safe{item.user.code} %></td>
+      <td><%= safe{item.user.name} %></td>
+      <td><%= safe{item.change_at.strftime('%Y/%m/%d')} %></td>
+      <td><%= item.next_group_name_from_root %></td>
+      <td><%= item.count_flag_label %></td>
+      <td><%= item.sort_no %></td>
+      <td><%= simple_error_messages_for item %></td>
+    </tr>
+    <% end %>
+  </table>
+  
+  <% @items.each_with_index do |item, i| %>
+    <% if item.errors.blank? %>
+      <% item.attributes.each do |attr, value| %>
+        <%= hidden_field_tag "items[#{i}][#{attr}]", value if value.present? %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <%= button_tag '入力内容を修正する', :type => :button, :onclick => "document.location='#{url_for(:action => :new_csv)}';" %>
+  <%= submit_tag 'この内容で登録する' %>
+<% end %>

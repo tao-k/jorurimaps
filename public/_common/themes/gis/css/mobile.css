@@ -1,0 +1,157 @@
+@charset "UTF-8";
+/* =========================================================
+   TOP
+========================================================= */
+/* header footer
+----------------------------------------------- */
+h1{
+  width:auto;
+  margin:0px;
+}
+body{
+  margin:0px;
+}
+body #container{
+  font-size: 80%;
+}
+body #smartPhoneContainer{
+  font-size: 100%;
+}
+.name{
+  margin-bottom:10px;
+}
+form{
+  padding-left:6px;
+}
+.headerTop {
+  width: 100%;
+  height: 27px;
+  padding:6px 0px 6px 0px;
+  margin:0px 0px 6px 0px;
+  border-top:4px solid #00257f;
+  border-bottom:1px solid #00257f;
+  display: inline-block;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  vertical-align: middle;
+}
+.headerTop img{
+  margin:0px 0px 0px 6px;
+}
+.headerTop a{
+  display: block;
+}
+.headerSmall {
+  width: 100%;
+  height: 13px;
+  padding: 6px 0px;
+  margin:0px 0px 6px 0px;
+  border-top:4px solid #00257f;
+  border-bottom:1px solid #00257f;
+  display: inline-block;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  vertical-align: middle;
+}
+.headerSmall img{
+  margin:0px 0px 0px 6px;
+}
+.footer{
+  width: 100%;
+  height: 14px;
+  margin:3px 0px 0px 0px;
+  padding:0px 0px 0px 0px;
+  background-color:#00257f;
+  display: inline-block;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.name{
+  font-weight: bold;
+  padding:0px 0px 0px 4px;
+}
+.NUM{
+  ime-mode: disabled;
+  -wap-input-format: *N;
+}
+.IMEdisabled{
+  ime-mode: disabled;
+  -wap-input-format: *m;
+}
+/* hr
+----------------------------------------------- */
+.borderDash {
+  border-width: 1px 0px 0px 0px;
+  border-style:dashed;
+  border-color:#00257f;
+  height:1px;
+}
+.borderDouble {
+  border-width: 3px 0px 0px 0px;
+  border-style:double;
+  border-color:#00257f;
+  height:3px;
+}
+.docsPageMove{
+  padding-top:5px;
+  border-width: 1px 0px 0px 0px;
+  border-style:dashed;
+  border-color:#00257f;
+}
+
+/* p
+----------------------------------------------- */
+.bgAsh{
+  margin:0px 0px 0px 0px;
+  padding:0px 0px 0px 24px;
+  background-color:#f0f2ff;
+}
+.bgYellow{
+  margin:0px 0px 0px 0px;
+  padding:0px 0px 0px 24px;
+  background-color:#fff7a4;
+}
+.bgBlue{
+  margin:0px 0px 0px 0px;
+  padding:0px 0px 0px 24px;
+  background-color:#00257f;
+}
+.leftPad1{
+  margin:0px 0px 0px 0px;
+  padding:0px 0px 0px 24px;
+}
+.leftPad2{
+  margin:4px 0px 0px 0px;
+  padding:0px 0px 0px 4px;
+}
+.leftPad3{
+  margin:0px 0px 0px 0px;
+  padding:0px 0px 0px 6px;
+}
+.pagination,
+.docsPageMove,
+.btReturn{
+  margin:4px 0px 0px 0px;
+  padding:0px 0px 0px 4px;
+}
+.attention{
+  color:#cc0000;
+  margin:6px 0px 6px 0px;
+}
+
+/* image
+----------------------------------------------- */
+
+/* link
+----------------------------------------------- */
+#a {
+  color: #3366cc;
+}
+#a:visited {
+  color: #330066;
+}
+/* text
+----------------------------------------------- */
+.textRed{
+  color: #ff0000;
+}

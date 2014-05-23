@@ -1,0 +1,67 @@
+
+var sliderWindows = new Object();
+var currentId = "";
+function showSlider(code){
+  if (sliderWindows[code]){
+    sliderWindows[code].show();
+  }else{
+    currentId = code;
+    <%if layer_state == "public"%>
+    var sliderUrl = "/<%=@map.code%>/" + code + "/slider";
+    <%else%>
+    var sliderUrl = "/_admin/gis/demos/" + code + "/slider";
+    <%end%>
+    sliderWindows[code] = new Ext.Window({
+        id:'slideWindow' + code,
+        bodyCssClass: 'sliderShow',
+        title:'写真から選択',
+        layout:'fit',
+        width:500,
+        height:150,
+        closeAction:'hide',
+        plain: true,
+        resizable: false,
+        minimizable: true,
+        //maximizable: true,
+        collapsible: true,
+        closable: true,
+        autoScroll:false,
+        autoLoad: {
+                url: sliderUrl,
+                method: "GET",
+                text: "読み込み中...",
+                timeout: 60,
+                scripts: true,
+                callback: function(el, succ, resp, opts){
+                  imagesLoaded( document.querySelector("#makeMeScrollable" + code), function( instance ) {
+                    setScrollEvent(code)
+                  });
+                }
+            }
+      });
+    sliderWindows[code].setPosition(300, 100);
+    sliderWindows[code].show();
+
+  }
+
+}
+
+function setScrollEvent(code){
+$("#makeMeScrollable" + code).smoothDivScroll({
+  autoScrollingStep:1,
+  autoScrollingInterval:25,
+  visibleHotSpotBackgrounds:"always",
+  mousewheelScrolling: "allDirections",
+  manualContinuousScrolling: true,
+  autoScrollingMode: "onStart"
+});
+
+$("#makeMeScrollable" + code).smoothDivScroll("startAutoScrolling");
+
+ $("#makeMeScrollable" + code).bind("mouseover", function() {
+        $("#makeMeScrollable" + code).smoothDivScroll("stopAutoScrolling");
+        }).bind("mouseout", function() {
+        $("#makeMeScrollable" + code).smoothDivScroll("startAutoScrolling");
+    });
+
+}

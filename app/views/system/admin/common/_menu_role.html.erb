@@ -1,0 +1,6 @@
+<div class="tabMenu">
+<%= link_to '管理者権限設定',       {:controller => 'system/admin/roles'}, :class => current_class(current, :roles) -%>
+<%= link_to '機能名設定',         {:controller => 'system/admin/role_names'}, :class => current_class(current, :role_names) -%>
+<%= link_to '対象権限追加',         {:controller => 'system/admin/priv_names'}, :class => current_class(current, :priv_names) -%>
+<%= link_to '機能権限設定',         {:controller => 'system/admin/role_name_privs'}, :class => current_class(current, :role_name_privs) -%>
+</div>

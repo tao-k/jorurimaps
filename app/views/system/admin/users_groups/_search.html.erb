@@ -1,0 +1,37 @@
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(function() {
+    $('input[name=search]').bind('click', function(e) {
+      var url = '<%= url_for(:action => :index, :parent_id => '_PARENT_ID_') %>';
+      $('form.search').attr('action', url.replace(/_PARENT_ID_/, $('#parent_id').val()));
+    });
+    $('input[name=reset]').bind('click', function(e) {
+      var url = '<%= url_for(:action => :index, :parent_id => '_PARENT_ID_') %>';
+      $('form.search').attr('action', url.replace(/_PARENT_ID_/, 0));
+    });
+  });
+})(jQuery);
+//]]>
+</script>
+
+<%
+group_options = [['全ての職員','0'],['所属が未登録の職員','-1']] + @company.group_options
+%>
+
+<%= form_tag '', :method => :get, :class => 'search' do %>
+<table>
+  <tr>
+    <th>所属</th>
+    <td><%= select_tag :parent_id, options_for_select(group_options, params[:parent_id]) %></td>
+    <th>職員番号・氏名</th>
+    <td><%= text_field_tag :s_keyword, params[:s_keyword], :size => 30 %></td>
+    <th>表示行数</th>
+    <td><%= select_tag :limit, options_for_select(limit_options, params[:limit]) %></td>
+    <td class="submitters">
+      <%= submit_tag '検索',     :name => :search %>
+      <%= submit_tag 'リセット', :name => :reset %>
+    </td>
+  </tr>
+</table>
+<% end %>

@@ -1,0 +1,16 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= link_to '新規登録', {:action => :new} %>
+<% if @is_dev %>
+  <%= button_to '開発者権限設定', system_role_developers_path %>
+  <%= button_to '対象権限追加',  system_priv_names_path %>
+  <%= button_to '機能名設定',  system_role_names_path %>
+  <%= button_to '機能権限設定', system_role_name_privs_path %>
+<% end %>
+
+<% when 'show' %>
+  <%= button_to '編集', {:action => :edit} , :method => :get%>
+  <%= link_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？'%>
+<% end %>
+</span>

@@ -1,0 +1,23 @@
+<%if @items.blank?%>
+<%else%>
+<table class="index">
+
+  <tr>
+    <th>詳細</th>
+    <th>マップ</th>
+    <th>承認状態</th>
+    <th>承認日</th>
+  </tr>
+
+  <% for item in @items %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item.portal_id) %></td>
+    <td ><%= map_demo_link(item.portal) %></td>
+    <td ><%= item.recognize_state_show %></td>
+    <td><%= safe{item.recognized_at.strftime("%Y-%m-%d")} %></td>
+  </tr>
+  <% end %>
+
+</table>
+<% end %>
+<%= paginate @items %>

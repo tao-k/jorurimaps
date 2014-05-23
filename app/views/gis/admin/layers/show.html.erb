@@ -1,0 +1,123 @@
+<%= init_tiny_mce :readonly => true %>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= @item.state_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:public_state) %></th>
+    <td><%= @item.public_state_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %></th>
+    <td><%= @item.code %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr><tr>
+    <th><%= @item.locale(:kind) %></th>
+    <td><%= @item.layer_kind_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:is_internal) %></th>
+    <td><%= @item.is_internal_show %></td>
+  </tr>
+  <tr id="opacityTr" style="<%=@item.opacity_row_style%>">
+    <th><%= @item.locale(:opacity) %></th>
+    <td><%= @item.opacity_show %></td>
+  </tr>
+  <tr id="exportTr" style="<%=@item.export_row_style%>">
+    <th><%= @item.locale(:export) %></th>
+    <td>
+      <%=@item.export_items%>
+    </td>
+  </tr>
+  <tr style="<%=@item.external_row_style%>">
+    <th><%= @item.locale(:url) %></th>
+    <td><%= @item.url  %></td>
+  </tr>
+  <%if @item.kind == "file"%>
+  <tr>
+    <th><%= @item.locale(:mapfile_id) %></th>
+    <td><%=link_to @item.mapfile.title, url_for({:controller=>"gis/admin/mapfiles", :action=>:show, :id=>@item.mapfile.id}) if @item.mapfile%></td>
+  </tr>
+  <%end%>
+  <tr style="<%=@item.internal_row2_style%>">
+    <th><%= @item.locale(:mapfile_layer_name) %></th>
+    <td><%= @item.mapfile_layer_name %></td>
+  </tr>
+  <tr style="<%=@item.slide_show_style%>">
+    <th><%= @item.locale(:is_slideshow) %></th>
+    <td><%=@item.is_slideshow_state%></td>
+  </tr>
+  <%if @item.kind == "kml" || @item.kind == "gpx" %>
+  <tr style="<%=@item.file_upload_style%>">
+    <th><%= @item.locale(:upload) %></th>
+    <td><%=  link_to safe{@item.layer_file.original_file_name}, @item.layer_data_file_path, :class=>safe{@item.layer_file.css_class} if @item.layer_file%></td>
+  </tr>
+  <%end%>
+  <tr>
+    <th><%=@item.locale(:layer_legend)%></th>
+    <td><%= text_area_tag 'layer_legend', @item.layer_legend, :class => 'mceEditor', :style => 'width:100%' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:user_kind) %></th>
+    <td><%= @item.user_kind_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_group_id) %></th>
+    <td><%= safe{@item.admin_group.name}  %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_user_id) %></th>
+    <td>
+    <%= safe{@item.admin_user.name} %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:editable_groups)%></th>
+    <td>
+    <%if @editable_groups.blank?%>
+      <%=div_notice("編集可能所属は存在しません。")%>
+    <%else%>
+      <%for manager in @editable_groups%>
+      <%= manager.group_name %><br />
+      <%end%>
+    <%end%>
+    </td>
+  </tr><tr>
+    <th><%= @item.locale(:available_groups)%></th>
+    <td>
+    <%if @available_groups.blank?%>
+      <%=div_notice("利用可能所属は存在しません。")%>
+    <%else%>
+      <%for manager in @available_groups%>
+      <%= manager.group_name %><br />
+      <%end%>
+    <%end%>
+    </td>
+  </tr>
+</table>
+<%= render :partial => 'gis/admin/common/operator'%>
+
+
+<h2>フォルダ</h2>
+<%if @assortments.blank?%>
+<%=div_notice("フォルダは存在しません。")%>
+<%else%>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th>名称</th>
+  </tr>
+<%for folder in @assortments%>
+<tr>
+<td class="showLink">
+  <%=link_to "詳細", url_for({:controller=>"gis/admin/folders", :action=>:show, :id=>folder.id})%>
+</td>
+<td>
+  <%=folder.title%>
+</td>
+</tr>
+<%end%>
+</table>
+<%end%>
+
+<%= render :partial => 'gis/admin/common/index_map'%>

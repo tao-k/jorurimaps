@@ -1,0 +1,41 @@
+<%= render :partial => 'search' %>
+<% if @items.blank? %>
+  <div class="notice">地区情報は登録されていません。</div>
+<% else %>
+<table class="index">
+  <tbody>
+    <tr>
+      <th>詳細</th>
+      <th>市町村名</th>
+      <th>地区名</th>
+      <th>状態</th>
+    </tr>
+    <% @items.each do |item| -%>
+      <%
+      public_status = System::Area.state_show(item.public_status)
+      if item.public_status == "public"
+        change_status = "非公開"
+      else
+        change_status = "公開"
+      end
+    %>
+
+      <tr class="<%= cycle '', 'cycle' %>">
+        <td class="showLink">
+          <%= link_to '詳細', {:action => :show, :id => item.area_code} %>
+        </td>
+        <td><%= item.city_name -%></td>
+        <td><%= item.area -%></td>
+        <td>
+          <%= public_status %>
+          <%= submit_tag "#{change_status}に変更",
+            {:onclick=>"checkDialog('#{url_for(:action => :public_regist, :area_code => item.area_code, :limit => params[:limit], :page => params[:page], :s_keyword => params[:s_keyword], :city_code => params[:city_code])}','#{change_status}に変更してもいいですか？');",
+            :name =>:add_submit} if item.editable? %>
+
+        </td>
+      </tr>
+    <% end -%>
+  </tbody>
+</table>
+<%= paginate @items %>
+<% end %>

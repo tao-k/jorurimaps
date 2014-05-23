@@ -1,0 +1,29 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:pref_id) %><%= required %></th>
+    <td>
+      <% pref_options = @item.pref_options %>
+      <%= f.select :pref_id, options_for_select(@item.pref_options, @item.pref_id) %>
+    </td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:zone_rid) %><%= required %></th>
+    <td><%= f.select :zone_rid, options_for_select(@item.zone_options(pref_options), @item.zone_rid) %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:county_rid) %><%= required %></th>
+    <td><%= f.select :county_rid, options_for_select(@item.county_options(pref_options), @item.county_rid) %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:name) %><%= required %></th>
+    <td><%= f.text_field :name, :size => 90 %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:code) %></th>
+    <td><%= f.text_field :code, :size => 90 %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:g) %><%= required %></th>
+    <td><%= render :partial => 'system/admin/common/form_map', :locals => {:f => f} %></td>
+  </tr>
+</table>

@@ -1,0 +1,6 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '編集', {:action => :edit}, :method => :get %>
+<% end %>
+</span>

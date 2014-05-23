@@ -1,0 +1,52 @@
+
+<h2>地図画面</h2>
+<%= link_to 'ポータル', url_for({:controller=>"gis/admin/demos", :action=>:map}), :target=>"_blank" %><br />
+<%= link_to '個別ポータル２　デモ画面', "/gis/demos/portal2", :target=>"_blank" %><br />
+<%= link_to '2画面表示　デモ画面', url_for({:controller=>"gis/admin/demos",:action=>:dual}), :target=>"_blank" %><br />
+<%= link_to '2画面表示　デモ画面（公開側）', url_for({:controller=>"gis/public/demos",:action=>:dual}), :target=>"_blank" %><br />
+<%#= link_to '総合ポータル　デモ画面', "/test2/index.html", :target=>"_blank" %><br />
+<%= link_to '防災・減災マップ', "/bousai/", :target=>"_blank" %><br />
+
+<h2>管理レイヤー</h2>
+<table class="index">
+
+  <tr>
+    <th>状態</th>
+    <th style="width: 60px;">公開状況</th>
+    <th style="width: ;">タイトル</th>
+    <th style="width: ;">識別コード</th>
+
+  </tr>
+
+  <% for item in @layers %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td ><%= item.state_show %></td>
+    <td ><%= item.public_state_show %></td>
+    <td><%= item.title %></td>
+    <td><%= item.code %></td>
+  </tr>
+  <% end %>
+
+</table>
+<%= link_to '>>続き', url_for({:controller=>"gis/admin/layers", :action=>:index}) %><br />
+
+<h2>管理フォルダ</h2>
+<table class="index">
+
+  <tr>
+    <th style="width: ;">タイトル</th>
+  </tr>
+
+  <% for item in @folders %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td><%= item.title %></td>
+  </tr>
+  <% end %>
+
+</table>
+
+
+
+<%= link_to '>>続き', url_for({:controller=>"gis/admin/folders", :action=>:index}) %><br />
+
+

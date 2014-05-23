@@ -1,0 +1,24 @@
+<%
+
+links = []
+links << link_to('ユーザ管理',  {:controller => 'system/admin/users'}, :class => current_class(current, :users))
+links << link_to('グループ管理',  {:controller => 'system/admin/groups', :action=>:index, :parent=>0}, :class => current_class(current, :groups))
+links << link_to('LDAP管理',  {:controller => 'system/admin/ldap_temporaries'}, :class => current_class(current, :ldaps))
+links << link_to('組織変更',  {:controller => 'system/admin/group_changes'}, :class => current_class(current, :changes))
+#links << link_to('権限管理',  {:controller => 'system/admin/roles'}, :class => current_class(current, :roles))
+links << link_to('エリア設定',  {:controller => 'system/admin/prefs'}, :class => current_class(current, :prefs))
+links << link_to('辞書設定',  {:controller => 'cms/admin/kana_dictionaries'}, :class => current_class(current, :kana_dictionaries))
+links << link_to('一行メッセージ設定',  {:controller => 'system/admin/short_messages'}, :class => current_class(current, :short_messages))
+links << link_to('更新情報管理',  {:controller => 'system/admin/social_updates'}, :class => current_class(current, :social_updates))
+links << link_to('関連リンク管理',  {:controller => 'system/admin/related_links'}, :class => current_class(current, :related_links))
+links << link_to('ポータル写真設定',  {:controller => 'cms/admin/portal_photos'}, :class => current_class(current, :portal_photos))
+links << link_to('管理設定',  {:controller => 'system/admin/options'}, :class => current_class(current, :options))
+links = links.select{|link| link.present?}
+%>
+
+<div class="menu">
+<% links.each_with_index do |link, i| %>
+<%= content_tag :span, link, {:class => i == 0 ? 'left' : ''} -%>
+<% end %>
+</div>
+<%= render :partial => controller.controller_path + '/navi'  %>

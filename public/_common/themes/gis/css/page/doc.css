@@ -1,0 +1,337 @@
+@charset "UTF-8";
+@import "/_common/themes/gis/css/base/init.css";
+@import "/_common/themes/gis/css/base/style.css";
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- recentDocs -----*/
+#recentDocs {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 20px 20px 45px 30px;
+  border: solid 1px #ADADAD;
+  background-color: #fff;
+  box-shadow: 0 5px 3px -3px #C2C2C2;
+}
+#recentDocs .recentDocsTitle:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 10px;
+  height: 58px;
+  background-color: #DDDDE1;
+}
+#recentDocs .recentDocsTitle {
+  color: #1B487A;
+  font-size: 180%;
+  font-weight: bold;
+}
+#recentDocs .docs {
+  margin-bottom: 20px;
+  padding: 25px 0 10px;
+}
+#recentDocs h2.date {
+  padding-top: 20px;
+  border-top: 1px dotted #ADADAD;
+}
+
+#recentDocs h2.date:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+#recentDocs .docs ul {
+  margin-bottom: 40px;
+}
+#recentDocs .docs ul li {
+  margin: 0 0 10px 5px;
+  padding-left: 12px;
+  background-image: url("/_common/themes/gis/images/ic/ic-dot_01.png");
+  background-position: left 0.4em;
+  background-repeat: no-repeat;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+/*----- contentArticleDoc -----*/
+.docPage {
+  padding-right: 0 !important;
+}
+#contentArticleDoc {
+  margin-bottom: 20px;
+  padding: 30px 5px 20px;
+  border: 1px solid #ADADAD;
+  background-color: #fff;
+  box-shadow: 0 5px 3px -3px #C2C2C2;
+}
+#contentArticleDoc .header {
+  margin-bottom: 30px;
+  padding: 10px 10px 5px 30px;
+  border-bottom: 2px solid #1B487A;
+}
+#contentArticleDoc .header h1 {
+  margin-bottom: 5px;
+  color: #1B487A;
+  font-size: 180%;
+  font-weight: bold;
+}
+#contentArticleDoc .publishedAt {
+  text-align: right;
+}
+#contentArticleDoc .body {
+  margin-bottom: 25px;
+  padding: 0 30px;
+}
+#contentArticleDoc .body h2 {
+  margin: 15px 0 10px;
+  padding: 10px 15px 8px;
+  border: 1px solid #819AB6;
+  border-left: 8px solid #819AB6;
+  background-color: #F5F5F5;
+  color: #333;
+  font-weight: bold
+}
+#contentArticleDoc .body h3 {
+  margin: 15px 0 10px;
+  padding-left: 8px;
+  padding-bottom: 5px;
+  border-left: 4px solid #BECBDA;
+  color: #333;
+  font-weight: bold;
+}
+#page-gis-help #contentArticleDoc .body h3 {
+  margin: 30px 0 10px;
+}
+#contentArticleDoc .body p {
+  margin: 10px 0 5px;
+  padding: 0 10px;
+  line-height: 1.8;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentArticleDoc .body table {
+  margin: 0 10px 10px;
+  border: solid 1px #ADADAD;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentArticleDoc .body table th {
+  padding: 5px 10px;
+  border: solid 1px #ADADAD;
+  background-color: #F5F5F5;
+  text-align: center;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentArticleDoc .body table td {
+  padding: 5px 10px;
+  border: solid 1px #ADADAD;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentArticleDoc .inquiry h2 {
+  margin: 15px 0 10px;
+  padding: 10px 15px 8px;
+  border: 1px solid #819AB6;
+  border-left: 8px solid #819AB6;
+  background-color: #F5F5F5;
+  color: #333;
+  font-weight: bold
+}
+#contentArticleDoc .inquiry {
+  padding: 0 30px;
+}
+#contentArticleDoc .inquiry div {
+  padding-left: 20px;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#contentArticleDoc .back {
+  margin: 30px 30px 15px;
+  padding-top: 20px;
+  border-top: 1px solid #bbb;
+  text-align: center;
+}
+#contentArticleDoc .back a {
+  display: inline-block;
+  padding: 8px 25px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  color: #333;
+  text-decoration: none;
+}
+#contentArticleDoc .back a:hover {
+  text-decoration: underline;
+}
+
+/*----- contentPage -----*/
+#contentPage {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 20px 20px 40px 20px;
+  border: solid 1px #ADADAD;
+  background-color: #fff;
+  box-shadow: 0 5px 3px -3px #C2C2C2;
+}
+#contentPage .pieceHeader:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 10px;
+  height: 58px;
+  background-color: #DDDDE1;
+}
+#contentPage .pieceHeader {
+  margin-bottom: 10px;
+  color: #1B487A;
+  font-size: 155%;
+  font-weight: bold;
+}
+#contentPage .pieceBody h2 {
+  margin: 15px 0 10px;
+  padding: 10px 15px 8px;
+  border: 1px solid #819AB6;
+  border-left: 8px solid #819AB6;
+  background-color: #F5F5F5;
+  color: #333;
+  font-weight: bold
+}
+#contentPage .pieceBody h3 {
+  margin: 15px 0 10px;
+  padding-left: 8px;
+  padding-bottom: 5px;
+  border-left: 4px solid #BECBDA;
+  color: #333;
+  font-weight: bold;
+}
+#contentPage .pieceBody p {
+  margin: 10px 0 5px;
+  padding: 0 10px;
+  line-height: 1.8;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentPage .pieceBody table {
+  margin: 0 10px 10px;
+  border: solid 1px #ADADAD;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentPage .pieceBody table th {
+  padding: 5px 10px;
+  border: solid 1px #ADADAD;
+  background-color: #F5F5F5;
+  text-align: center;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#contentPage .pieceBody table td {
+  padding: 5px 10px;
+  border: solid 1px #ADADAD;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+/*----- howto -----*/
+#contentPage .pieceBody .howto h2 {
+  margin-top: 30px;
+}
+#contentPage .pieceBody .howto ul {
+  margin-bottom: 5px;
+  padding-left: 28px;
+}
+#contentPage .pieceBody .howto ul li {
+  list-style-type: disc;
+}
+#contentPage .pieceBody .howto .iconInfo {
+  margin-bottom: 20px;
+  border-top: solid 1px #ADADAD;
+}
+#contentPage .pieceBody .howto .iconInfo p {
+  margin: 0;
+  padding: 8px 0 8px 53px;
+  background-position: 13px center;
+  background-repeat: no-repeat;
+  border-bottom: solid 1px #ADADAD;
+}
+.no1 {
+  background-image: url(/_common/themes/gis/images/main/ic_map_system.gif);
+}
+.no2 {
+  background-image: url(/_common/themes/gis/images/main/ic_map_article.gif);
+}
+.no3 {
+  background-image: url(/_common/themes/gis/images/main/ic_map_externallink.gif);
+}
+.smartInfo {
+  margin-bottom: 10px;
+  padding: 8px 0 8px 15px;
+  border-top: solid 1px #C2C2C2;
+  border-bottom: solid 1px #C2C2C2;
+}
+.smartInfo img {
+  vertical-align: middle;
+}
+
+/*----- search -----*/
+#cse-search-results {
+  width: 100%;
+}
+#cse-search-results iframe {
+  max-width: 900px;
+  width: 100%;
+}
+
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+@media only screen and (max-width: 799px) {
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- recentDocs -----*/
+#recentDocs {
+  padding: 20px 10px 15px 20px;
+}
+#recentDocs .recentDocsTitle {
+  font-size: 180%;
+}
+#recentDocs h2.date {
+  margin-bottom: 10px;
+}
+#recentDocs .docs ul li {
+  margin-bottom: 20px;
+}
+
+/*----- contentArticleDoc -----*/
+#contentArticleDoc .body {
+  padding: 0 15px;
+}
+#contentArticleDoc .inquiry {
+  padding: 0 15px;
+}
+#contentArticleDoc .back {
+  margin: 30px 15px 15px;
+}
+#contentArticleDoc .inquiry div {
+  margin-bottom: 10px;
+  padding-left: 10px;
+}
+
+/*----- contentPage -----*/
+#contentPage {
+  paddig: 20px 10px 15px 20px;
+}
+#contentPage .pieceHeader {
+  font-size: 180%;
+}
+}

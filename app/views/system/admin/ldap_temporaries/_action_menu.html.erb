@@ -1,0 +1,9 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+<%= link_to '新規登録', url_for({:action => :index, :do => "create"}), :confirm => '中間データを作成します' %>
+<%= link_to '通信テスト', url_for({:action => :index, :do => "preview"}) %>
+<% when 'show' %>
+<%= link_to '戻る', url_for({:action => :index}) %>
+<% end %>
+</span>

@@ -1,0 +1,21 @@
+<%
+current = []
+case
+when params[:controller] =~ %r(system/)
+   current[0] = 'current'
+when params[:controller] =~ %r(cms/)
+   current[0] = 'current'
+else
+  current[1] = 'current'
+end
+%>
+<div class="headerMenu">
+<ul>
+  <li>
+    <%= link_to '地図情報データベース', {:controller => '/gis/admin/maps', :action => :index}, :class => "#{current[1]}"  %>
+  </li>
+  <li>
+    <%= link_to 'システム管理', {:controller => '/system/admin/fronts'}, :class => "#{current[0]}" if Core.user.has_auth?(:manager)%>
+  </li>
+</ul>
+</div>

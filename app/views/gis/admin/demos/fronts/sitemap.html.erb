@@ -1,0 +1,12 @@
+<div id="contentPage">
+  <div class="pieceHeader">サイトマップ</div>
+  <div class="pieceBody">
+    <div class="sitemap">
+      <h2><%=link_to "トップページ", url_for({:controller=>"/gis/admin/demos", :action=>:show, :id=>@map.code})%></h2>
+      <h2><%=link_to "お問い合わせ", url_for({:controller=>"/gis/admin/demos/inquiries", :action=>:index, :demo_id=>@map.code})%></h2>
+      <h2><%=link_to "サイトマップ", url_for({:controller=>"/gis/admin/demos/fronts", :action=>:sitemap, :demo_id=>@map.code})%></h2>
+      <h2><%=link_to "更新情報一覧", url_for({:controller=>"/gis/admin/demos/docs", :action=>:index, :demo_id=>@map.code}) %></h2>
+      <h2><%=link_to "#{@map.title}について", url_for({:controller=>"/gis/admin/demos/fronts", :action=>:about, :demo_id=>@map.code})%></h2>
+    </div>
+  </div>
+</div>

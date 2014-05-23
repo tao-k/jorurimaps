@@ -1,0 +1,104 @@
+<%= f.hidden_field :tmp_id%>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= f.radio_buttons :state, @item.state_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%= f.radio_buttons :web_state, @item.web_state_select, :class => 'status' %></td>
+  </tr><tr id="portalKind">
+    <th><%= @item.locale(:portal_kind) %></th>
+    <td><%= f.radio_buttons :portal_kind, @item.portal_kind_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %><%= required %></th>
+    <td><%= f.text_field :code, :class => 'sort_no IMEoff' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:parent_category_id) %></th>
+    <td>
+      <%= f.select(:parent_category_id, @item.parent_category_select, :selected=>@item.parent_category_id, :prompt => "なし")%>
+      <%= f.select(:parent_category_id_1, @item.parent_category_select, :selected=>@item.parent_category_id_1, :prompt => "なし")%>
+      <%= f.select(:parent_category_id_2, @item.parent_category_select, :selected=>@item.parent_category_id_2, :prompt => "なし")%>
+    </td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %></th>
+    <td><%= f.text_field :sort_no, :class => 'sort_no IMEoff' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :class => 'string title' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:body) %></th>
+    <td><%= f.text_area :body, :style=>"width: 600px; height: 150px;" %></td>
+  </tr>
+  <tr id="remarkTr" style="<%=remark_style(@item)%>">
+    <th><%= @item.locale(:is_display_message) %></th>
+    <td><%=f.check_box(:is_display_message, {}, 1,0)%><label for="item_is_display_message"><%=@item.locale(:display_message)%></label></td>
+  </tr>
+  <tr id="messageTr">
+    <th><%= @item.locale(:message) %></th>
+    <td><%= f.text_area :message, :class => 'string body mceEditor' %></td>
+  </tr>
+  <tr id="urlTr" style="<%=link_style(@item)%>">
+    <th><%= @item.locale(:link_url) %></th>
+    <td><%= f.text_area :link_url, :style => "width: 600px; height: 60px;"  %></td>
+  </tr>
+  <tr id="fileUpload" style="<%=upload_style(@item)%>">
+    <th><%= @item.locale(:upload) %></th>
+    <td>
+      <% if !@item.icon_path.blank? && !@item.icon_uri.blank?%>
+        <label for="icon_delete">削除する</label><br />
+        <%= check_box_tag "icon_delete", 1, false  %><br />
+        <%= image_tag("#{@item.icon_uri}?#{Time.now.to_i}")%>
+      <%end%>
+      <%= f.file_field :upload %>
+    </td>
+  </tr>
+  <tr id="fileUpload_thumb">
+    <th><%= @item.locale(:upload_thumb) %></th>
+    <td>
+      <% if !@item.thumb_path.blank? && !@item.thumb_uri.blank?%>
+        <label for="thumb_delete">削除する</label><br />
+        <%= check_box_tag "thumb_delete", 1, false  %><br />
+        <%= image_tag("#{@item.thumb_uri}?#{Time.now.to_i}")%>
+      <%end%>
+      <%= f.file_field :upload_thumb %>
+    </td>
+  </tr>
+  <!--<tr>
+    <th><%#=@item.locale(:map_legend)%></th>
+    <td><%#= f.text_area :map_legend, :class => 'string body mceEditor' %></td>
+  </tr>-->
+</table>
+<%= init_tiny_mce %>
+<%=render(:partial => 'gis/admin/maps/legend_files/form', :locals => {:f => f, :item => @item})%>
+<%= render :partial => 'gis/admin/common/users_field_form', :locals => {:f => f} %>
+<div id="folderSelect" style="<%=folder_select_style(@item)%>">
+<%= render :partial => 'gis/admin/common/form_folder', :locals => {:f => f} %>
+<%= render :partial => 'gis/admin/common/form_layer', :locals => {:f => f} %>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $("#portalKind input").change(function(e) {
+    var portal_kind = $( this ).val();
+    if(portal_kind == 3){
+      $("#remarkTr").show();
+      $("#urlTr").show();
+      $("#fileUpload").hide();
+      $("#folderSelect").hide();
+    }else if (portal_kind == 4){
+      $("#remarkTr").hide();
+      $("#urlTr").hide();
+      $("#fileUpload").hide();
+      $("#folderSelect").hide();
+    }else{
+      $("#remarkTr").hide();
+      $("#urlTr").hide();
+      $("#fileUpload").show();
+      $("#folderSelect").show();
+    }
+  });
+
+})(jQuery);
+//]]>
+</script>

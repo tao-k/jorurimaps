@@ -1,0 +1,22 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:change_type) %></th>
+    <td><%= @item.change_type_label %></td>
+  </tr><tr>
+    <th><%= @item.locale(:user_code) %></th>
+    <td><%= safe{@item.user.code} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:user_name) %></th>
+    <td><%= safe{@item.user.name} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:change_at) %></th>
+    <td><%= safe{@item.change_at.strftime('%Y/%m/%d')} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:next_group_id) %></th>
+    <td><%= @item.next_group_name_from_root %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'system/admin/common/operator' %>
+
+<%= button_to '戻る', {:action => :index}, :method => :get %>

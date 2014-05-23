@@ -1,0 +1,12 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '登録', {:action => :new}, :method => :get if @items.blank?%>
+  <%= button_to '編集', {:action => :edit, :id=>@items[0].id} , :method => :get if !@items.blank?%>
+  <%= button_to '戻る', url_for({:controller=>"/gis/admin/layers",:action => :show, :id => @layer.id}), :method => :get%>
+<% when 'show' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get%>
+  <%= button_to '編集', {:action => :edit} , :method => :get if @layer.editable?%>
+  <%= button_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？' if @layer.deletable?%>
+<% end %>
+</span>

@@ -1,0 +1,914 @@
+
+(function($) {
+
+
+<%
+ wms_url = Application.config(:wms_gateway_url, "localhost")
+ vector_layer_list = []
+%>
+
+
+  /* mapサーバ */
+  var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+
+/* map */
+var map = null;
+
+/* test */
+var selectControl = null;
+
+/* マップビュー */
+var mapPanel = null;
+
+/* AREAセレクタ */
+var scaleStore = null;
+var areaSelector = null;
+
+/* レイヤービュー */
+var layerPanel = null;
+
+/* タイムラインビュー */
+var timelinePanel = null;
+
+/* 凡例ビュー */
+var legend = null;
+
+/* settings */
+var settings = new Object();
+
+/* layer switcher */
+var layerSwitcher = null;
+
+/* base layers container */
+var baseLayers = new Object();
+
+/* overlays layers container */
+var overlays = new Object();
+
+/* select action container */
+var selectControls = new Object();
+var currentBaseLayer = "";
+
+
+Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+var myproj =new OpenLayers.Projection("EPSG:4326");
+
+var portalLayers = new Array();
+
+var Rule = OpenLayers.Rule;
+var Filter = OpenLayers.Filter;
+var kindFilters = new Object();
+var kind_filter_xmls = new Object();
+var kindLayerFilters = new Object();
+var listPop = new Object();
+var layerStyles = new Object();
+var legendPositionLeft, drawPositionLeft, measurePositionLeft;
+var legendPositionTop, drawPositionTop, measurePositionTop;
+var helpPanel, linkPanel, printPanel,outPutPanel;
+var mapPermalink;
+
+var disasterFilter = null;
+var basicDamageFilter = null;
+var expandDms = false;
+var expandMedical = false;
+
+/* for tool bar*/
+var ctrl, toolbarItems = [], action, toolbar, actions = {};
+var extWindow = [];
+var modifyControl;
+var drawWindow, legendPanel;
+var dragFeature;
+var drawControls = {};
+var currentControl;
+var permalinkControl;
+var featureSelectControl;
+
+var strokeSelectWindow, fillSelectWindow;
+var strokeColor = "FF0000";
+var fillColor = "FFFFFF";
+var iconConfig = {};
+var strokeWidth = 2;
+var circleSides = 200;
+
+var layerPanel,leftTabs,mapToolPanel,addLayerWin,markers;
+
+var measureControls;
+var confirmWin;
+
+
+
+$(document).on('click', ".mapTitle", function(e){
+  e.preventDefault();
+  var id = $(this).attr("id").replace(/mapTitle/,"");
+  var childTitle = $(".title" + id).length;
+  var isOpen = false;
+  for(var i = 0; i <= childTitle; i++){
+    var titleId = "#title" + id + "-"+ i;
+    var bodyId = "#body" + id+ "-" + i;
+    if($(titleId).css("display") == "none"){
+      $(titleId).show();
+      isOpen = true;
+    }else{
+      $(titleId).hide();
+      $(bodyId).hide();
+      $(titleId).removeClass("open");
+    }
+  }
+  if(isOpen){
+    $(this).addClass("open");
+  }else{
+    $(this).removeClass("open");
+  }
+});
+
+
+$(document).on("change", ".baseLayer", function(e){
+  var radioBtnSet = $(".baseLayer");
+  var value;
+   for(var i = 0; i < radioBtnSet.length; i++){
+       inputCheck = radioBtnSet[i];
+      inputId = inputCheck.id;
+      value = $("#" + inputId).prop('checked');
+      currentBaseLayer = inputId;
+     if(value==true){
+       //baseLayers[inputId].setVisibility(true);
+       map.setBaseLayer(baseLayers[inputId]);
+       }else{
+       //baseLayers[inputId].setVisibility(false);
+       }
+   }
+});
+
+$(document).on('change', ".allCheck", function(e){
+  var id = $(this).attr("id").replace(/allCheck/, "");
+  var value = $(this).prop('checked');
+  var layerCheckList = $(".layerCheck" + id );
+  for(var i = 0; i< layerCheckList.length; i++){
+    var checkId = layerCheckList[i].id;
+    if(value){
+      $("#" + checkId).prop({'checked':'checked'});
+    }else{
+      $("#" + checkId).prop({'checked':false});
+    }
+    $("#" + checkId).trigger("change");
+  }
+});
+
+
+
+$(document).on("click", ".layerTitle", function(e){
+    e.preventDefault();
+    var id = $(this).attr("id").replace(/titleLink/,"");
+    var bodyId = "#body" + id;
+    $(bodyId).toggle();
+    var parentDiv = $("#"+$(this).attr("id")).parent("div");
+    if($(bodyId).css("display") == "none"){
+      parentDiv.removeClass("open");
+    }else{
+      parentDiv.addClass("open");
+    }
+  });
+
+  prevLayer = null;
+
+
+$(document).on("change", ".featureLayer", function(e){
+  var id = $(this).attr("id");
+  var overlayId = $("#"+id).val();
+  var value = $("#"+id).prop('checked');
+  if(overlays[overlayId]==null){
+    return;
+  }
+  if(value==true){
+    Ext.getCmp('layerOpacitySlider').setLayer(overlays[overlayId]);
+    overlays[overlayId].setVisibility(true);
+    check_class = $(this).attr("class");
+    if (check_class && check_class.match(/showSlideCheck/)){
+      showSlider(overlayId);
+    }
+  }else{
+    overlays[overlayId].setVisibility(false);
+  }
+
+  loadLegends(overlayId, value);
+  loadOutPutForm(overlayId, value);
+
+
+});
+
+var loadedOutPutForm = new Object();
+var loadOutPutFormRequest = new Object();
+function loadOutPutForm(overlayId, checked) {
+
+  var layerName = overlayId;
+  if (checked) {
+    //if($('#outPut_' + layerName).html()!=null){
+    //  return;
+
+    //}
+    if (loadedOutPutForm[layerName]) {
+      //$('#outPutFormDiv').append(loadedLegends[layerName]);
+      $('#outPut_' + layerName).show();
+      return;
+    }
+    if(loadOutPutFormRequest[layerName] && loadOutPutFormRequest[layerName]!=null){
+      loadOutPutFormRequest[layerName].abort();
+    }
+    var request_uri = getBaseUrl() + "/" + overlayId + '/export_form';
+    loadOutPutFormRequest[layerName] = $.ajax({
+          url   :request_uri,
+          type: 'post',
+          method: 'post',
+          data:{
+              layer_name :layerName,
+              authenticity_token: "<%=form_authenticity_token%>"
+          },
+          success:function(result){
+
+            if(result.match(/出力用フォームがありません/)){
+            }else{
+              var outPutHtml = '<div id="outPut_' + layerName + '">' + result + '</div>';
+              loadedOutPutForm[layerName] = outPutHtml;
+              $('#outPutFormDiv').append(outPutHtml);
+            }
+          },
+          failure:function(result,opt){
+              alert("データ出力フォームの取得に失敗");
+          }
+      });
+  }else{
+    if(loadOutPutFormRequest[layerName] && loadOutPutFormRequest[layerName]!=null){
+      loadOutPutFormRequest[layerName].abort();
+    }
+    $('#outPut_' + layerName).hide();
+  }
+}
+
+
+/* 表示中凡例ページ */
+var currentLegned = null;
+/* 凡例ページコンテナ */
+var loadedLegends = new Object();
+var loadLegendRequest = new Object();
+
+function loadLegends(overlayId, checked) {
+  var layerName = "legend_" + overlayId;
+    if (checked) {
+    //凡例チェック
+    if($('#' + layerName).html()!=null){
+      return;
+    }
+    if (loadedLegends[layerName]) {
+      currentLegned = layerName;
+      //存在する場合、表示用データに設定
+      $('#legendPanel_set').append(loadedLegends[layerName]);
+
+    } else {
+      //存在しない場合、dmsへリクエスト
+      if(loadLegendRequest[layerName] && loadLegendRequest[layerName]!=null){
+        loadLegendRequest[layerName].abort();
+      }
+      var request_uri = getBaseUrl() + "/" + overlayId + '/legend';
+      loadLegendRequest[layerName] = $.ajax({
+          url   :request_uri,
+          type: 'post',
+          method: 'post',
+          data:{
+              layer_name :layerName,
+              authenticity_token: "<%=form_authenticity_token%>"
+          },
+          success:function(result){
+            if(result!="凡例がありません。" && $('#' + layerName).html()==null){
+              var legendHtml = '<div id="' + layerName + '">' + result + '</div>';
+              loadedLegends[layerName] = legendHtml;
+              $('#legendPanel_set').append(legendHtml);
+
+              if(childWindow && childWindow.document){
+                var legendBody = $('#legendPanel_set').html();
+                childWindow.document.open();
+                childWindow.document.write(legendBody);
+                childWindow.document.close();
+                childWindow.focus();
+              }
+            }
+          currentLegned = layerName;
+          },
+          failure:function(result,opt){
+              alert("凡例の取得に失敗");
+          }
+      });
+    }
+    //凡例パネル再描画
+  } else {
+    if(loadLegendRequest[layerName] && loadLegendRequest[layerName]!=null){
+        loadLegendRequest[layerName].abort();
+      }
+    //チェック解除の場合
+    $('#' + layerName).remove();
+    var legendBody = $('#legendPanel_set').html();
+    if(childWindow && childWindow.document){
+      childWindow.document.open();
+      childWindow.document.write(legendBody);
+      childWindow.document.close();
+    }
+
+  }
+}
+
+
+$(document).on("click", ".listBox a.markerLink",function(e){
+  e.preventDefault();
+  var linkId = $(this).attr("id");
+  var markerId = linkId.replace(/_link/, "");
+  markerId = markerId.replace(/marker_/, "");
+  showListPop(markerId,"vector_layer")
+  return false;
+});
+
+$(document).on("click", ".makeMeScrollable a.markerLink",function(e){
+  e.preventDefault();
+  var linkId = $(this).attr("id");
+  var markerId = linkId.replace(/_link/, "");
+  markerId = markerId.replace(/marker_/, "");
+  showListPop(markerId,"vector_layer")
+  return false;
+});
+
+
+
+function initMap() {
+
+  //設定  作成
+  initSettings();
+
+  //マップインスタンス作成
+  map = new OpenLayers.Map(settings['mapOpts']);
+  map.Z_INDEX_BASE['Popup'] =10000;
+  //base laysers
+  initBaseLayer(map, null);
+
+  //地図設定 作成
+  initMapSettings(map);
+
+  //wmsレイヤー
+  initWMSLayer();
+
+
+  //wfsレイヤー
+  initWFSLayer();
+
+  //オーバーレイ
+  //initOverlays(map, null);
+
+  //地図初期設定
+  initMapObj(map);
+
+}
+
+/**
+ * セッティング
+ */
+function initSettings() {
+  var zoom = 18;
+  settings['initMapZoom'] = <%= @init_map[:zoomlevel] %>;
+
+  settings['mapOpts']  = {
+            div: 'mapdisplay',
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            numZoomLevels: 20,
+            maxResolution: 'auto',
+            controls : [
+                        new OpenLayers.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        })
+                        ]
+        };
+
+}
+
+
+/**
+ * 地図セッティング
+ */
+function initMapSettings(m) {
+  settings['initCenterLonLet'] = new OpenLayers.LonLat(<%= @init_map[:center_lon] %>, <%= @init_map[:center_lat] %>)
+      .transform(
+        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+        m.getProjectionObject() // to Spherical Mercator Projection
+      );
+  m.setCenter (settings['initCenterLonLet'], settings['initMapZoom']);
+}
+
+<%= render :partial =>  'select_feature', :locals=>{:map_code =>params[:code]}   rescue nil %>
+
+
+/**
+ * 地図初期表示制御
+ */
+function initMapObj(m, opts) {
+
+  //コントロール設定
+  //地図切り替え
+   //map.addControl(new OpenLayers.Control.LayerSwitcher({'div':OpenLayers.Util.getElement('defaultlayerSwitcher')}));
+//  m.addControl(new OpenLayers.Control.LayerSwitcher());
+
+  layerSwitcher = new OpenLayers.Control.LayerSwitcher({ascending: true});
+  m.addControl(layerSwitcher);
+  layerSwitcher.maximizeControl();
+  permalinkControl = new OpenLayers.Control.Permalink()
+  var panzoomoption = new OpenLayers.Control.PanZoomBar();
+    m.addControl(new OpenLayers.Control.Scale());
+    m.addControl(new OpenLayers.Control.ScaleLine());
+    m.addControl(new OpenLayers.Control.MousePosition());
+    m.addControl(panzoomoption);
+    m.addControl(permalinkControl);
+    m.addControl(new OpenLayers.Control.ArgParser());
+    m.addControl(new OpenLayers.Control.Attribution());
+
+
+    var panzoombuttons = panzoomoption.buttons;
+
+    for (var i = 0; i < panzoombuttons.length; i++){
+      var getId = panzoombuttons[i].id;
+      if(getId.match(/panup/)){
+        OpenLayers.Element.addClass(panzoombuttons[i], "topButton");
+      }else if(getId.match(/panleft/)){
+        OpenLayers.Element.addClass(panzoombuttons[i], "leftButton");
+      }else if(getId.match(/panright/)){
+        OpenLayers.Element.addClass(panzoombuttons[i], "rightButton");
+      }else if(getId.match(/pandown/)){
+        OpenLayers.Element.addClass(panzoombuttons[i], "bottomButton");
+      }else if(getId.match(/zoomin/)){
+        OpenLayers.Element.addClass(panzoombuttons[i], "plusButton");
+      }else if(getId.match(/zoomout/)){
+        OpenLayers.Element.addClass(panzoombuttons[i], "minusButton");
+      }else{
+        //
+      }
+    }
+    OpenLayers.Element.addClass(panzoomoption.slider ,"sliderCursor");
+    OpenLayers.Element.addClass(panzoomoption.zoombarDiv ,"sliderBack");
+
+
+  //表示
+    m.setCenter (settings['initCenterLonLet'], settings['initMapZoom']);
+//広域マップ表示
+  var ovmapBase = [];
+  for(key in baseLayers){
+    ovmapBase.push(baseLayers[key])
+  }
+  var overviewControl = new OpenLayers.Control.OverviewMap({
+            maximized: true,
+            maximizeTitle: 'Show the overview map',
+            minimizeTitle: 'Hide the overview map',
+            size: new OpenLayers.Size(150, 110)
+        });
+  m.addControl(overviewControl);
+
+  //初期レイヤー設定
+  <%@layers.each do |layer|
+  next if layer == "vector"-%>
+  if(overlays['<%=layer%>']){
+  overlays['<%=layer%>'].setVisibility(true);
+  }
+
+  <%end unless @layers.blank?-%>
+}
+
+
+var featureInfoPop;
+
+function onFeatureSelect(feature) {
+}
+
+
+
+/* 市町村座標 */
+var areaList = new Array();
+var areaSelectorList = new Array();
+<% @system_cities.each_with_index do |cmp, i| %>
+  areaList[<%= cmp.rid %>] = {"name":"<%= cmp.name %>", "lon":<%= cmp.lng %>, "lat":<%= cmp.lat %>, "zoom":12};
+  areaSelectorList[<%= i + 1 %>]      = [<%= cmp.rid %>, '<%= cmp.name %>'];
+<% end unless @system_cities.blank?-%>
+areaList[0]      = {"name":"全域", "lon":<%=Gis.defalut_position[:lng]%>, "lat":<%=Gis.defalut_position[:lat]%>, "zoom":10};
+areaSelectorList[0] = [0, '全域'];
+
+/* 座標変換 */
+function convLonLat( x, y ) {
+  return new OpenLayers.LonLat( x ,y )
+    .transform(
+      new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+      map.getProjectionObject() // to Spherical Mercator Projection
+    );
+}
+
+/* AREAセレクタ設定 */
+function initAreaSelecter() {
+  areaSelector = new Ext.form.ComboBox({
+      store: new Ext.data.ArrayStore({
+      id: 0,
+      fields: [
+        'areaId',
+        'displayText'
+      ],
+      data: areaSelectorList
+    }),
+    valueField: 'areaId',
+    displayField: 'displayText',
+    emptyText: "エリア選択",
+    /* tpl: '<tpl for="."><div class="x-combo-list-item">{[areaId]} : {[displayText]}</div></tpl>', */
+    editable: false,
+    triggerAction: 'all',
+    mode: 'local',
+    listeners     : {
+        'expand'   : function(combo) {
+            var blurField = function(el) {
+                el.blur();
+            }
+            blurField.defer(10,this,[combo.el]);
+        },
+        'collapse'   : function(combo) {
+            var blurField = function(el) {
+                el.blur();
+            }
+            blurField.defer(10,this,[combo.el]);
+        }
+    }
+  });
+
+  areaSelector.on('select',
+    function(combo, record, index) {
+    var z   = areaList[record.id]["zoom"];
+    var lon = areaList[record.id]["lon"];
+    var lat = areaList[record.id]["lat"];
+    if (map.baseLayer && map.baseLayer.CLASS_NAME == "webtis.Layer.BaseMap") {
+        z = z - 5;
+    }
+    //map.moveTo( convLonLat(lon, lat), z );
+    map.setCenter( convLonLat(lon, lat), z );
+    },
+    this
+  );
+}
+
+
+
+/* レイヤー再描画 */
+var refleshLayers = function(button,event){
+  var layers = map.getLayersByClass("OpenLayers.Layer.Vector");
+  for (i = 0; i < layers.length; i++) {
+      layers[i].refresh({force: true});
+   }
+   return false;
+}
+
+
+
+
+
+
+
+$(document).on('focus', '#map_link_url', function(e){
+  $(this).select();
+});
+
+
+
+/* ここからが Ext JS のコード  */
+
+
+function showhelpPanel(){
+  var heplChildwindow = window.open( '/gis/help.html','printWindow',"width=800,height=780,location=no,toolbar=no,menubar=yes,resizable=yes,scrollbars=yes");
+}
+
+function getBaseUrl(){
+  var mapLinkUrl = "<%="#{Core.full_uri}#{@map.code}/"%>";
+  return mapLinkUrl;
+}
+
+function showlinkPanel(){
+  var mapLinkUrl = getBaseUrl();
+
+  mapLinkUrl += createParams();
+  linkPanel.show();
+  $("#map_link_url").val(mapLinkUrl);
+}
+
+var printWindow;
+
+function createParams(){
+  <%if @map.portal_kind == 1%>
+  var mapLinkUrl = "search/";
+  <%else%>
+  var mapLinkUrl = "";
+  <%end%>
+  var lon = map.getCenter().transform(
+   new OpenLayers.Projection("EPSG:900913"),
+   new OpenLayers.Projection("EPSG:4326")).lon;
+  var lat = map.getCenter().transform(
+   new OpenLayers.Projection("EPSG:900913"),
+   new OpenLayers.Projection("EPSG:4326")).lat;
+  mapLinkUrl += "?zoom=" + map.getZoom() + "&lon="+ lon + "&lat=" +  lat;
+  var displayedLayer = [];
+  for (var keyString in overlays) {
+    if (overlays[keyString].visibility == true && keyString!= "vector"){
+      displayedLayer.push(keyString);
+    }
+  }
+
+  if(displayedLayer){
+    mapLinkUrl += "&layers=" + displayedLayer.join(",");
+  }
+  for (var keyString in baseLayers){
+    if (baseLayers[keyString].visibility == true){
+      mapLinkUrl += "&baselayer=" + keyString;
+    }
+  }
+  <%if @map.portal_kind == 1%>
+    var search_params = "";
+    var vars = new Object, params;
+    var temp_params = window.location.search.substring(1).split('&');
+    for(var i = 0; i <temp_params.length; i++) {
+      params = temp_params[i].split('=');
+      //vars[params[0]] = params[1];
+      switch (params[0]) {
+        case "zoom":  break;
+        case "lat":  break;
+        case "lon":  break;
+        case "layers":  break;
+        case "baselayer":  break;
+        default : search_params += "&" + params[0] + "=" + params[1]; break;
+      }
+    }
+    mapLinkUrl += search_params;
+  <%end%>
+
+  return mapLinkUrl;
+}
+
+function showprintPanel(){
+  var mapLinkUrl = getBaseUrl();
+  mapLinkUrl += "print"
+  mapLinkUrl += createParams();
+  mapLinkUrl = mapLinkUrl.replace(/printsearch\//,"print");
+  printWindow = window.open( mapLinkUrl,'printWindow',"width=980,height=780,location=no,toolbar=no,menubar=yes");
+
+}
+var outPutConfirmed = false;
+var outPutConfirmWin;
+function showOutPutPanel(){
+  if (outPutConfirmed){
+    outPutPanel.show();
+  }else{
+      outPutConfirmWin.show();
+  }
+
+}
+
+
+
+function createCtrlPanel(){
+
+
+  var drawLayer = overlays['vector'] ;
+  drawLayer.events.register('beforefeatureadded', drawLayer, afterSketch);
+
+
+  action = {id: "printMapBtn", text: "印刷", tooltip: "地図を印刷", handler: showprintPanel };
+  toolbarItems.push(action);
+  actions["print"] = action;
+
+
+  action = {id: "drawConfigBtn", text: "作図", tooltip: "作図パネル表示", handler: showDrawWindow };
+  toolbarItems.push(action);
+  actions["config"] = action;
+
+  action = {id: "showLinkBtn", text: "リンク", tooltip: "リンク表示", handler: showlinkPanel };
+  toolbarItems.push(action);
+  actions["link"] = action;
+
+  action = {id: "measureConfig", text: "計測", tooltip: "計測パネル表示", handler: showMeasureWindow};
+  toolbarItems.push(action);
+  actions["measure"] = action;
+
+  action = {id: "outPutBtn", text: "出力", tooltip: "データ出力", handler: showOutPutPanel };
+  toolbarItems.push(action);
+  actions["export"] = action;
+
+
+  action = {id: "helpPanelBtn", text: "ヘルプ", tooltip: "ヘルプ表示", handler: showhelpPanel };
+  toolbarItems.push(action);
+  actions["help"] = action;
+
+
+  toolbarItems.push("->");
+
+  action = {id: "legendShowBtn",text: "凡例",tooltip: "凡例パネル表示", handler: showLedendWindow}
+  toolbarItems.push(action);
+  actions["ledeng"] = action;
+
+
+  ctrl = new OpenLayers.Control.NavigationHistory();
+  map.addControl(ctrl);
+
+  //dragFeature = new OpenLayers.Control.DragFeature(drawLayer);
+  //map.addControl(dragFeature);
+  //dragFeature.activate();
+
+
+  toolbar = new Ext.Toolbar(toolbarItems);
+  createClickControl();
+  setDrawControl();
+}
+
+var childWindow;
+
+function showLedendWindow(){
+  childWindow = window.open('legend','legendWindow',"width=600,height=500,resizable=yes,scrollbars=yes,location=no,toolbar=no,menubar=no");
+  var legendBody ='<html><head><title>凡例</title><div id="legendChild">' +  $('#legendPanel_set').html() +  '</div>';
+
+  childWindow.document.open();
+  childWindow.document.write(legendBody);
+  childWindow.document.close();
+  childWindow.focus();
+}
+
+function showDrawWindow(){
+  drawWindow.setPosition(drawPositionLeft, drawPositionTop);
+  drawWindow.show();
+}
+function showMeasureWindow(){
+  measureWindow.setPosition(measurePositionLeft, measurePositionTop);
+  measureWindow.show();
+}
+$(document).on('click', "#strokeColorBtn", function(e){
+  e.preventDefault();
+  strokeSelectWindow.show();
+});
+$(document).on('click', "#fillColorBtn", function(e){
+  e.preventDefault();
+  fillSelectWindow.show();
+});
+
+var measureWindow;
+function readyForMeasure(){
+  setMeasureControl();
+  measureWindow = new Ext.Window({
+      id:'measurePanel',
+      title:'計測',
+      layout:'fit',
+      width:300,
+      closeAction:'hide',
+      autoScroll:true,
+      plain: true,
+      maximizable: true,
+      collapsible: true,
+      closable: true,
+      autoHeight:false,
+      autoLoad: {
+                url: "<%= url_for({:action => :measure}) %>",
+                method: "GET",
+                text: "読み込み中...",
+                timeout: 60
+            }
+        });
+}
+
+function readyForDraw(){
+  drawWindow = new Ext.Window({
+      id:'drawPanel',
+      title:'作画パネル',
+      layout:'fit',
+      width:300,
+      height: 400,
+      closeAction:'hide',
+      autoScroll:true,
+      plain: true,
+      maximizable: true,
+      collapsible: true,
+      closable: true,
+      autoHeight:false,
+      autoLoad: {
+                url: "<%= url_for({:action => :draw}) %>",
+                method: "GET",
+                text: "読み込み中...",
+                timeout: 60
+            }
+        });
+
+  strokeSelectWindow = new Ext.Window({
+              height: '180',
+              width: '160',
+              xtype: 'panel',
+              closeAction:'hide',
+              title: '線色',
+              items: [{
+                xtype: 'colorpalette',
+                listeners: {
+                  select: function(plt, color){
+                    Ext.getCmp('stroke-sel-color').setValue(color);
+                    strokeColor = color;
+                  }
+                }
+              }, {
+                xtype: 'form',
+                border: false,
+                bodyStyle: 'background-color: transparent; padding-left: 5px;',
+                labelWidth: 60,
+                items: [{
+                    xtype: 'displayfield',
+                    id: 'stroke-sel-color',
+                    style: 'margin-top: 2px',
+                    fieldLabel: '選択'
+                }]
+
+              }],
+              buttons: [{
+                text: 'OK',
+                xtype: 'button',
+                id: 'strokeColorSelect',
+                listeners: {
+                  click: function(){
+                      var clrtext = Ext.getCmp('stroke-sel-color').getValue();
+                      var ele = Ext.get('selected');
+                      if((clrtext == 'ffffff') || (clrtext == 'FFFFFF')){
+                          ele.update('□');
+                          ele.applyStyles('color: #000000');
+                      }else{
+                          ele.update('■');
+                          ele.applyStyles('color: #'+ clrtext);
+                      }
+                      strokeSelectWindow.hide();
+                  }
+                }
+              }]
+            });
+
+   fillSelectWindow = new Ext.Window({
+              height: '180',
+              width: '160',
+              xtype: 'panel',
+              title: '塗色',
+              closeAction:'hide',
+              items: [{
+                xtype: 'colorpalette',
+                listeners: {
+                  select: function(plt, color){
+                    Ext.getCmp('fil-sel-color').setValue(color);
+                    fillColor = color;
+                  }
+                }
+              }, {
+                xtype: 'form',
+                border: false,
+                bodyStyle: 'background-color: transparent; padding-left: 5px;',
+                labelWidth: 60,
+                items: [{
+                    xtype: 'displayfield',
+                    id: 'fil-sel-color',
+                    style: 'margin-top: 2px',
+                    fieldLabel: '選択'
+                }]
+
+              }],
+              buttons: [{
+                xtype: 'button',
+                id: 'fillColorSelect',
+                text: 'OK',
+                baseCls : "colorBtn",
+                listeners: {
+                  click: function(){
+                      var clrtext = Ext.getCmp('fil-sel-color').getValue();
+                      var ele = Ext.get('selectedFill');
+                      if((clrtext == 'ffffff') || (clrtext == 'FFFFFF')){
+                          ele.update('□');
+                          ele.applyStyles('color: #000000');
+                      }else{
+                          ele.update('■');
+                          ele.applyStyles('color: #'+ clrtext);
+                      }
+                      fillSelectWindow.hide();
+                  }
+                }
+              }]
+            });
+}
+<%= render :partial =>  'base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
+<%= render :partial =>  'add_layer_js', :locals=>{:vector_layer_list =>vector_layer_list,:wms_url => wms_url}   rescue nil %>
+<%= render :partial =>  'gis/public/portals/getpoint_js'   rescue nil %>
+<%= render :partial =>  'gis/public/portals/show_slider_js', :locals=>{:layer_state =>"public"}  rescue nil %>
+<%= render :partial =>  'gis/public/portals/geocode_form'  rescue nil %>
+<%= render :partial =>  'gis/public/portals/draw_js'  rescue nil %>
+<%case @portal%>
+<%when "portal1"%>
+<%= render :partial =>  'portal1_js', :locals=>{:vector_layer_list =>vector_layer_list,:wms_url => wms_url}  rescue nil %>
+<%else%>
+<%= render :partial =>  'portal2_js', :locals=>{:vector_layer_list =>vector_layer_list,:wms_url => wms_url}   rescue nil %>
+<%end%>
+
+
+})(jQuery);

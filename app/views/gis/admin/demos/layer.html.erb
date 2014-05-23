@@ -1,0 +1,66 @@
+<div id="layerList">
+<div class="layerSet">
+
+<%
+
+   map_class = "current"
+   list_display = ""
+   title_class = " open"
+   body_class = " open"
+   i= 0
+
+%>
+<div class="<%=map_class%>">
+    <a href="#map<%=@map.id%>" class="mapTitle<%=title_class%>" id="mapTitle<%=i%>"><%=@map.title%></a><br />
+    <%
+    last_index = nil
+    folders = @map.assortments
+    folders.each_with_index{|folder, n|
+      last_index = n
+    %>
+    <div id="title<%=i%>-<%=n%>" class="title<%=i%> layerTitleLink<%=body_class%>" style="<%=list_display%>">
+      <input class="allCheck" id="allCheck<%=i%>-<%=n%>" name="allCheck" type="checkbox" value="1" />
+      <a  class="layerTitle" href="#" id="titleLink<%=i%>-<%=n%>"><%=folder.title%></a>
+    </div>
+    <div class="layerBody body<%=i%>" id="body<%=i%>-<%=n%>" style="<%=list_display%>">
+      <%layers = get_layers_from_item(folder,"internal")
+      layers.each_with_index{|layer, m|
+        next if layer.state != "enabled"
+        checked = false
+        checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?
+      -%>
+        <%=check_box_tag("feature_layer", layer.code, checked, {:id=>"#{layer.code}_#{i}_#{n}", :class=>"featureLayer layerCheck#{i}-#{n}#{layer.slide_show_class}"})%>
+        <label for="<%=i%>_<%=n%>_<%=layer.code%>"><%=layer.title%></label><br />
+      <%} unless layers.blank?-%>
+      </div>
+    <%} unless folders.blank?
+    last_index = last_index.blank? ? 0 : last_index + 1
+    %>
+
+    <%layers = get_layers_from_item(@map,"internal")
+    if layers%>
+    <div id="title<%=i%>-<%=last_index%>" class="title<%=i%> layerTitleLayer body<%=i%>" style="<%=list_display%>">
+    <%layers.each_with_index{|layer, n|
+        next if layer.state != "enabled"
+        checked = false
+        checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?-%>
+      <%=check_box_tag("feature_layer", layer.code, checked, {:id=>"#{layer.code}_#{i}_#{last_index}", :class=>"featureLayer layerCheck#{i}-#{last_index}#{layer.slide_show_class}"})%>
+      <label for="<%=i%>_<%=last_index%>_<%=layer.code%>"><%=layer.title%></label><br />
+    <%} unless layers.blank?%>
+     </div>
+
+    <%end%>
+</div>
+<div class="additionalLayer">
+
+
+<div class="layerFunc">
+  <a href="#" id="openFuncWindow">追加レイヤー登録</a>
+  <span class="caution">※残り<span id="addLayerCount">5</span>件追加可能</span>
+</div>
+<div id="selectedLayers"></div>
+</div>
+
+  <div id="slideShow" style="display: none;"></div>
+</div>
+</div>

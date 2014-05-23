@@ -1,0 +1,16 @@
+<%
+links = []
+links << link_to('庁内ポータル',  {:controller => '/gis/admin/maps'}, :class => current_class(current, :maps))
+links << link_to('レイヤー管理',  {:controller => '/gis/admin/layers'}, :class => current_class(current, :layers))
+links << link_to('マップファイル管理',  {:controller => '/gis/admin/mapfiles'}, :class => current_class(current, :mapfiles))
+links << link_to('背景地図',  {:controller => '/gis/admin/background_maps'}, :class => current_class(current, :backgrounds)) if Core.user.has_auth?(:manager)
+links << link_to('地図アイコン管理',  {:controller => '/gis/admin/map_icons'}, :class => current_class(current, :icons))
+links = links.select{|link| link.present?}
+%>
+
+<div class="menu">
+<% links.each_with_index do |link, i| %>
+<%= content_tag :span, link, {:class => i == 0 ? 'left' : ''} -%>
+<% end %>
+</div>
+<%= render :partial => controller.controller_path + '/navi' rescue nil %>

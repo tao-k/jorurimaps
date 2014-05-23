@@ -1,0 +1,136 @@
+@charset "UTF-8";
+
+/* 印刷設定
+-----------------------------------------------------*/
+@media print {
+  #header, #headerBody, #banner, #bannerBody, #navi,
+  #naviBody, #menu, #menuContainer, #links, #linksContainer,
+  #footer, #footerContainer, #footerBody, #popup_select_group_2,
+  form.search,
+  .menu, .showMenu, .actionMenu, .noprint {
+    display: none;
+    margin: 0;
+    padding: 0;
+  }
+  #page-index #menu,
+  #page-index #menu #menuContainer {
+    display: block;
+  }
+  #content, #contentContainer {
+    margin: 0;
+  }
+
+  /* table index
+  -----------------------------------------------------*/
+  table.index {
+    width: 100%;
+    margin-bottom: 10px;
+    border-left: solid 2px #FFF;
+    border-right: solid 2px #FFF;
+  }
+  table.index th {
+    padding: 6px 7px;
+    background-color: #E3EFFF;
+    border: 1px solid #CCCCCC;
+    text-align: left;
+  }
+  table.index tr.subIndex th {
+    padding: 5px 0 5px 7px;
+    background-color: #C6D1E8;
+    font-weight: bold;
+    color: #000;
+  }
+  table.index td {
+    padding: 6px 7px;
+    border: 1px solid #CCCCCC;
+  }
+  table.index td.noneLeft {
+    border-left: none;
+  }
+  table.index td.noneRight {
+    border-right: none;
+  }
+  table.index td.noneTop {
+    border-top: none;
+  }
+  tr.cycle td {
+    background-color: #F7FBFF;
+  }
+  table.index .st_at {
+    border-right: 1px solid #ccc;
+  }
+  table.index ._name {
+    border-right: 1px solid #ccc;
+  }
+  table.index ._participant_nums_inner {
+    border-right: 1px solid #ccc;
+  }
+  table.index ._participant_nums_outer {
+    border-right: 1px solid #ccc;
+  }
+  table.index ._owner {
+    border-right: 1px solid #ccc;
+  }
+  table.index ._subscriber {
+    border-right: 1px solid #ccc;
+  }
+  table.index td.integer {
+    text-align: right;
+  }
+  table.index td.decimal {
+    text-align: right;
+  }
+  table.index td.float {
+    text-align: right;
+  }
+  table.index img.thumbnail {
+    width: 49px;
+    height: 44px;
+  }
+  table.index colgroup.action {
+    white-space: nowrap;
+  }
+  td.title span.new,
+  td.docTitle span.new {
+    display: inline-block;
+    height: 0;
+    width: 23px;
+    margin-left: 3px;
+    padding-top: 12px;
+    background-image: url("/_common/themes/gw/files/icon/ic-new.gif");
+    background-repeat: no-repeat;
+    overflow: hidden;
+    vertical-align: middle;
+  }
+  tr.highlight td {
+    background-color: #ffb;
+  }
+
+  /* table show
+  -----------------------------------------------------*/
+  table.show {
+    width: 100%;
+    margin: 0 0 10px;
+    border: solid 2px #C6D1E8;
+  }
+  table.show th {
+    width: 135px;
+    padding: 6px 7px;
+    border: 1px solid #C6D1E8;
+    background-color: #E3EFFF;
+    font-weight: lighter;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.show th.titleTop {
+    width: auto;
+  }
+  table.show td {
+    padding: 6px 7px;
+    border: solid 1px #C6D1E8;
+  }
+  table.show td.mceEditor {
+    padding:0px;
+  }
+
+}

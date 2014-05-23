@@ -1,0 +1,4 @@
+<div class="tabMenu">
+<%= link_to 'ユーザ一覧',  {:controller => 'system/admin/users'}, :class => current_class(current, :users) -%>
+<%= link_to 'CSV管理',  {:controller => 'system/admin/users', :action=>:csvget}, :class => current_class(current, :csv) -%>
+</div>

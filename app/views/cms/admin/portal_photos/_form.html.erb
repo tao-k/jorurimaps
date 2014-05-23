@@ -1,0 +1,18 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%= f.radio_buttons :web_state, @item.status_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:category) %><%= required %></th>
+    <td><%= f.select(:category, @item.category_select, :selected=>@item.category)%></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :class => 'string title' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %><%= required %></th>
+    <td><%= f.text_field :sort_no, :class => 'num IMEoff' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:upload) %><%= required %></th>
+    <td><%= f.file_field :upload, :class => 'string title' %></td>
+  </tr>
+</table>

@@ -1,0 +1,28 @@
+
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:web_state) %><%= required %></th>
+    <td><%= f.radio_buttons :web_state, @item.web_state_select, :class => 'status' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :style=>"width: 80%;" %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:url) %><%= required %></th>
+    <td><%= f.text_field :url, :style=>"width: 80%;" %></td>
+  </tr>
+    <tr>
+    <th>並び順<%= required %></th>
+    <td><%= f.number_field :sort_no, :class => 'int', :min => 0, :max => 65536, :step => 1, :value => @item.sort_no, :style => 'width: 200px;' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:parent_category_id) %></th>
+    <td>
+      <%= f.select(:parent_category_id_0, @item.parent_category_select({:include_blank=>true}), :selected=>@item.parent_category_id_0)%>
+      <%= f.select(:parent_category_id_1, @item.parent_category_select({:include_blank=>true}), :selected=>@item.parent_category_id_1)%>
+      <%= f.select(:parent_category_id_2, @item.parent_category_select({:include_blank=>true}), :selected=>@item.parent_category_id_2)%>
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,25 @@
+<table class="index">
+
+  <tr>
+    <th>詳細</th>
+    <th style="width: 60px;">ID</th>
+    <th style="width: ;">管理用タイトル</th>
+    <th style="width: 60px;">状態</th>
+    <th style="width: ;">分類</th>
+    <th style="width: 60px;">並び順</th>
+  </tr>
+
+  <% for item in @items %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td class="showLink"><%= link_to :show, url_for(:action => :show, :id => item) %></td>
+    <td><%=h item.id %></td>
+    <td><%=h item.title %></td>
+    <td ><%= item.web_state_show %></td>
+    <td ><%= item.category_show %></td>
+    <td ><%= item.sort_no %></td>
+  </tr>
+  <% end %>
+
+</table>
+
+<%= paginate @items %>

@@ -1,0 +1,92 @@
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= @item.state_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td>
+      <%= @item.web_state_show %>
+      <%if @item.web_state == "recognize"%>
+      <br />
+      <%=recognized_user(@item)%>
+      <%end%>
+    </td>
+  </tr><tr>
+    <th><%= @item.locale(:portal_kind) %></th>
+    <td>
+      <%= @item.portal_kind_show %>
+        <%if @item.editable? && @item.portal_kind == 1%>
+        <ul>
+        <li><%= link_to '＞関連リンク設定', url_for({:controller=>"gis/admin/maps/related_links",:action => :index, :map_id => @item.id})  %></li>
+        <li><%= link_to '＞更新情報管理', url_for({:controller=>"gis/admin/maps/social_updates",:action => :index, :map_id => @item.id})  %></li>
+        <li><%= link_to '＞ポータル写真設定', url_for({:controller=>"gis/admin/maps/portal_photos",:action => :index, :map_id => @item.id})  %></li>
+        <li><%= link_to '＞検索フォーム設定', url_for({:controller=>"gis/admin/maps/searches",:action => :index, :map_id => @item.id})  %></li>
+        <li><%= link_to '＞おすすめ検索設定', url_for({:controller=>"gis/admin/maps/recommends",:action => :index, :map_id => @item.id})  %></li>
+        <li><%= link_to '＞お問い合わせ先設定', url_for({:controller=>"gis/admin/maps/inquiries",:action => :index, :map_id => @item.id})  %></li>
+        </ul>
+        <% end %>
+    </td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %></th>
+    <td><%= @item.code %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:in_genre_id) %></th>
+    <td><%=@item.parent_category_show%></td>
+  </tr><tr>
+    <th><%= @item.locale(:sort_no) %></th>
+    <td><%= @item.sort_no %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:body)%></th>
+    <td><%= @item.body %></td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:message)%></th>
+    <td><%= text_area_tag 'message', @item.message, :class => 'mceEditor', :style => 'width:100%' %></td>
+  </tr>
+  <tr style="<%=link_style(@item)%>">
+    <th><%=@item.locale(:link_url)%></th>
+    <td><%= @item.link_url %></td>
+  </tr>  <tr id="fileUpload" style="<%=upload_style(@item)%>">
+    <th><%= @item.locale(:upload) %></th>
+    <td>
+      <% if !@item.icon_path.blank? && !@item.icon_uri.blank?%>
+        <%= image_tag("#{@item.icon_uri}?#{Time.now.to_i}")%>
+      <%end%>
+    </td>
+  </tr><tr id="fileUpload_thumb">
+    <th><%= @item.locale(:upload_thumb) %></th>
+    <td>
+      <% if !@item.thumb_path.blank? && !@item.thumb_uri.blank?%>
+        <%= image_tag("#{@item.thumb_uri}?#{Time.now.to_i}")%>
+      <%end%>
+    </td>
+  </tr><tr>
+    <th><%= @item.locale(:user_kind) %></th>
+    <td><%= @item.user_kind_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_group_id) %></th>
+    <td><%= safe{@item.admin_group.name}  %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:admin_user_id) %></th>
+    <td>
+    <%= safe{@item.admin_user.name} %></td>
+  </tr>
+  <!--<tr>
+    <th><%#=@item.locale(:map_legend)%></th>
+    <td><%#= text_area_tag 'map_legend', @item.map_legend, :class => 'mceEditor', :style => 'width:100%' %></td>
+  </tr>-->
+</table>
+<%= init_tiny_mce :readonly => true %>
+<%= render :partial => 'gis/admin/common/operator'%>
+<div id="folderSelect" style="<%=folder_select_style(@item)%>">
+<%= render :partial => 'gis/admin/common/index_folder'%>
+<%= render :partial => 'gis/admin/common/index_layer'%>
+</div>

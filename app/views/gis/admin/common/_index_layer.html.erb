@@ -1,0 +1,19 @@
+<h2><%= @item.locale(:layers) %></h2>
+<%if @layers.blank?%>
+<%=div_notice("レイヤーは登録されていません。")%>
+<%else%>
+<table class="index">
+  <tr>
+    <th>状態</th>
+    <th style="width: 60px;">公開状況</th>
+    <th style="width: ;">タイトル</th>
+  </tr>
+  <% for item in @layers %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td ><%= item.state_show %></td>
+    <td ><%= item.public_state_show %></td>
+    <td><%= item.title %></td>
+  </tr>
+  <% end %>
+</table>
+<%end%>

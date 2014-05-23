@@ -1,0 +1,65 @@
+
+<h2><%=@item.locale(:base)%></h2>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:geometry_type) %></th>
+    <td><%= @item.geometry_type_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:label_column) %></th>
+    <td><%= @item.label_column_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:label_color) %></th>
+    <td><span style="color: <%=@item.label_color%>">■</span></td>
+  </tr>
+</table>
+
+<h2><%=@item.locale(:draw)%></h2>
+<table class="show">
+  <tr id="point">
+    <th><%= @item.locale(:point_color) %></th>
+    <td><span style="color: <%=@item.point_color%>">■</span></td>
+  </tr>
+  <tr id="line1">
+    <th><%= @item.locale(:line_color) %></th>
+    <td><span style="color: <%=@item.line_color%>">■</span></td>
+  </tr>
+  <tr id="line2">
+    <th><%= @item.locale(:line_width) %></th>
+    <td><%=@item.line_width_show%></td>
+  </tr>
+  <tr id="polygon">
+    <th><%= @item.locale(:polygon_color) %></th>
+    <td><span style="color: <%=@item.polygon_color%>">■</span></td>
+  </tr>
+</table>
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(document).ready(function() {
+    drawConfigShow()
+    function drawConfigShow(){
+      var kind = "<%=@item.geometry_type%>";
+      if (kind == "point"){
+        $("#point").show();
+        $("#line1").hide();
+        $("#line2").hide();
+        $("#polygon").hide();
+      }else if (kind == "line"){
+        $("#point").hide();
+        $("#line1").show();
+        $("#line2").show();
+        $("#polygon").hide();
+      }else{
+        $("#point").hide();
+        $("#line1").show();
+        $("#line2").show();
+        $("#polygon").show();
+      }
+    }
+
+  });
+})(jQuery);
+//]]>
+</script>

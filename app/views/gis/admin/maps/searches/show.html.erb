@@ -1,0 +1,40 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:form_type) %></th>
+    <td id="formType"><%= @item.form_type_show %></td>
+  </tr><tr>
+    <th><%= @item.locale(:label) %></th>
+    <td><%= @item.label %></td>
+  </tr>
+  <tr id="columnFields" style="<%=@item.form_type == "area" ? "display: none;" : ""%>">
+    <th><%=@item.locale(:column_flds)%></th>
+    <td>
+      <table>
+        <tr>
+          <th>レイヤー名</th>
+        <%@layers.each do |item|%>
+        <th><%=item.title%></th>
+        <%end unless @layers.blank?%>
+        </tr>
+        <tr>
+          <th>項目名</th>
+          <%@layers_configs.each do |item|
+            value = params["layer_item#{item[:layer].id}"]
+            @item.column_flds.each{ |fld| value = fld[1] if fld[0].to_i == item[:layer].id } if @item.column_flds
+            fld_text = "指定なし"
+            item[:columns].each{|item| fld_text = item[0] if item[1] == value} unless item[:columns].blank?
+          %>
+      <td><%=fld_text%></td>
+          <%end unless @layers_configs.blank?%>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <th><%=@item.locale(:form_show)%></th>
+    <td>
+      <%= portal_search_form_show(@item) %>
+    </td>
+  </tr>
+</table>
+<%= render :partial => 'gis/admin/common/operator'%>

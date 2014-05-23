@@ -1,0 +1,44 @@
+<!-- pageTitle -->
+
+      <div id="pageTitle">
+        <div class="pieceContainer">
+        <div class="pieceBody <%=@category%>">
+          <h1><%=@class_title%></h1>
+          <%=safe{image_tag(top_banner_url(@category), :title=>@class_title, :alt => @class_title)} if top_banner_url(@category)%>
+        </div>
+        </div>
+      </div>
+      <!-- /pageTitle -->
+
+
+      <!-- docTab -->
+      <div id="docTab" class="piece">
+      <div class="pieceContainer">
+      <div class="pieceBody">
+        <script type="text/javascript" src="/_common/themes/gis/js/doc_tabs.js"></script>
+
+      <div class="wrapper">
+        <div class="content">
+          <div class="title"><h2>マップ情報一覧</h2></div>
+          <div class="change">
+            <span id="samunail" class="current">サムネイル</span>
+            <span id="ichiran">一覧</span>
+          </div>
+          <ul class="shinchaku" >
+            <li>
+              <%= render :partial =>  "/gis/public/common/map_index", :locals=> {:map_items=>@maps} rescue nil %>
+            </li>
+          </ul>
+
+         </div>
+
+          <%= paginate @maps %>
+
+          </div>
+          <!-- /.wrapper -->
+
+</div>
+</div>
+</div>
+<!-- /docTab -->
+<%= render_show_cache("feed_index_#{@category}", '/gis/public/categories/rss_index',{:category=>@category, :class_title => @class_title}) %>

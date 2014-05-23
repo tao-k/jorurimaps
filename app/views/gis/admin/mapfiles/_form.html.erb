@@ -1,0 +1,21 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= f.radio_buttons :state, @item.state_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:file_name) %><%= required %></th>
+    <td><%= f.text_field :file_name, :class => 'string title IMEoff', :style => 'width: 400px;' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :class => 'string title' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:caption) %></th>
+    <td><%= f.text_area :caption, :style => "width: 300px; height: 60px;" %></td>
+  </tr><tr>
+    <th><%= @item.locale(:body) %><%= required %></th>
+    <td><%= f.text_area :body, :style => 'width: 500px; height: 500px;' %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'gis/admin/common/users_field_form', :locals => {:f => f} %>
+

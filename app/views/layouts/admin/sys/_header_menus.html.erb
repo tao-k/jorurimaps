@@ -1,0 +1,26 @@
+<%
+current = []
+case
+when request.fullpath =~ %r(/map/)
+  current[0] = 'current'
+when request.fullpath =~ %r(/ud/)
+  current[1] = 'current'
+when request.fullpath =~ %r(/system/)
+  current[2] = 'current'
+when request.fullpath =~ %r(/cms/)
+  current[2] = 'current'
+end
+%>
+<div class="headerMenu">
+<ul>
+  <li>
+    <%= link_to 'マップデモ画面', {:controller => 'gis/admin/demos', :action => :map}, :class => "#{current[0]}", :target=>"_blank"  %>
+  </li>
+  <li>
+    <%= link_to '施設管理画面', {:controller => 'ud/admin/facilities', :action => :index}, :class => "#{current[0]}", :target=>"_blank"  %>
+  </li>
+  <li>
+    <%= link_to 'システム管理', {:controller => 'system/admin/fronts'}, :class => "#{current[2]}" %>
+  </li>
+</ul>
+</div>

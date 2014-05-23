@@ -1,0 +1,10 @@
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:kind) %></th>
+    <td><%= f.select :kind, @item.kind_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:value) %><%= required %></th>
+    <td><%= f.text_field :value, :class => 'string title' %></td>
+  </tr>
+</table>

@@ -1,0 +1,21 @@
+<div id="contentPage">
+  <div class="pieceHeader">サイトマップ</div>
+  <div class="pieceBody">
+    <div class="sitemap">
+      <h2><a href="/">TOP</a></h2>
+      <h2><a href="/gis/howto.html">ご利用方法等</a></h2>
+      <h2><a href="/doc/index.html">更新情報</a></h2>
+      <h2><a href="/inquiry/index.html">お問い合わせ</a></h2>
+      <h2 style="margin-bottom: 5px;"><a href="/gis/category">分野</a></h2>
+      <%header_menu_piece_list.each do |menu|
+        next if menu[:class]=="top"%>
+
+        <h3><a href="/gis/category/<%=menu[:class]%>/"><%=menu[:title]%></a></h3>
+        <ul class="sitemap">
+          <li class=""><a href="/gis/category/<%=menu[:class]%>/"><%=menu[:title]%>の新着情報</a></li>
+        </ul>
+      <%end%>
+
+    </div>
+  </div>
+</div>

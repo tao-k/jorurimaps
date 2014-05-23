@@ -1,0 +1,49 @@
+var geocoder = new google.maps.Geocoder();
+$(document).on("submit", "#geoCodingForm",function(e){
+  e.preventDefault();
+  $("#geocodeResult").html("読み込み中…");
+  $("#geocodeResultList").html("");
+
+
+  var address = $("#geocodeAdress").val();
+
+  geocoder.geocode( { 'address': address, 'region': 'jp'}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        var addrList = "";
+        $("#geocodeResult").html("検索結果：" + results.length +"件<br />");
+        for(var i=0; i < results.length; i++){
+          addrList += '<a href="#'+ results[i].geometry.location.k + ','+ results[i].geometry.location.A  + '" class="geoCodeMark">'+ results[i].address_components[0].long_name + '<a><br />';
+        }
+        $("#geocodeResultList").html(addrList);
+      } else {
+        $("#geocodeResult").html("情報を取得できませんでした。");
+        //alert("Geocode was not successful for the following reason: " + status);
+      }
+    });
+  return false;
+});
+
+$(document).on("click","#resetResult",function(e){
+  e.preventDefault();
+   $("#geocodeResult").html("");
+   $("#geocodeAdress").val("");
+   markers.clearMarkers();
+});
+
+$(document).on("click", ".geoCodeMark",function(e){
+  e.preventDefault();
+  var latLng = $(this).attr("href").replace("#","").split( ',' );
+  var marker = new OpenLayers.Marker(
+    new OpenLayers.LonLat(latLng[1], latLng[0]).transform(
+      new OpenLayers.Projection("EPSG:4326"),
+      new OpenLayers.Projection("EPSG:900913")
+    )
+  );
+  markers.clearMarkers(marker);
+  var defaultZoom = 16
+  if(map.baseLayer.zoomOffset){
+    defaultZoom = defaultZoom- map.baseLayer.zoomOffset;
+  }
+  markers.addMarker(marker);
+  map.setCenter( convLonLat(latLng[1], latLng[0]), defaultZoom);
+});

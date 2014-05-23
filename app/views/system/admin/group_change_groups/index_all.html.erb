@@ -1,0 +1,31 @@
+<% if @items.present? %>
+<div><%= @items.size %>件登録しています。</div>
+<%= render :partial => 'unsetting_groups' %>
+<table class="index">
+  <colgroup></colgroup>
+  <colgroup></colgroup>
+  <colgroup></colgroup>
+  <colgroup class="action"></colgroup>
+  <colgroup class="action"></colgroup>
+  <tr>
+    <th>所属コード</th>
+    <th>所属名</th>
+    <th>引継元所属</th>
+    <th>変更</th>
+    <th>削除</th>
+  </tr>
+  <% @items.each do |item| %>
+  <% prefix = "&nbsp;"*(item.level_no-2)*3 %>
+  <tr class="<%= cycle '', 'cycle' %> <%= 'highlight' if item.will_change? %>">
+    <td><%=raw "#{prefix}#{item.code}" %></td>
+    <td><%=raw "#{prefix}#{item.name}" %></td>
+    <td><%=br item.ogirinal_group_names.join("\n") %></td>
+    <td><%= link_to '変更', {:action => :edit, :id => item.id} %></td>
+    <td><%= link_to '削除', {:action => :destroy, :id => item.id}, :method => :delete, :confirm => '削除してよろしいですか？' if item.deletable? %></td>
+  </tr>
+  <% end %>
+</table>
+<% else %>
+<div>登録データがありません。</div>
+<% end %>
+<%= button_to '戻る', {:action => :index, :parent_id => 0}, :method => :get %>

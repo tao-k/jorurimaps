@@ -1,0 +1,8 @@
+<% if @unsetting_groups.size > 0 %>
+<div class="notice">
+次の所属が引継元所属に設定されていません。
+<% @unsetting_groups.each do |item| %>
+<div>・<%= item.code %><%= item.name %></div>
+<% end %>
+</div>
+<% end %>

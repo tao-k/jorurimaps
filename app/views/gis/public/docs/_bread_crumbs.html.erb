@@ -1,0 +1,10 @@
+
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+  <a href="/">TOP</a> &gt; <a href="/doc/index.html">更新情報</a><%if @item%> &gt; <%=link_to @item.title, update_public_uri(@item)%><%end%>
+    </div>
+  </div>
+</div>
+</div>

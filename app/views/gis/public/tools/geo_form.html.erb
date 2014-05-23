@@ -1,0 +1,13 @@
+<div class="geoCodeFormSet">
+  <p>住所から該当する位置情報を表示します。</p>
+  <br />
+<%= form_for :item, :url => url_for({:action => :geocode}), :html => {:multipart => true, :id=>"geoCodingForm"}, :remote => true do |f|%>
+<%= text_field_tag :address, "", :id=>"geocodeAdress", :style=>"width : 180px"%>
+<%=f.submit :value=>"送信"%><%=submit_tag "クリア", :id=>"resetResult"%>
+<% end %>
+
+<div id="geocodeResult">
+</div>
+<div id="geocodeResultList">
+</div>
+</div>

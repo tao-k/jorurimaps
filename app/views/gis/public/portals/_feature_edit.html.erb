@@ -1,0 +1,21 @@
+<div class="drawFeatureTool">
+<%case params[:mode]%>
+<%when "marker"%>
+<span class="labelText">マーカー：</span>
+<%icon_select.each_with_index do |icon, i|
+checked = false
+checked = true if i == 0
+%>
+<%=radio_button_tag("mapIconEdit", "marker#{icon.id}", checked, {:id=>"icon#{icon.id}Edit", :class=>"selectMarkerEdit"})%>
+<label for="<%="icon#{icon.id}Edit"%>"><%=image_tag(icon.file_uri)%></label>
+<%end%>
+<%when "color"%>
+<%=link_to "線色", "#", :id=>"strokeEditBtn"%><span id="editStroke" style="color: #ff0000;">■</span>
+<span style="display: none;" id="editStrokeValue">ff0000</span>
+　<%=link_to "塗色", "#", :id=>"fillEditBtn"%><span id="editFill" style="color: #ffffff;">■</span><br />
+<span style="display: none;" id="editFillValue">ffffff</span>
+<br />
+<%else%>
+<%end%>
+<button type="button" name="finish" value="OK" id="editFeatureBtn">OK</button>
+</div>

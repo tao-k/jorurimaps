@@ -1,0 +1,95 @@
+
+<div class="body" id="confirmMessage">
+  <h4>ご利用上の注意</h4>
+  <div class="info">
+  <%= render :partial =>  'message' rescue nil %>
+  </div>
+<div id="btnContainer">
+  <div>
+    <a href="#closeMessage" id="closeMessage" class="mapFuncBtn">同意する</a>
+    <a href="/" class="mapFuncBtn">同意しない</a>
+  </div>
+</div>
+</div>
+<div id="layerMenu">
+<%= render :partial =>  'tools' rescue nil %>
+<span id="openCount" style="display: none;">0</span>
+<div id="canvas"></div><br />
+<div id="popupText"></div>
+<div class="explanatory">
+<a href="#legend" class="mapFuncBtn" id="legendShowBtn">凡例</a><br />
+<div id="legendPanel_set" style="display: none;"></div>
+</div>
+<a href="#confirmShow" id="confirmShow" class="confirmBtn"><%=safe{@map.title}%>のご利用上の注意</a>
+</div>
+<div class="linkMenu">
+</div>
+<script type="text/javascript">
+
+
+//<![CDATA[
+(function($) {
+
+  $("#closeMessage").click(function (e) {
+    e.preventDefault();
+    $("#confirmMessage").hide();
+    $("#canvas").show();
+    $(".dropdown").css("display", "inline");
+    $("#confirmShow").show();
+    if($("#openCount").text()=="0"){
+      $("#tab2").show();
+      $("#openCount").html("1");
+    }
+
+    if($($("#tabLink1").attr("href")).css("display")=="none"){
+      $("#tabLink1").removeClass("current");
+    }else{
+      $("#tabLink2").addClass("current");
+    }
+    if($($("#tabLink2").attr("href")).css("display")=="none"){
+      $("#tabLink2").removeClass("current");
+    }else{
+      $("#tabLink2").addClass("current");
+    }
+    $("#legendShowBtn").show();
+    var targetOffset = $("body").offset().top;
+    $('html,body').animate({ scrollTop: targetOffset }, 'fast');
+    $("#legendPanel_set").hide();
+    $(".explanatory").show();
+
+    $("#dropdownLayer").addClass("dropdown");
+    $("#dropdownBase").addClass("dropdown");
+    $("#dropdownLayer").show();
+    $("#dropdownBase").show();
+    $("#popupText").show();
+  });
+  $("#confirmShow").click(function (e) {
+    e.preventDefault();
+    $("#confirmMessage").show();
+    $(".dropdown").hide();
+    $(".tanPanel").hide();
+    //$("#canvas").hide();
+    $("#legendPanel_set").hide();
+    $("#confirmShow").hide();
+    $("#legendShowBtn").hide();
+    $("#legendPanel_set").hide();
+    var targetOffset = $("body").offset().top;
+    $(".explanatory").hide();
+    $('html,body').animate({ scrollTop: targetOffset }, 'fast');
+    $("#dropdownLayer").removeClass("dropdown");
+    $("#dropdownBase").removeClass("dropdown");
+    $("#dropdownLayer").hide();
+    $("#dropdownBase").hide();
+  });
+
+  $("#legendShowBtn").click(function (e) {
+    $("#legendPanel_set").toggle();
+    if($("#legendPanel_set").css("display")=="none"){
+      $("#legendShowBtn").removeClass("open");
+    }else{
+      $("#legendShowBtn").addClass("open");
+    }
+  });
+})(jQuery);
+</script>
+</div>

@@ -1,0 +1,23 @@
+development:
+  title  : Joruri Maps
+  public_title: ジョールリ市
+  uri    : http://192.168.0.2/
+  proxy  :
+  map_key:
+  mail_domain :
+
+test:
+  title  :
+  public_title:
+  uri    :
+  proxy  :
+  map_key:
+  mail_domain :
+
+production:
+  title  :
+  public_title:
+  uri    :
+  proxy  :
+  map_key:
+  mail_domain :

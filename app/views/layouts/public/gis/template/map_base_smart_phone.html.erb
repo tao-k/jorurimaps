@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=2.0,user-scalable=yes" />
+<%= render :partial => 'layouts/public/gis/map_header_tag' %>
+</head>
+<body <%= Page.body_id %> <%= Page.body_class %>>
+<div id="container">
+
+<!-- アクセシビリティツール -->
+
+<%if @map && @map.portal_kind == 1 %>
+<%= render :partial => 'layouts/public/gis/portal1_header' rescue nil%>
+<%else%>
+<!-- header -->
+<div id="header">
+  <div id="headerContainer">
+  <div id="headerBody">
+  <div class="piece">
+  <div class="rightMenu">
+  <%if @map%>
+  <%=image_tag(map_icon_uri(@map))%>
+  <h1><%=safe{@map.title}-%></h1>
+  <%end%>
+  </div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<%end%>
+
+
+
+
+  <!-- /headerBody -->
+
+<!-- end #headerContainer --></div>
+<!-- end #header --></div>
+<!-- /header -->
+
+<!-- アクセシビリティツール終り -->
+
+
+<div id="main">
+
+<div id="wrapper">
+
+<div id="content">
+<div id="contentContainer">
+<div id="contentBody">
+
+<%= yield  %>
+</div>
+<!-- end #contentContainer --></div>
+<!-- end #content --></div>
+
+
+
+<!-- end #wrapper --></div>
+<!-- end #main --></div>
+
+
+<div id="footer">
+<div id="footerContainer">
+<div id="footerHeader"></div>
+<div id="footerBody">
+<div class="copyright">
+  <%=show_site_settings[:copyright]%>
+</div>
+</div>
+<div id="footerFooter"></div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

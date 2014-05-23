@@ -1,0 +1,212 @@
+@charset "UTF-8";
+@import "/_common/themes/gis/css/base/init.css";
+@import "/_common/themes/gis/css/base/style.css";
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- pageTitle -----*/
+#pageTitle {
+  margin-bottom: 15px;
+}
+#pageTitle .pieceBody h1 {
+  padding: 7px 0 4px 15px;
+  background-color: #1B487A;
+  color: #fff;
+  font-size: 180%;
+  font-weight: bold;
+}
+#pageTitle .bousai h1 {
+  background-color: #C40000
+}
+#pageTitle .pieceBody img {
+  width: 100%;
+  height: auto;
+}
+
+/*----- categories -----*/
+#categories {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 20px 20px 15px 30px;
+  border: solid 1px #ADADAD;
+  background-color: #fff;
+  box-shadow: 0 5px 3px -3px #C2C2C2;
+}
+#categories .pieceHeader:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 10px;
+  height: 58px;
+  background-color: #DDDDE1;
+}
+#categories .pieceHeader {
+  margin-bottom: 10px;
+  color: #1B487A;
+  font-size: 155%;
+  font-weight: bold;
+}
+#categories .category {
+  clear: both;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: solid 1px #bbb;
+  overflow: hidden;
+  zoom: 1;
+}
+#categories .cateTitle {
+  float: left;
+}
+#categories .cateTitle a {
+  display: inline-block;
+  width: 158px;
+  padding: 10px 0;
+  background-color: #1B487A;
+  border-radius: 5px;
+  color: #fff;
+  text-align: center;
+}
+#categories .bousai .cateTitle a {
+  background-color: #C40000;
+}
+#categories .children {
+  padding-top: 10px;
+  padding-left: 20px;
+  overflow: hidden;
+  zoom: 1;
+}
+#categories .children div {
+  display: inline;
+  margin-bottom: 5px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/*----- kannrenInfo -----*/
+#kannrenInfo {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 20px 20px 15px 30px;
+  border: solid 1px #ADADAD;
+  background-color: #fff;
+}
+#kannrenInfo .pieceHeader:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 10px;
+  height: 58px;
+  background-color: #DDDDE1;
+}
+#kannrenInfo .pieceHeader {
+  margin-bottom: 15px;
+  overflow: hidden;
+  zoom: 1;
+}
+#kannrenInfo .kannrenTitle {
+  float: left;
+  color: #1B487A;
+  font-size: 160%;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+#kannrenInfo .rightMenu {
+  float: right;
+}
+.tokushima {
+  display: inline-block;
+  padding: 2px 8px 2px 0;
+  border-right: dotted 1px #ADADAD;
+}
+.rss {
+  display: inline-block;
+  margin-left: 3px;
+  padding-left: 15px;
+  background-image: url(/_common/themes/gis/images/ic/ic-rss_atom.gif);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+#kannrenInfo .pieceBody {
+  padding-left: 5px;
+}
+#kannrenInfo .pieceBody ul li {
+  margin-bottom: 8px;
+  padding-left: 12px;
+  background-image: url("/_common/themes/gis/images/ic/ic-dot_01.png");
+  background-position: left 0.4em;
+  background-repeat: no-repeat;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+#kannrenInfo .pieceBody ul li a {
+  word-wrap: break-word;
+  word-break: break-all;
+}
+#kannrenInfo .pieceBody ul li .link {
+  margin-left: -5px;
+}
+
+
+/*=============================================================
+ タブレット・スマホ向けスタイル
+=============================================================*/
+@media only screen and (max-width: 799px) {
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- pageTitle -----*/
+#pageTitle .pieceBody h1 {
+  padding: 7px 0 6px 15px;
+  font-size: 180%;
+}
+
+/*----- categories -----*/
+#categories .category {
+  border-bottom: none;
+}
+#categories .cateTitle {
+  float: none;
+}
+#categories .cateTitle a {
+  display: block;
+  width: auto;
+  margin-bottom: 5px;
+  padding: 15px 10px;
+  text-decoration: underline;
+  text-align: left;
+}
+#categories .children {
+  padding: 0;
+}
+#categories .children div {
+  display: block;
+}
+#categories .children div a {
+  display: block;
+  padding: 7px 10px 6px;
+  border-bottom: solid 1px #bbb;
+}
+
+/*----- kannrenInfo -----*/
+#kannrenInfo {
+  padding: 20px 10px 15px 20px;
+}
+#kannrenInfo .pieceHeader {
+  margin-bottom: 10px;
+}
+#kannrenInfo .kannrenTitle {
+  margin-bottom: 10px;
+  font-size: 180%;
+}
+#kannrenInfo .rightMenu span {
+  margin-bottom: 5px;
+}
+}

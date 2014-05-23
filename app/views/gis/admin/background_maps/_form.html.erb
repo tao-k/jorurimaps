@@ -1,0 +1,40 @@
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:state) %></th>
+    <td><%= f.radio_buttons :state, @item.state_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %><%= required %></th>
+    <td><%= f.text_field :code, :class => 'sort_no IMEoff' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :class => 'string title' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:kind) %><%= required %></th>
+    <td><%= f.select(:kind , @item.kind_select, :selected=> @item.kind) %></td>
+  </tr><tr id="urlInput" style="<%=url_style(@item)%>">
+    <th><%= @item.locale(:url) %><%= required %></th>
+    <td><%= f.text_area :url, :style=>"width: 600px; height: 150px;" %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:sort_no)%><%= required %></th>
+    <td><%= f.text_field :sort_no, :class => 'sort_no IMEoff' %></td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $("#item_kind").change(function(){
+    var value = $("#item_kind").val();
+    if(value=="wms"){
+      $("#urlInput").show();
+    }else{
+      $("#urlInput").hide();
+    }
+  });
+
+})(jQuery);
+//]]>
+</script>

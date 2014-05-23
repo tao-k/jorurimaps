@@ -1,0 +1,339 @@
+@charset "UTF-8";
+
+/* basic style
+----------------------------------------------- */
+body, body div {
+  background-color: #00b;
+  color: #fff;
+}
+#container {
+  background-image: none;
+}
+a {
+  color: #fff;
+}
+a:visited {
+  color: #fff;
+}
+a:hover {
+  color: #fff;
+}
+.docTab .content li {
+  color: #fff;
+}
+h1 {
+  color: #fff;
+}
+#contentBody .docTab .content li {
+  color: #fff;
+}
+span {
+  color: #fff !important;
+}
+
+/*------------------------------------------------
+ a-tool
+------------------------------------------------*/
+#a-tool {
+  border-bottom: 1px solid #fff;
+}
+.naviFont .small:hover, .naviFont .big:hover, .naviTheme .white:hover, .naviTheme .blue:hover, .naviTheme .black:hover, .naviRuby .ruby:hover, .naviTalk .talk:hover, .riyou a:hover {
+  color: #fff;
+}
+.riyou a {
+  color: #fff !important;
+  _color: #fff !important;
+}
+#navigationNotice {
+  color: #fff !important;
+}
+
+/* header
+--------------------------------------------------- */
+
+/*----- headerBody -----*/
+.logo a {
+  color: #fff;
+}
+
+/*----- navi -----*/
+#navi {
+  background-color: #00b;
+  background: #00b;
+  filter: none;
+}
+.naviMenu li a {
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+.naviMenu li.bousai a {
+  background: #00b;
+  filter: none;
+}
+.naviMenu li a:hover,
+.naviMenu li.bousai a:hover {
+  border-bottom: solid 1px #fff;
+  background: #fff;
+  background-color: #fff;
+  color: #00b;
+  /color: #00b !important;
+}
+.naviMenu li a.current, .naviMenu li a.current:hover,
+.naviMenu li.bousai a.current, .naviMenu li.bousai a.current:hover {
+  border-bottom: solid 1px #fff;
+  background-color: #fff;
+  color: #00b;
+  /color: #00b !important;
+}
+
+/*------------------------------------------------
+ content
+------------------------------------------------*/
+
+/*----- docInfo -----*/
+#docInfo {
+  border-color: #fff;
+  background-color: #00b;
+  box-shadow: none;
+}
+#docInfo .pieceHeader:before {
+  background-color: #fff;
+}
+#docInfo .pieceHeader h2 {
+  color: #fff;
+}
+
+/*----- docTab -----*/
+#docTab .wrapper {
+  border-color: #fff;
+  background-color: #00b;
+  box-shadow: none;
+}
+#docTab .wrapper:after {
+  background-color: #fff;
+}
+.title h2 {
+  color: #fff;
+}
+.change span {
+  border: 1px solid #fff;
+}
+.change span.current {
+  background-color: #fff;
+}
+
+/*----- docTabs content（サムネイル表示） -----*/
+.shinchaku li {
+  border-color:  #fff;
+}
+.shinchaku .title:hover {
+  color: #fff;
+}
+
+/*----- docTabs content（一覧表示） -----*/
+.ichi .shinchaku li {
+  border-color:  #fff;
+}
+.ichi .shinchaku li > div {
+  border-color:  #fff;
+}
+.ichi .shinchaku .title {
+  color: #fff;
+}
+
+/*----- pageTitle -----*/
+#pageTitle .pieceBody h1 {
+  border: 1px solid #fff;
+  background-color: #00b;
+}
+
+/*----- categories -----*/
+#categories {
+  border-color: #fff;
+  background-color: #00b;
+  box-shadow: none;
+}
+#categories .pieceHeader:before {
+  background-color: #fff;
+}
+#categories .pieceHeader {
+  color: #fff;
+}
+#categories .category {
+  border-color: #fff;
+}
+#categories .cateTitle a,
+#categories .bousai .cateTitle a {
+  border: 1px solid #fff;
+  background-color: #00b;
+}
+
+/*----- kannrenInfo -----*/
+#kannrenInfo {
+  border-color: #fff;
+  background-color: #00b;
+}
+#kannrenInfo .pieceHeader:before {
+  background-color: #fff;
+}
+#kannrenInfo .kannrenTitle {
+  color: #fff;
+}
+.tokushima {
+  border-color: #fff;
+}
+
+/*----- recentDocs -----*/
+#recentDocs {
+  border-color: #fff;
+  background-color: #00b;
+  box-shadow: none;
+}
+#recentDocs .recentDocsTitle:before {
+  background-color: #fff;
+}
+#recentDocs .recentDocsTitle {
+  color: #fff;
+}
+#recentDocs h2.date {
+  border-color: #fff;
+  color: #fff;
+}
+
+/*----- contentArticleDoc -----*/
+#contentArticleDoc {
+  border-color: #fff;
+  background-color: #00b;
+  box-shadow: none;
+}
+#contentArticleDoc .header {
+  border-color: #fff;
+}
+#contentArticleDoc .header h1 {
+  color: #fff;
+}
+#contentArticleDoc .body h2 {
+  border-color: #fff;
+  background-color: #00b;
+  color: #fff:
+}
+#contentArticleDoc .body h3 {
+  border-color: #fff;
+  color: #fff;
+}
+#contentArticleDoc .body table {
+  border-color: #fff;
+}
+#contentArticleDoc .body table th {
+  border-color: #fff;
+  background-color: #00b;
+}
+#contentArticleDoc .body table td {
+  border-color: #fff;
+}
+#contentArticleDoc .inquiry h2 {
+  border-color: #fff;
+  background-color: #00b;
+  color: #fff;
+}
+#contentArticleDoc .inquiry {
+  padding: 0 30px;
+}
+#contentArticleDoc .back a {
+  border-color: #fff;
+  background-color: #00b;
+  color: #fff;
+}
+
+/*----- contentPage -----*/
+#contentPage {
+  border-color: #fff;
+  background-color: #00b;
+  box-shadow: none;
+}
+#contentPage .pieceHeader:before {
+  background-color: #00b;
+}
+#contentPage .pieceHeader {
+  color: #fff;
+}
+#contentPage .pieceBody h2 {
+  border-color: #fff;
+  background-color: #00b;
+  color: #fff;
+}
+#contentPage .pieceBody h3 {
+  border-color: #fff;
+  color: #fff;
+}
+#contentPage .pieceBody table {
+  border-color: #fff;
+}
+#contentPage .pieceBody table th {
+  border-color: #fff;
+  background-color: #00b;
+}
+#contentPage .pieceBody table td {
+  border-color: #fff;
+}
+
+/*----- howto -----*/
+#contentPage .pieceBody .howto .iconInfo {
+  border-color: #fff;
+}
+#contentPage .pieceBody .howto .iconInfo p {
+  border-color: #fff;
+}
+.smartInfo {
+  border-color: #fff;
+}
+
+/*----- pagination -----*/
+#docTab .pagination {
+  border-color: #fff;
+}
+.pagination {
+  border-color: #fff;
+}
+.pagination span.previous_page,
+.pagination span.next_page {
+  color: #fff;
+}
+.pagination em.current {
+  border-color: #fff;
+  background-color: #00b;
+  text-decoration: underline;
+}
+.pagination a {
+  border-color: #fff;
+  background-color: #00b;
+  color: #fff;
+}
+
+/*------------------------------------------------
+ menu
+------------------------------------------------*/
+#menuBody {
+  border-color: #fff;
+}
+
+/*----- relation -----*/
+#relation .pieceHeader h2 {
+  color: #fff;
+}
+
+/*----- qrCode -----*/
+#qrCode .pieceHeader h2 {
+  color: #fff;
+}
+
+
+/*------------------------------------------------
+ footer
+------------------------------------------------*/
+#footer {
+  border-color: #fff;
+}
+#address {
+  border-color: #fff;
+}

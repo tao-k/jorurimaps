@@ -1,0 +1,12 @@
+<%= render :partial => 'gis/admin/common/menu', :locals => {:current => :maps} %>
+<%
+current_menu = case params[:action]
+when "recognize_index"
+  :recognize_index
+else
+  :maps
+end
+
+%>
+
+<%= render :partial => 'gis/admin/common/menu_map', :locals => {:current => current_menu} %>

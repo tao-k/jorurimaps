@@ -1,0 +1,50 @@
+
+  <!-- menu -->
+  <div id="menu">
+    <div id="menuContainer">
+    <div id="menuBody">
+
+      <!-- about -->
+      <div id="about">
+        <h2><a href="<%=portal_about_url(@map)%>"><%=@map.title%>について</a></h2>
+      </div>
+      <!-- /about -->
+      <!-- qrCode -->
+      <div class="piece" id="qrCode">
+      <div class="pieceContainer">
+      <div class="pieceHeader"><h2>スマートフォン</h2></div>
+        <div class="pieceBody">
+          <p>QRコードを読み込んでサイトにアクセスできます。</p>
+          <%=image_tag(ind_qr_code(@map,Core.full_uri, 80), :title=>"QRコード", :alt=>"QRコード")%>
+        </div>
+      </div>
+      </div>
+      <!-- other -->
+      <!--
+      <div id="other">
+        <h2><a href="#">○○○○○○</a></h2>
+      </div>
+      -->
+      <!-- /other -->
+
+      <!-- relation -->
+      <div id="relation">
+        <div class="pieceHeader"><h2>関連リンク</h2></div>
+        <div class="pieceBody">
+          <ul>
+            <%links = portal_related_link_items(@map)
+            links.each do |link|%>
+            <li><%=link_to link.title, link.url, :target=>"_blank"%></li>
+            <%end unless links.blank?%>
+          </ul>
+        </div>
+      </div>
+      <!-- /relation -->
+
+    </div>
+    <!-- /menuBody -->
+
+    </div>
+  </div>
+  <!-- /menu -->
+

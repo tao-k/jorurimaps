@@ -1,0 +1,5 @@
+<div class="tabMenu">
+<% @settings.each do |name, setting| %>
+<%= link_to setting[:title], {:controller => "system/admin/settings", :name => setting[:name]}, :class => current_class(current, setting[:name]) -%>
+<% end %>
+</div>

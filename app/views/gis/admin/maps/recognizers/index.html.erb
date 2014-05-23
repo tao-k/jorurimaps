@@ -1,0 +1,21 @@
+<%if @items.blank?%>
+<%else%>
+<table class="index">
+
+  <tr>
+    <th>承認者</th>
+    <th>状態</th>
+    <th>承認日</th>
+  </tr>
+
+  <% for item in @items %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td ><%= safe{item.user.name} %></td>
+    <td ><%= item.recognize_state_show %></td>
+    <td><%= safe{item.recognized_at.strftime("%Y-%m-%d")} %></td>
+  </tr>
+  <% end %>
+
+</table>
+<% end %>
+<%= paginate @items %>

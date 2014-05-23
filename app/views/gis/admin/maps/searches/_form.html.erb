@@ -1,0 +1,50 @@
+<%=f.hidden_field :portal_id%>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:form_type) %></th>
+    <td id="formType"><%= f.radio_buttons :form_type, @item.form_type_select, :class => 'status' %></td>
+  </tr><tr>
+    <th><%= @item.locale(:label) %><%= required %></th>
+    <td><%= f.text_field :label, :style=>"width: 300px;" %></td>
+  </tr>
+  <tr id="columnFields" style="<%=@item.form_type == "area" ? "display: none;" : ""%>">
+    <th><%=@item.locale(:column_flds)%></th>
+    <td>
+      <table>
+        <tr>
+          <th>レイヤー名</th>
+        <%@layers.each do |item|%>
+        <th><%=item.title%></th>
+        <%end unless @layers.blank?%>
+        </tr>
+        <tr>
+          <th>項目名</th>
+          <%@layers_configs.each do |item|
+            value = params["layer_item#{item[:layer].id}"]
+            @item.column_flds.each{ |fld| value = fld[1] if fld[0].to_i == item[:layer].id } if @item.column_flds
+          %>
+      <td>
+          <%=select_tag "[layer_item][#{item[:layer].id}]", options_for_select(item[:columns], value)%>
+            </td>
+          <%end unless @layers_configs.blank?%>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $("#formType input").change(function(e) {
+    var form_type = $( this ).val();
+    if(form_type=="area"){
+      $("#columnFields").hide();
+    }else{
+      $("#columnFields").show();
+    }
+  });
+
+})(jQuery);
+//]]>
+</script>

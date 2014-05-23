@@ -1,0 +1,10 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '新規登録', {:action => :new}, :method => :get %>
+  <%= button_to '辞書更新', {:action => :make}, :method => :get, :confirm=>"辞書を更新してよろしいですか？" %>
+  <%= button_to '動作確認', {:action => :test}, :method => :get %>
+<% when 'test' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get %>
+<% end %>
+</span>

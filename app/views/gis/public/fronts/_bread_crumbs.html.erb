@@ -1,0 +1,18 @@
+<%if @action!="index"%>
+<div class="piece" id="breadCrumbs">
+  <div class="pieceContainer">
+  <div class="pieceBody">
+<div>
+  <%case @action%>
+  <%when "howto"%>
+  <a href="/">TOP</a> &gt; <a href="/gis/howto.html">ご利用方法等</a>
+  <%when "use"%>
+  <a href="/">TOP</a> &gt; <a href="/gis/use.html">ご利用案内</a>
+  <%when "sitemap"%>
+  <a href="/">TOP</a> &gt; <a href="/gis/front/sitemap.html">サイトマップ</a>
+  <%end%>
+    </div>
+  </div>
+</div>
+</div>
+<%end%>

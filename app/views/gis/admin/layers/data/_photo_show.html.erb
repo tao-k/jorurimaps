@@ -1,0 +1,21 @@
+<%unless @photos.blank?%>
+<%= form_for :item, :url => {:controller => '/gis/admin/layers/data', :action=>:photo_sort, :id=>@item.rid}, :html => {:method => :post} do |f| %>
+<h2>施設写真</h2>
+  <table class="show">
+    <tr>
+      <th style="width:200px">画像</th>
+      <th style="width:30px">状態</th>
+      <th style="width:30px">並び順<%= f.submit '変更' %></th>
+      <th>キャプション</th>
+    </tr>
+  <%@photos.each do |photo|%>
+    <tr>
+      <td><%=image_tag(photo.thumbnail_public_photo_path, :width=>"#{photo.show_width}px") if photo.file_uri%></td>
+      <td><%=photo.state_show%></td>
+      <td><%= text_field_tag "photo[_sort_no][#{photo.id}]",photo.sort_no , :style=>"width: 30px;"  %></td>
+      <td><%=photo.caption%></td>
+    </tr>
+  <%end %>
+  </table>
+<%end %>
+<%end %>

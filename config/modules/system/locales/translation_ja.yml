@@ -1,0 +1,813 @@
+ja:
+  activerecord:
+    attributes:
+      system/user:
+        state: 状態
+        account: アカウント
+        code: 職員番号
+        name: 氏名
+        name_en: 氏名（英）
+        kana: 氏名（かな）
+        password: パスワード
+        sort_no: 表示順
+        handle_name: 表示名
+        auth: ユーザ権限
+        sex: 性別
+        birth_year: 生年
+        post_code: 郵便番号
+        email: メールアドレス
+        mobile_email: 携帯メールアドレス
+        ldap: LDAP同期
+        ldap_version: LDAP同期バージョン
+        retired_at: 退職日
+        company: 企業名
+        role_id: ユーザーロール
+        groups: 所属
+        private_groups: 所属
+        user_groups: 所属
+        auths: 権限
+        regist_state: 登録状況
+        regist_password: 仮パスワード
+        regist_error: 備考
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/user/auths:
+        func_id: 機能名
+        role_id: ロール名
+        priv_id: 権限名
+      system/user/user_groups:
+        group_id: 所属
+        sort_no: 表示順
+        count_flag: 参集集計
+      system/user_auth:
+        user_id: アカウント
+        role_id: ロール名
+        priv_id: 権限名
+        user_account: アカウント
+        user_name: 氏名
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/company:
+        name: 企業名
+        company_type: 業種
+        sort_no: 表示順
+        role_id: 企業ロール
+        lat: 緯度
+        lng: 経度
+        g: 地図
+        pref_id: 都道府県
+        zone_id: 圏
+        county_id: 市郡
+        city_id: 市町村
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/group:
+        state: 状態
+        parent_id: 上位の所属
+        children: 下位の所属
+        level_no: 階層
+        sort_no: 表示順
+        code: 所属コード
+        name: 所属名
+        name_en: 所属名（英語表記）
+        email: メールアドレス
+        ldap: LDAP同期
+        ldap_version: LDAP同期バージョン
+        start_at: 適用開始日
+        end_at: 適用終了日
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/users_group:
+        user_id: ユーザー
+        user_code: 職員番号
+        user_name: 氏名
+        group_id: 所属
+        sort_no: 表示順
+        count_flag: 参集集計
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/group_change:
+        code: 所属コード
+        name: 所属名称
+        level_no: 氏名（英語表記）
+        parent_code: 親所属コード
+        parent_name: 親所属名称
+        change_division: 変更区分
+        ldap: LDAP同期（１：同期、０：非同期）
+        start_date: 開始日
+        old_division: 過去所属区分
+        old_id: 過去所属ID
+        old_code: 過去所属コード
+        old_name: 過去所属名称
+        commutation_code:
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/group_change_date:
+        start_at: 開始日
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/group_change_group:
+        change_division: 変更区分
+        parent_id: 上位の所属
+        children: 下位の所属
+        code: 所属コード
+        name: 所属名
+        original_groups: 引継元所属
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/group_change_group/original_groups:
+        group_id: 引継元所属
+      system/role:
+        name: ロール名
+        role_code: ロールコード
+        sort_no: 表示順
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/priv:
+        name: 権限名
+        priv_code: 権限コード
+        sort_no: 表示順
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/func:
+        name: 機能名
+        func_code: 機能コード
+        sort_no: 表示順
+        routes: 対象
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/func/routes:
+        controller: コントローラ名
+        action: アクション名
+      system/func_role:
+        func_id: 機能名
+        role_id: ロール名
+        created_at: 作成日時
+        updated_at: 更新日時
+      system/func_priv:
+        func_id: 機能名
+        priv_id: 権限名
+        created_at: 作成日時
+        updated_at: 更新日時
+      system/func_route:
+        controller: コントローラ名
+        action: アクション名
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/role_priv_func:
+        role_id: ロール名
+        priv_id: 権限名
+        func_id: 機能名
+        priority: 優先度
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/role_priv_area:
+        role_id: ロール名
+        priv_id: 権限名
+        pref_id: 都道府県名
+        city_id: 市町村名
+        company_type: 業種
+        company_id: 企業名
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/community:
+        name: コミュニティ名
+        message: 招待メッセージ
+        sort_no: 表示順
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/community_member:
+        user_id: アカウント
+        user_name: 氏名
+        manager_flag: 管理者
+        progress_state: 状態
+        progress_at: 承認日時
+        company: 企業名
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/community_mail:
+        news_at: 作成日
+        subject: タイトル
+        body: 本文
+        send_at: 配信日時
+        send_state: 送信状態
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/community_mail_log:
+        company: 企業名
+        user_account: アカウント
+        user_name: 氏名
+        last_viewed_at: 最終閲覧日時
+        remark: コメント
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/setting:
+        name: 設定名
+        value: 設定値
+      system/pref:
+        name: 都道府県名
+        code: 地方公共団体コード
+        lat: 中心地
+        lng: 中心地
+        g: 中心地
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/city:
+        pref_id: 都道府県
+        zone_rid: 圏
+        county_rid: 市郡
+        name: 市町村名
+        code: 地方公共団体コード
+        lat: 中心地
+        lng: 中心地
+        g: 中心地
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+      system/zone:
+        pref_id: 都道府県
+        code: 圏コード
+        name: 圏名
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        lat: 中心地
+        lng: 中心地
+        g: 中心地
+      system/county:
+        pref_id: 都道府県
+        zone_id: 圏
+        code: 市郡コード
+        name: 市郡名
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        lat: 中心地
+        lng: 中心地
+        g: 中心地
+      system/abri:
+        abri: 避難所名
+        zone_rid: 圏
+        company_code : 管理組織
+        area_code: 地区名
+        area: 地区名
+        city_code : 市町村名
+        city_name : 市町村名
+        address: 所在地
+        order_no: 並び順
+        lat: 所在地（位置）
+        g: 所在地（位置）
+        tel: TEL
+        fax: FAX
+        limit_num: 収容可能人数
+        water: 備蓄物資（水）
+        water_update: 備蓄物資（水：更新日時）
+        food: 備蓄物資（食料）
+        food_update: 備蓄物資（食料：更新日時）
+        machine: 備蓄機材
+        machine_update: 備蓄機材（更新日時）
+        public_status: 公開設定
+        created_at: 作成日
+        created_user: 作成者所属
+        created_group: 作成者
+        updated_at: 更新日
+        updated_user: 更新者所属
+        updated_group: 更新者
+        deleted_at: 削除日
+        deleted_user: 削除者所属
+        deleted_group: 削除者
+      system/area:
+        area: 地区名
+        zone_rid: 圏
+        public_status: 公開設定
+        order_no: 並び順
+        city_code : 市町村名
+        city_name : 市町村名
+        created_at: 作成日
+        created_user: 作成者所属
+        created_group: 作成者
+        updated_at: 更新日
+        updated_user: 更新者所属
+        updated_group: 更新者
+        deleted_at: 削除日
+        deleted_user: 削除者所属
+        deleted_group: 削除者
+      system/public_office:
+        company_code : 管理組織
+        zone_rid: 圏
+        office_type: 種別
+        office_name: 庁舎・支所
+        city_code : 所在市町村名
+        city_name : 所在市町村名
+        area_code: 地区名
+        area_name: 地区名
+        lat: 所在地（位置）
+        g: 所在地（位置）
+        order_no: 並び順
+        create_abri: 避難所作成
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        deleted_at: 削除日
+        deleted_user: 削除者
+        deleted_group: 削除者所属
+      system/message:
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        deleted_at: 削除日
+        deleted_user: 削除者
+        deleted_group: 削除者所属
+        published_at: 公開日時
+        state: 状態
+        title: タイトル
+        body: 本文
+      system/short_message:
+        created_at: 作成日時
+        updated_at: 編集日時
+        published_at: 公開日時
+        body: メッセージ
+        sort_no: 並び順
+        release_at: 公開開始日時
+        end_at: 公開終了日日時
+      system/ldap_temporary:
+        created_at: 作成日時
+        updated_at: 編集日時
+        version: 詳細
+        show: 詳細
+      system/social_update:
+        map_id: 個別地図
+        is_tweet: Twitterへの投稿
+        tweet_id: ツイートID
+        web_state: 公開状態
+        title: タイトル
+        body: 本文
+        published_at: 公開日時
+        user_kind: 管理種別
+        admin_user_id: 管理ユーザ
+        admin_group_id: 管理所属
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        deleted_at: 削除日
+        deleted_user: 削除者
+        deleted_group: 削除者所属
+        inquiry_group_id: 問い合わせ先所属
+        mail_to: メールアドレス
+        tel: 電話番号
+        fax: FAX番号
+        charge: 担当
+      system/related_link:
+        title: タイトル
+        url: URL
+        sort_no: 並び順
+        web_state: 公開状態
+        parent_category_id: 表示箇所
+        parent_category_id_0: 表示箇所１
+        parent_category_id_1: 表示箇所２
+        parent_category_id_2: 表示箇所３
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        deleted_at: 削除日
+        deleted_user: 削除者
+        deleted_group: 削除者所属
+      system/link_banner:
+        web_state: "公開状態"
+        title: "タイトル"
+        caption: "キャプション"
+        upload: "画像ファイル"
+        sort_no: "並び順"
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+        parent_category_id: 表示箇所
+        parent_category_id_0: 表示箇所１
+        parent_category_id_1: 表示箇所２
+        parent_category_id_2: 表示箇所３
+      system/option:
+        kind: 種別
+        value: 設定値
+        created_at: 作成日
+        created_user: 作成者
+        created_group: 作成者所属
+        updated_at: 更新日
+        updated_user: 更新者
+        updated_group: 更新者所属
+  controller:
+    system/admin/users:
+      title: ユーザ一覧
+      action:
+        show: 詳細
+        edit: 編集
+        update: 権限設定
+        edit_role: ロール設定
+        update_role: ロール設定
+        daily_count: 日別登録数
+    system/admin/users:
+      title: ユーザ管理
+      action:
+        show: 詳細
+        edit: 編集
+    system/admin/user_auths:
+      title: 権限設定
+      action:
+        show: 詳細
+        new: CSV登録
+        new_confirm: CSV登録
+        create: CSV登録
+        edit: 編集
+        update: 編集
+    system/admin/user_account_regs:
+      title: アカウント登録
+      action:
+        show: 詳細
+        new: CSV登録
+        new_confirm: CSV登録
+        create: CSV登録
+    system/admin/user_account_yahoo_regs:
+      title: Yahoo一括登録
+      action:
+        show: 詳細
+    system/admin/user_account_states:
+      title: 登録状況照会
+      action:
+        show: 詳細
+    system/admin/companies:
+      title: 企業一覧
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+    system/admin/groups:
+      title: グループ一覧
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+        new_csv: CSV登録
+        new_csv_confirm: CSV登録
+    system/admin/users_groups:
+      title: グループ内ユーザ一覧
+      action:
+        show: 詳細
+        edit: 職員番号設定
+        update: 職員番号設定
+        edit_retire: 退職日設定
+        update_retire: 退職日設定
+        edit_order: 表示順設定
+        update_order: 表示順設定
+        edit_users_groups: 所属設定
+        update_users_groups: 所属設定
+    system/admin/group_change_dates:
+      title: 組織変更開始日設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        new_csv: CSV登録
+        new_csv_confirm: CSV登録
+    system/admin/group_changes:
+      title: 組織変更
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        csv_up: CSV登録
+    system/admin/roles:
+      title: 管理者権限設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+    system/admin/privs:
+      title: 権限種別管理
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+    system/admin/funcs:
+      title: 機能名称管理
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+    system/admin/func_names:
+      title: 機能名称管理
+      action:
+        show: 詳細
+        edit: 編集
+        update: 編集
+    system/admin/func_roles:
+      title: 機能ロール割当管理
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/func_privs:
+      title: 機能権限割当管理
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/role_priv_funcs:
+      title: ロール権限機能割当
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/role_priv_areas:
+      title: ロール権限エリア割当
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/settings:
+      title: 環境設定
+      action:
+        edit: 編集
+        update: 編集
+    system/admin/siteinfo:
+      title: 接続情報
+    system/admin/prefs:
+      title: 都道府県設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/zones:
+      title: 圏設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/counties:
+      title: 市郡設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/cities:
+      title: 市町村設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/abris:
+      title: 避難所管理
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+    system/admin/areas:
+      title: 地区管理
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+    system/admin/offices:
+      title: 庁舎・支所管理
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+        edit_order: 表示順設定
+        update_order: 表示順設定
+    system/admin/messages:
+      title: おしらせ
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/ldap_temporaries:
+      title: LDAP同期
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/ldap_groups:
+      title: LDAP
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/role_name_privs:
+      title: 機能権限設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/role_names:
+      title: 機能名設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/priv_names:
+      title: 対象権限追加
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/short_messages:
+       title: 一行メッセージ管理
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/social_updates:
+       title: 更新情報管理
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/related_links:
+       title: 関連リンク管理
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/link_banners:
+       title: バナー管理
+       action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    system/admin/options:
+      title: 管理設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集

@@ -1,0 +1,17 @@
+<%
+controller_title = translate_controller
+action_title = translate_action
+%>
+<div class="navi">
+<%= link_to 'トップページ', '/' %>
+&gt; <%= link_to 'システム管理',   {:controller => 'system/admin/tops'} %>
+&gt; <%= link_to '所属管理',       {:controller => 'system/admin/groups', :parent_id => 0} %>
+&gt; <%= link_to controller_title, {:controller => params[:controller], :parent_id => 0} %>
+<% 
+@parent.path(:without_root => true).each do |group|
+  concat ' > '
+  concat link_to group.name, {:action => :index, :parent_id => group.id}
+end
+%>
+<%= " > #{action_title}" if action_title.present? %>
+</div>

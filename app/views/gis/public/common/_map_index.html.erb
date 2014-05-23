@@ -1,0 +1,13 @@
+
+<%map_items.each do |map_item|%>
+<div>
+  <a href="/<%=map_item.code%>/" class="title<%=recommend_mark(map_item)%>" target="_blank"><span><%=map_item.title%></span></a>
+  <div class="img">
+    <a href="/<%=map_item.code%>/" target="_blank">
+      <img src="<%=map_tumb_path(map_item)%>" alt=""/>
+      <span class="imgMini"><img src="<%=portal_kind_icon(map_item)%>" alt="" /></span>
+    </a>
+  </div>
+  <div class="text"><%=safe{hbr map_item.body}%></div>
+</div>
+<%end unless map_items.blank?%>

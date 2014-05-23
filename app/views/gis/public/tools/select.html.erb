@@ -1,0 +1,29 @@
+<div id="layerSelectMenu">
+<div id="leyerSelectTable">
+<div class="map">
+<span class="title">マップ一覧</span>
+  <%= select_tag 'map_select[]', options_from_collection_for_select(pref_portal_map_list, "id", "title", nil), { :size =>3, :class=>"active",:id=>"mapSelect" } %>
+</div>
+<div class="folder">
+  <span title="folder">フォルダ一覧</span>
+    <select id="folderSelect" name="folder_select[]" disabled="disabled">
+      <option value=''>マップを選択してください</option>
+    </select>
+</div>
+<div class="layer">
+  <span title="folder">レイヤー一覧</span>
+    <select multiple="multiple" id="layerSelect" name="layer_select[]" disabled="disabled">
+      <option value=''>フォルダを選択してください</option>
+    </select>
+   <span class="caution">※複数選択可能</span>
+</div>
+</div>
+<div id="layerSelectBtn">
+<a href="#" id="addBtn">＞＞</a>
+</div>
+<div id="resultMenu">
+  <span class="title">追加するレイヤー</span>
+  <div id="selectResult">レイヤーを選択してください</div>
+  <a href="#" id="selectFinish">登録</a>
+  <a href="#" id="addLayerCansel">キャンセル</a>
+</div>

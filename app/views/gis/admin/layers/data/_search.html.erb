@@ -1,0 +1,14 @@
+<%= form_tag '', :method => :get, :class => 'search' do %>
+<table>
+  <tr>
+    <th>市町村</th>
+    <td><%= select_tag :s_area_code, options_for_select(map_area_options, params[:s_area_code].to_i) %></td>
+    <th>名称</th>
+    <td colspan="2"><%= text_field_tag :s_keyword, params[:s_keyword], :size => 50 %></td>
+    <td class="submitters" colspan="2">
+      <%= submit_tag '検索',     :name => :search %>
+      <%= submit_tag 'リセット', :name => :reset %>
+    </td>
+  </tr>
+</table>
+<% end %>

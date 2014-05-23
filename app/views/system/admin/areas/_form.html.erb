@@ -1,0 +1,15 @@
+<%= f.hidden_field :company_code, :value => Core.user.company_id %>
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:city_code) %><%= required %></th>
+    <td><%= f.select :city_code, options_from_collection_for_select(@input_cities, :rid, :name, @item.city_code) %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:area) %><%= required %></th>
+    <td><%= f.text_field :area %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:public_status) %><%= required %></th>
+    <td><%= f.radio_buttons :public_status, System::Area.public_status_states %></td>
+  </tr>
+</table>

@@ -1,0 +1,13 @@
+  <!-- menu -->
+  <div id="menu">
+    <div id="menuContainer">
+    <div id="menuBody">
+
+      <%= render_show_cache("related_link_#{@category}", '/gis/public/common/related_link',{:kind=>"category", :category=>@category}) %>
+
+    </div>
+    <!-- /menuBody -->
+    <%= render_show_cache("link_banner_#{@category}", '/gis/public/common/link_banner',{:kind=>"category", :category=>@category}) %>
+    </div>
+  </div>
+  <!-- /menu -->

@@ -1,0 +1,5 @@
+<div class="tabMenu">
+<%= link_to '個別地図',  {:controller => '/gis/admin/maps'}, :class => current_class(current, :maps) -%>
+<%= link_to '承認待ち',  {:controller => '/gis/admin/maps', :action=>"recognize_index"}, :class => current_class(current, :recognize_index) -%>
+<%= link_to 'おすすめマップ設定',  {:controller => '/gis/admin/recommends', :action => :new}, :class => current_class(current, :recommends) if Core.user.has_auth?(:manager) -%>
+</div>

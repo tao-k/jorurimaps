@@ -1,0 +1,35 @@
+
+<%@search_configs.each do |conf, i|
+next if params[conf.field_id].blank?
+%>
+<div class="<%=conf.search_class%>">
+<div class="leftMenu"><%=conf.label%>：</div>
+<div class="rightMenu" id="field_<%=conf.id%>"><%=conf.field_value(params[conf.field_id])%> </div>
+</div>
+<%end unless @search_configs.blank?%>
+
+<div class="resultMapHeader">
+<p>上記の条件で、<span class="countShow"><%=@items.size%></span>件の施設が見つかりました。地図内に<span class="countShow" id="countFeatures_tab"></span>件表示しています。</p>
+</div>
+  <div class="listBox" id="shisetsu">
+    <ul>
+      <%
+      id_list = []
+      for item in @items
+        id_list << item.id
+        if @layers_count[item.layer_id.to_s].blank?
+          @layers_count[item.layer_id.to_s] = 1
+        else
+          @layers_count[item.layer_id.to_s] += 1
+        end
+
+      %>
+      <li>
+      <span><a href="javascript:void(0);" class="markerLink" id="marker_<%=item.id%>_link"><%=item.name%></a><br>
+      <%=item.address%><br>
+      </span>
+      <%end%>
+      </li>
+  </ul>
+  <div id="resultIdList" style="display: none;"><%=id_list.join(",")%></div>
+</div>

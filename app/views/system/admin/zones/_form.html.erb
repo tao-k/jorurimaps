@@ -1,0 +1,18 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:pref_id) %><%= required %></th>
+    <td><%= f.select :pref_id, options_from_collection_for_select(System::Pref.order(:sort_no).all, :rid, :name, @item.pref_id) %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:name) %><%= required %></th>
+    <td><%= f.text_field :name, :size => 90 %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:code) %><%= required %></th>
+    <td><%= f.text_field :code, :size => 90 %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:g) %><%= required %></th>
+    <td><%= render :partial => 'system/admin/common/form_map', :locals => {:f => f, :item_city_id => "#item_pref_id"} %></td>
+  </tr>
+</table>

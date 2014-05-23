@@ -1,0 +1,4 @@
+<div class="tabMenu">
+<%= link_to 'LDAP同期',  {:controller => 'system/admin/ldap_temporaries'}, :class => current_class(current, :temporaries) -%>
+<%= link_to 'LDAP',  url_for({:controller => 'system/admin/ldap_groups', :action=>:index, :parent=>0}), :class => current_class(current, :groups) -%>
+</div>

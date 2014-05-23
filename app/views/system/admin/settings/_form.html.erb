@@ -1,0 +1,9 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:name) %></th>
+    <td><%= @item.name_label %></td>
+  </tr><tr>
+    <th><%= @item.locale(:value) %><%= required %></th>
+    <td><%= @item.form(f) %></td>
+  </tr>
+</table>

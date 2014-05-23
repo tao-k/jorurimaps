@@ -1,0 +1,46 @@
+
+
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<link rel="shortcut icon" href="/images/favicon.ico"  />
+<title><%= Page.title || @page_title %> - <%= Site.title -%></title>
+<%#= javascript_include_tag :prototype %>
+<%#= javascript_include_tag "/_common/js/prototype.js" %>
+<%= javascript_include_tag "/javascripts/jquery.min.js" %>
+<%= javascript_include_tag "/javascripts/jquery-ui.js" %>
+<%=javascript_include_tag '/_common/js/analytics.js'%>
+
+
+<%
+controller_js = @js ||  []
+
+js_ret=''
+controller_js.each{|x|js_ret += javascript_include_tag(x)+"\n"};
+%>
+<%=raw(js_ret)%>
+<%if @map && @map.portal_kind != 1 && request.smart_phone?%>
+
+<script type="text/javascript">
+$(function() {
+  $("#confirmMessage .info").wrapInner('<div class="scroll"></div>');
+  $("#confirmMessage .info").jScrollPane();
+});
+</script>
+<%end%>
+
+<%
+@css = @css || []
+css_ret=''
+@css.each{|x|css_ret+=stylesheet_link_tag(x, :media=>:all)+"\n"};
+%>
+<%=raw(css_ret)%>
+
+<%
+controller_dynamic_js = @dynamic_js ||  []
+dynamic_js_ret=''
+controller_dynamic_js.each{|x|
+   qs = "?lat=#{x[:lat]}&amp;lon=#{x[:lon]}&amp;zoom=#{params[:zoom]}&layers=#{params[:layers]}&portal=#{@portal}&map_id=#{@map_id}&baselayer=#{params[:baselayer]}&map_code=#{@map_code}"
+  %>
+<script src="<%=url_for({:controller=>x[:controller], :action=>x[:action]})%>.js<%=qs%>" type="text/javascript"></script>
+<%}-%>
+

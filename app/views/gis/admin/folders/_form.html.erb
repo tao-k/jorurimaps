@@ -1,0 +1,13 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%= f.radio_buttons :web_state, @item.web_state_select, :class => 'status' %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:title) %><%= required %></th>
+    <td><%= f.text_field :title, :class => 'string title' %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'gis/admin/common/users_field_form', :locals => {:f => f} %>
+<%= render :partial => 'gis/admin/common/form_layer', :locals => {:f => f} %>

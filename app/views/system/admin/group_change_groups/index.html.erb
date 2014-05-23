@@ -1,0 +1,32 @@
+<%= render :partial => 'search' %>
+
+<% if @items.present? %>
+<div><%= @items.total_entries %>件登録しています。</div>
+<%= render :partial => 'unsetting_groups' %>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th>下位管理</th>
+    <th>所属コード</th>
+    <th>所属名</th>
+    <th>引継元所属</th>
+    <th>変更</th>
+    <th>削除</th>
+  </tr>
+  <% @items.each do |item| %>
+  <tr class="<%= cycle '', 'cycle' %> <%= 'highlight' if item.will_change? %>">
+    <td class="showLink"><%= link_to '詳細', {:action => :show, :id => item.id} %></td>
+    <td><%= link_to '管理', {:action => :index, :parent_id => item.id} %></td>
+    <td><%= item.code %></td>
+    <td><%= item.name %></td>
+    <td><%=br item.ogirinal_group_names.join("\n") %></td>
+    <td><%= link_to '変更', {:action => :edit, :id => item.id} %></td>
+    <td><%= link_to '削除', {:action => :destroy, :id => item.id}, :method => :delete, :confirm => '削除してよろしいですか？' if item.deletable? %></td>
+  </tr>
+  <% end %>
+</table>
+<%= paginate @items %>
+<% else %>
+<div>登録データがありません。</div>
+<% end %>
+<%= button_to '戻る', {:action => :index, :parent_id => @parent.parent.id}, :method => :get if @parent.level_no > 1 %>

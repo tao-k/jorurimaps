@@ -1,0 +1,259 @@
+
+(function($) {
+
+var panel1, panel2, osm, slider, map, map2;
+var settings = {};
+
+<%
+ wms_url = Application.config(:wms_gateway_url, "localhost")
+%>
+
+/* mapサーバ */
+var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+
+Ext.onReady(function() {
+  var zoom = 18;
+ var option1 = {
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            numZoomLevels: zoom,
+            maxResolution: 156543.0339,
+            controls : [
+                        new OpenLayers.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        })/*,
+                        new OpenLayers.Control.LayerSwitcher({'ascending':false})*/
+
+                        ]
+        };
+
+ var option2 = {
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            numZoomLevels: zoom,
+            maxResolution: 156543.0339,
+            controls : [
+                        new OpenLayers.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        })/*,
+                        new OpenLayers.Control.LayerSwitcher({'ascending':false})*/
+
+                        ]
+        };
+
+  map = new OpenLayers.Map('map', option1);
+
+  osm = new OpenLayers.Layer.OSM("オープンストリートマップ");
+
+
+
+ // create a map panel with an embedded slider
+ panel1 = new GeoExt.MapPanel({
+  title: "Map 1",
+  layout: "fit",
+  //region: "west",
+  region: "center",
+  layers: [osm],
+  map: map,
+  //flex: 0.4
+  flex: 1
+ });
+
+
+// var option2 = option;
+ map2 = new OpenLayers.Map('map2', option2);
+ //map2 = map.clone();
+ var osm2 = new OpenLayers.Layer.OSM("オープンストリートマップ");
+
+
+ panel2 = new GeoExt.MapPanel({
+  title: "Map 2",
+  layout: "fit",
+  region: "east",
+  layers: [osm2],
+  map: map2,
+  //flex: 0.4
+  width: "50%"
+ });
+
+  new Ext.Viewport({
+    layout:'border',
+    items: [
+      /*new Ext.Panel({
+      title:'CENTER',
+      html:'CENTER PANEL',
+      width:'100px',
+      region:'center',
+      flex: 0.2
+      }),*/
+      panel1,
+      panel2,
+      new Ext.Panel({
+        header: false,
+        contentEl: 'header',
+        margins:'0 0 0 0',
+        height: '55px',
+        region:'north',
+        collapsible:true,
+        collapseMode: "mini",
+        split:true,
+        autoHeight:false
+      })
+
+    ]
+ });
+  initMapSettings(map);
+  initMapSettings(map2);
+  initBaseLayer(map);
+  initWMSLayer(map);
+  initBaseLayer(map2);
+  initWMSLayer(map2);
+  map.events.register("moveend", map, map1MoveListener);
+  map2.events.register("moveend", map2, map2MoveListener);
+
+});
+
+
+function initMapSettings(m) {
+  settings['initCenterLonLet'] = new OpenLayers.LonLat(<%= @init_map[:center_lon] %>, <%= @init_map[:center_lat] %>)
+      .transform(
+        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+        m.getProjectionObject() // to Spherical Mercator Projection
+      );
+  settings['initMapZoom'] = <%= @init_map[:zoomlevel] %>;
+  m.setCenter (settings['initCenterLonLet'], settings['initMapZoom']);
+
+  //コントロール設定
+  //地図切り替え
+
+    m.addControl(new OpenLayers.Control.Scale());
+    m.addControl(new OpenLayers.Control.ScaleLine());
+    m.addControl(new OpenLayers.Control.MousePosition());
+    m.addControl(new OpenLayers.Control.PanZoomBar());
+    m.addControl(new OpenLayers.Control.Permalink());
+    m.addControl(new OpenLayers.Control.ArgParser());
+    m.addControl(new OpenLayers.Control.Attribution());
+    m.addControl(new OpenLayers.Control.LayerSwitcher());
+
+}
+
+<%= render :partial =>  'base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
+
+
+function initWMSLayer(m) {
+
+   var overlays = new Object();
+   overlays['schoolarea'] = new OpenLayers.Layer.WMS(
+            "小学校区",
+            mapserverUrl,  //mapserverurl
+             {
+         map:"mapfiles/overlays_wms.map", //mapfileの場所指定
+         layers: 'school_area',  //取得するレイヤー
+         version: '1.1.1', //サービスのバージョン
+         format: "image/png" //取得するファイル形式
+         },
+             {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: 1.0,
+          layerName:"ext_schoolarea",
+         group: "kokudosuchi"
+          }
+         );
+         m.addLayer(overlays['schoolarea']);
+
+
+   overlays['landslide'] = new OpenLayers.Layer.WMS(
+            "土砂災害",
+            mapserverUrl,  //mapserverurl
+             {
+         map:"mapfiles/overlays_wms.map", //mapfileの場所指定
+         layers: 'landslide',  //取得するレイヤー
+         version: '1.1.1', //サービスのバージョン
+         format: "image/png" //取得するファイル形式
+         },
+             {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: 0.5,
+     layerName:"ext_landslide",
+     group: "kokudosuchi"
+          }
+         );
+         m.addLayer(overlays['landslide']);
+
+    var matsushigeKitajimaLayers = ["kitajima_division","matsushige-kitajima_division","matsushige_division"]
+
+    var urban_planning_layers = [
+      {name: "池田都市計画区域",mapfile: "urban_planning_ikeda",layers: "ikeda_division",layerName: "ext_urban_planning_ikeda",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "日和佐都市計画区域",mapfile: "urban_planning_hiwasa",layers: "hiwasa_division",layerName: "ext_urban_planning_hiwasa",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "徳島東部都市計画区域（阿南）",mapfile: "urban_planning_tokushima_higashi",layers: "anan_division",layerName: "ext_urban_planning_anan",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "徳島東部都市計画区域（鴨島）",mapfile: "urban_planning_tokushima_higashi",layers: "kamojima_division",layerName: "ext_urban_planning_kamojima",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "徳島東部都市計画区域（石井）",mapfile: "urban_planning_tokushima_higashi",layers: "ishii_division",layerName: "ext_urban_planning_ishii",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "徳島東部都市計画区域（松茂・北島）",mapfile: "urban_planning_tokushima_higashi",layers: matsushigeKitajimaLayers,layerName: "ext_urban_planning_kitajima",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "徳島東部都市計画区域（小松島）",mapfile: "urban_planning_tokushima_higashi",layers: "komatsushima_division",layerName: "ext_urban_planning_komatsushima",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "徳島東部都市計画区域（徳島市）",mapfile: "urban_planning_tokushima_higashi",layers: "tokushima_division",layerName: "ext_urban_planning_tokushima",group: "toshikeikaku-kuiki", opacity: 0.8},
+      {name: "都市計画道路：日和佐",mapfile: "urban_planning_road",layers: "hiwasa",layerName: "ext_urban_planning_road_hiwasa",group: "toshikeikaku-douro", opacity: 0.8},
+      {name: "都市計画道路：牟岐",mapfile: "urban_planning_road",layers: "mugi",layerName: "ext_urban_planning_road_mugi",group: "toshikeikaku-douro", opacity: 0.8},
+      {name: "都市計画道路：貞光",mapfile: "urban_planning_road",layers: "sadamitsu",layerName: "ext_urban_planning_road_sadamitsu",group: "toshikeikaku-douro", opacity: 0.8},
+      {name: "都市計画道路：徳島東部",mapfile: "urban_planning_road",layers: "tokushimahigashi",layerName: "ext_urban_planning_road_tokushimahigashi",group: "toshikeikaku-douro", opacity: 0.8},
+      {name: "浸水予想：江川",mapfile: "urban_planning_river",layers: "egawa",layerName: "ext_urban_planning_river_egawa",group: "river-shinsui", opacity: 0.8},
+      {name: "浸水予想：江川（外水のみ）",mapfile: "urban_planning_river",layers: "egawa_gaisui",layerName: "ext_urban_planning_river_egawa_gaisui",group: "river-shinsui", opacity: 0.8},
+      {name: "浸水予想：ほたる川",mapfile: "urban_planning_river",layers: "hotarugawa",layerName: "ext_urban_planning_river_hotarugawa",group: "river-shinsui", opacity: 0.8},
+      {name: "浸水予想：ほたる川（外水のみ）",mapfile: "urban_planning_river",layers: "hotarugawa_gaisui",layerName: "ext_urban_planning_river_hotarugawa_gaisui",group: "river-shinsui", opacity: 0.8},
+      {name: "浸水予想：園瀬川",mapfile: "urban_planning_river",layers: "sonosegawa",layerName: "ext_urban_planning_river_sonosegawa",group: "river-shinsui", opacity: 0.8},
+      {name: "浸水予想：飯尾川",mapfile: "urban_planning_river",layers: "ino_region",layerName: "ext_urban_planning_river_ino",group: "river-shinsui", opacity: 0.8},
+      {name: "浸水予想：桑野川",mapfile: "urban_planning_river",layers: "kuwanogawa_region",layerName: "ext_urban_planning_river_kuwano",group: "river-shinsui", opacity: 0.8},
+      {name: "浸水予想：宍喰川",mapfile: "urban_planning_river",layers: "shishikuigawa_region",layerName: "ext_urban_planning_river_shishikui",group: "river-shinsui", opacity: 0.8}
+    ]
+
+    for(var i = 0; i < urban_planning_layers.length; i++){
+      overlays[urban_planning_layers[i].layerName] = new OpenLayers.Layer.WMS(
+            urban_planning_layers[i].name,
+            mapserverUrl,
+             {
+             map:"mapfiles/" + urban_planning_layers[i].mapfile +".map", //mapfileの場所指定
+             layers: urban_planning_layers[i].layers,  //取得するレイヤー
+             version: '1.1.1', //サービスのバージョン
+             format: "image/png" //取得するファイル形式
+             },
+             {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: urban_planning_layers[i].opacity,
+         layerName: urban_planning_layers[i].layerName,
+         group: urban_planning_layers[i].group
+          }
+         );
+         m.addLayer(overlays[urban_planning_layers[i].layerName]);
+    }
+
+
+
+}
+
+function map1MoveListener(evt){
+  map2.events.unregister("moveend", map2, map2MoveListener);
+  map2.setCenter(map.getCenter());
+  map2.zoomTo(map.getZoom());
+  map2.events.register("moveend", map2, map2MoveListener);
+}
+
+function map2MoveListener(evt){
+  map.events.unregister("moveend", map, map1MoveListener);
+  map.setCenter(map2.getCenter());
+  map.zoomTo(map2.getZoom());
+  map.events.register("moveend", map, map1MoveListener);
+}
+
+
+})(jQuery);

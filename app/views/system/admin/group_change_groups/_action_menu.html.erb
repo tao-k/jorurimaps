@@ -1,0 +1,11 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '新規登録', {:action => :new}, :method => :get %>
+  <%= button_to '全一覧', {:action => :index_all}, :method => :get %>
+  <%= button_to 'CSV登録', {:action => :new_csv}, :method => :get %>
+  <%= button_to '即時反映', {:controller => 'system/admin/group_changes', :action => :execute, :id => @group_change.id}, :method => :get, :confirm => '変更日の設定を無視して即時反映します。よろしいですか？' if @group_change.executable? %>
+<% when 'index_all' %>
+  <%= button_to '即時反映', {:controller => 'system/admin/group_changes', :action => :execute, :id => @group_change.id}, :method => :get, :confirm => '変更日の設定を無視して即時反映します。よろしいですか？' if @group_change.executable? %>
+<% end %>
+</span>

@@ -1,0 +1,44 @@
+<div id="header">
+<div id="headerContainer">
+<div id="headerBody">
+<div class="piece">
+<div class="rightMenu">
+    <%if @map%>
+    <%=image_tag(map_icon_uri(@map))%>
+  <h1><%=safe{@map.title}-%></h1>
+  <span class="department"><%=safe{@map.department}-%></span>
+   <%end%>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div  style="display: none;">
+<div id="confirmMessage">
+  <div class="body">
+<%= render :partial =>  'message' rescue nil %>
+  </div>
+</div>
+<div  style="display: none;">
+<div id="outPutFormDiv"></div>
+</div>
+<div id="outPutConfirmWinMessage">
+  <h2>出力データのライセンスについて</h2>
+  <a rel="license" href="http://creativecommons.org/licenses/by/2.1/jp/" target="_blank"><img alt="クリエイティブ・コモンズ・ライセンス" style="border-width:0" src="http://i.creativecommons.org/l/by/2.1/jp/88x31.png" /></a>
+  <br />本システムの「データ出力」機能によって提供されるデータは <a rel="license" href="http://creativecommons.org/licenses/by/2.1/jp/" target="_blank">クリエイティブ・コモンズ 表示 2.1 日本 ライセンスの下に提供されています。</a><img src="/_common/themes/gis/images/ic/ic_gaibu.gif" alt="外部リンク"><br />
+  二次著作物を作成する際は、利用するデータの出典の表示をお願いします。<br />
+</div>
+<div id="legendPanel_set"></div>
+</div>
+<div id="footer">
+<div id="footerContainer">
+<div id="footerHeader"></div>
+<div id="footerBody">
+<div class="copyright">
+  <span><%=show_site_settings[:copyright]%></span>
+  <a target="_blank" href="http://joruri.org"><img src="/_common/themes/gis/images/bn_pb_jorurimap.png" /></a>
+</div>
+</div>
+<div id="footerFooter"></div>
+</div>
+</div>

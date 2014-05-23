@@ -1,0 +1,19 @@
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:parent_id) %></th>
+    <td><%= safe{@item.parent.name} %></td>
+  </tr><tr>
+    <th><%= @item.locale(:code) %></th>
+    <td><%= @item.code %></td>
+  </tr><tr>
+    <th><%= @item.locale(:name) %></th>
+    <td><%= @item.name %></td>
+  </tr><tr>
+    <th><%= @item.locale(:original_groups) %></th>
+    <td><%=br @item.original_groups.map{|og| og.group.group_names_from_root}.join("\n") %></td>
+  </tr>
+</table>
+
+<%= render :partial => 'system/admin/common/operator' %>
+
+<%= button_to '戻る', {:action => :index}, :method => :get %>

@@ -1,0 +1,21 @@
+<%= form_tag url_for(:action => :update_order), {:method => :put, :id => 'itemForm'} do %>
+  <%= unique_error_messages_for @items %>
+  <table class="index">
+    <tr>
+      <th>企業名</th>
+      <th>表示順<%= required %></th>
+    </tr>
+    <% @items.each do |item| %>
+    <tr class="<%= cycle '', 'cycle' %>">
+      <td><%= item.name %></td>
+      <td>
+        <% field_with_errors item, :sort_no do %>
+          <%= text_field_tag "sort_no[#{item.id}]", item.sort_no_before_type_cast, :size => 10, :class => 'IMEoff' %>
+        <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+  <%= button_tag '戻る', :type => :button, :onclick => "document.location='#{url_for(:action => :index)}';" %>
+  <%= submit_tag 'この内容で登録する' %>
+<% end %>

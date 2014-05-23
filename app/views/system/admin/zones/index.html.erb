@@ -1,0 +1,20 @@
+<% if @items.present? %>
+<table class="index">
+  <tr>
+    <th>詳細</th>
+    <th>都道府県</th>
+    <th>圏名</th>
+  </tr>
+  <% @items.each_with_index do |item, i| %>
+    <tr class="<%= cycle '', 'cycle' %>">
+      <td class="showLink"><%= link_to '詳細', {:action => :show, :id => item.id} %></td>
+      <td><%= item.pref.name if item.pref.present? %></td>
+      <td><%= item.name %></td>
+    </tr>
+  <% end %>
+</table>
+<%= paginate @items %>
+<% else %>
+<div>登録データがありません。</div>
+<% end %>
+

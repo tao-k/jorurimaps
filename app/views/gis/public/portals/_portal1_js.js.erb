@@ -1,0 +1,582 @@
+
+var layerPanel,leftTabs,mapToolPanel,addLayerWin,resultIdsFilder;
+/**
+ *  VM環境WMS呼び出し
+ */
+function initWMSLayer() {
+
+  layerStyles['vector_layer'] = new OpenLayers.Style({
+        pointRadius: 10,
+        strokeWidth: 3,
+        strokeOpacity: 0.7,
+        strokeColor: "navy",
+        fillColor: "yellow",
+        fillOpacity: 1
+      }
+      <%icons = icon_select
+      if  icons%>
+      , {rules: [
+      <%icons.each_with_index{|icon, i|-%>
+
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "icon_id",
+                      value: "<%=icon.id%>"
+                  }),
+                symbolizer: {
+                    externalGraphic: "<%=icon.file_uri%>",
+                    graphicWidth: <%=icon.width%>,
+                    graphicHeight: <%=icon.height%>,
+                    graphicXOffset: -<%=icon.offset_x%>,
+                    graphicYOffset: -<%=icon.offset_y%>
+                       }})<%= icons.length - 1 == i ? nil : ',' -%>
+       <%}-%>]}
+       <%end-%>);
+
+    var resultIdList = $("#resultIdList").text().split(/,/);
+    var setFilterList = [];
+    for (var i = 0; i < resultIdList.length; i++){
+      var idFilder = new OpenLayers.Filter.Comparison({
+                  type: OpenLayers.Filter.Comparison.EQUAL_TO,
+                  property: "rid",
+                  value: resultIdList[i].toString()
+            });
+      setFilterList.push(idFilder)
+    }
+
+    resultIdsFilder = new OpenLayers.Filter.Logical({
+        type: OpenLayers.Filter.Logical.OR,
+        filters: setFilterList,
+        active: true
+    });
+
+
+<%
+map_list = [@map]
+layer_list = []
+map_list.each do |map|
+  folders = get_folders_from_item(map, "all")
+    folders.each do |folder|
+      layers = get_layers_from_item(folder,"all",true)
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end unless folders.blank?
+   layers = get_layers_from_item(map,"all",true)
+    if layers
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end
+end unless map_list.blank?
+
+layer_list.each do |item|
+  if item.kind == "file" || item.kind == "raster" || item.kind ==  "vector"
+    next if item.mapfile.blank?
+    layer_names = item.mapfile_layer_name.split(/,/)
+    if layer_names.size <= 1-%>
+    var layers = "<%=item.mapfile_layer_name%>";
+    <%else%>
+    var layers = [];
+    <%layer_names.each do |name|-%>
+      layers.push("<%=name%>");
+    <%
+      end
+    end
+  end
+if item.is_internal == 0%>
+addOverlayers("<%=item.code%>", "<%=item.kind%>","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.url%>",<%=item.opacity_level%>,true,true);
+<%
+next
+end
+if item.kind == "file" || item.kind == "raster"
+-%>
+  addOverlayers("<%=item.code%>", "<%=item.kind=%>","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,true,false);
+<%elsif item.kind ==  "vector"
+  next if !vector_layer_list.index(item.code).blank?
+  vector_layer_list << item.code -%>
+  addOverlayers("<%=item.code%>", "vector","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,true,false);
+  portalLayers.push("<%=item.code%>");
+<%elsif item.kind == "kml"-%>
+  addOverlayers("<%=item.code%>", "kml","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>,true,false);
+<%elsif item.kind == "gpx"-%>
+  addOverlayers("<%=item.code%>", "gpx","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>,true,false);
+<%else
+  next
+end-%>
+<%end unless layer_list.blank?-%>
+
+
+}
+
+function addOverlayers(layer_code, kind,layer_id, mapfile,title,layers,url,opacity_level,resultID,external){
+  if(overlays[layer_code]){
+    return ;
+  }
+  if(external==true && (kind != "kml" || kind != "gpx")){
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      url,
+       {
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: true,
+         opacity: opacity_level,
+         layerName: title,
+         layers: layers
+        }
+   );
+    map.addLayer(overlays[layer_code]);
+    overlays[layer_code].setVisibility(true);
+    return;
+  }
+
+
+  if(kind=="gpx"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.GPX()
+      }),
+      style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: opacity_level},
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: true,
+    });
+  }else if(kind=="kml"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.KML({extractStyles: true,extractAttributes: true})
+      }),
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: true,
+    });
+  }else if(kind=="vector"){
+    var comparison = [
+    new Filter.Comparison({
+                    type: "==",
+                    property: "state",
+                    value: "enabled"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "web_state",
+                    value: "public"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "layer_id",
+                    value: layer_id
+              })
+
+               ];
+    kindFilters[layer_code] = new OpenLayers.Filter.Logical({
+      type: OpenLayers.Filter.Logical.AND,
+      filters:comparison
+               });
+
+    kind_filter_xmls[layer_code] = new OpenLayers.Format.XML();
+    kindLayerFilters[layer_code] = kind_filter_xmls[layer_code].write(new OpenLayers.Format.Filter().write(kindFilters[layer_code]));
+    if(resultID){
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: true,
+                strategies: [new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.Filter({filter: resultIdsFilder, active: true})],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+    }else{
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: true,
+                strategies: [new OpenLayers.Strategy.Fixed()],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+     }
+  }else{
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      mapserverUrl,
+       {
+       map:"gis_mapfiles/" + mapfile, //mapfileの場所指定
+       layers: layers,  //取得するレイヤー
+       version: '1.1.1', //サービスのバージョン
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: true,
+         opacity: opacity_level,
+         layerName: title
+        }
+   );
+  }
+  map.addLayer(overlays[layer_code]);
+  overlays[layer_code].setVisibility(true);
+}
+
+
+function initWFSLayer(){
+
+
+  overlays['vector']  = new OpenLayers.Layer.Vector("描画領域",
+  {
+    visibility: true,
+    group: "others",
+    projection: new OpenLayers.Projection("EPSG:900913"),
+    displayProjection: new OpenLayers.Projection("EPSG:4326")
+   }
+  );
+  map.addLayer(overlays['vector']);
+
+    selectControls['demo'] = new OpenLayers.Control.SelectFeature(
+      [
+      <%vector_layer_list.each do |layer|-%>
+      overlays['<%=layer%>'],
+      <% end unless vector_layer_list.blank?-%>
+      overlays['vector']
+      ],
+       {onSelect: onAedFeatureSelect, onUnselect: onFeatureUnselect});
+       map.addControl(selectControls['demo']);
+       selectControls['demo'].activate();
+}
+
+
+  function desplayDialog(){
+    confirmWin.show();
+  }
+
+  var countRequest = null;
+  function handleMapMove() {
+    // 地図の表示範囲を取得
+    var extent = map.getExtent();
+    // 地図座標に変換
+    extent.transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+    var setText = "上" + extent.top + "/左" + extent.left + "/右" +extent.right+"/下" +extent.bottom;
+    $("#displayLatlng").html(setText);
+    var bboxParams = extent.left + "," + extent.top + ","+extent.right + "," +extent.bottom;
+    var idParams = $("#resultIdList").text();
+    var request_uri = '/<%=@map.code%>/search/get_bbox?bbox=' + bboxParams + '&ids=' + idParams ;
+     $("#countFeatures").html("読み込み中...");
+     if(countRequest!=null){
+       countRequest.abort();
+     }
+    countRequest = $.ajax({
+        url: request_uri,
+        async: true,
+        cache: false,
+        dataType:"text",
+        error: function(){
+          //alert('Error loading CSV document');
+        },
+        success: function(result){
+          //$("#countFeatures").html("地図内に"+ result + "件表示しています。");
+          $("#countFeatures_tab").html(result);
+          $("#countFeatures").html(result);
+        },
+        timeout: function(){
+       }
+      });
+  }
+
+
+Ext.onReady(function() {
+
+  Ext.QuickTips.init();
+
+  /* マップ設定 */
+  initMap();
+
+ /* ズームセレクタ設定 */
+ initAreaSelecter();
+
+ /*コントロールパネル作成*/
+  createCtrlPanel();
+
+  /* 描画用ウィンドウ作成  */
+  readyForDraw();
+
+  /*計測用ウィンドウ作成*/
+  readyForMeasure();
+
+  /*カウント用関数設定*/
+  map.events.register('moveend', map, handleMapMove);
+
+   var i = 0;
+
+
+  /* map view */
+
+
+   printPanel = new Ext.Window({
+        id:'printPanel',
+        title:'印刷',
+        layout:'fit',
+        width:300,
+        height:200,
+        closeAction:'hide',
+        plain: true,
+        //minimizable: true,
+        maximizable: true,
+        collapsible: true,
+        closable: true,
+        items:
+          new Ext.Panel({
+            html:'<br /><br /><br />'
+          })
+      });
+   linkPanel = new Ext.Window({
+        id:'linkPanel',
+        title:'リンク',
+        layout:'fit',
+        width:300,
+        height:200,
+        closeAction:'hide',
+        plain: true,
+        //minimizable: true,
+        maximizable: true,
+        collapsible: true,
+        closable: true,
+        items:
+          new Ext.Panel({
+            html:'<textarea id="map_link_url" name="map_link_url" style="width: 280px; height: 180px;">'+ permalinkControl.base +'</textarea>'
+          })
+      });
+
+
+  outPutPanel = new Ext.Window({
+        id:'outPutPanel',
+        title:'データ出力',
+        layout:'fit',
+        width:300,
+        height:200,
+        closeAction:'hide',
+        plain: true,
+        //minimizable: true,
+        maximizable: true,
+        collapsible: true,
+        closable: true,
+        autoScroll:true,
+        contentEl: 'outPutFormDiv',
+        html: ''
+      });
+
+  var layerSlider = {
+        id: "layerOpacitySlider",
+        xtype: "gx_opacityslider",
+        layers: overlays,
+        changeVisibility: false,
+        aggressive: true,
+        horizontail: true,
+        width: 100,
+        plugins: new GeoExt.LayerOpacitySliderTip({template: '<div>透過度: {opacity}%</div>'})
+     };
+  var sliderLabel = {id: 'sliderLabel', text:'透過度：'}
+  var align = "->" ;
+  //var messageUse = {text: "<%=safe{@map.title}%>のご利用上の注意", handler: desplayDialog}
+  mapPanel = new GeoExt.MapPanel({
+    border: true,
+    margins:'0 0 0 0',
+    width:'100px',
+    region: "center",
+    map:    map,
+    zoom: settings['initMapZoom'],
+    tbar: [areaSelector, toolbarItems],
+    //bbar: [sliderLabel, layerSlider,align,messageUse]
+    bbar: [sliderLabel, layerSlider]
+  });
+
+layerPanel = new Ext.Panel({
+        id: 'layerPanel',
+        contentEl: 'layerListTab',
+        title:'レイヤー切替',
+        html:'',
+        margins:'0 0 0 0',
+        autoScroll:true
+    });
+  mapToolPanel = new Ext.Panel({
+    title: '検索結果',
+    contentEl: 'resultListTab',
+    html: '',
+    margins:'0 0 0 0',
+    autoScroll:true,
+    id: 'mapToolTab'
+
+  });
+
+  leftTabs = new Ext.TabPanel({
+    id: "toolTab",
+    activeTab: 0,
+    region: "west",
+    collapsible:true,
+    split:true,
+     width: '220px',
+    items: [
+      mapToolPanel,
+      layerPanel
+    ]
+  });
+
+
+
+
+
+  /* create view */
+  new Ext.Viewport({
+    layout:'border',
+    items:[
+      mapPanel,
+      leftTabs,
+      new Ext.Panel({
+        header: false,
+        contentEl: 'header',
+        margins:'0 0 0 0',
+        height: '55px',
+        region:'north',
+        collapsible:true,
+        collapseMode: "mini",
+        split:true,
+        autoHeight:false
+      }),
+      new Ext.Panel({
+          header: false,
+          contentEl: 'footer',
+          margins:'0 0 0 0',
+          region:'south',
+          collapsible:true,
+          collapseMode: "mini",
+          split:true,
+          autoHeight:true
+        })
+    ]
+  });
+
+
+
+outPutConfirmWin = new Ext.Window( {
+           title:  'ライセンスについて',
+           id: 'outPutConfirmWindow',
+           contentEl: 'outPutConfirmWinMessage',
+           modal:  true,
+           closable: false,
+           buttons: [{
+               xtype: 'button',
+               id: 'outPutConfirmOk',
+               text: '同意する',
+               baseCls : "colorBtn",
+               listeners: {
+                 click: function(){
+                   outPutConfirmed = true;
+                   outPutConfirmWin.hide();
+                   outPutPanel.show();
+                 }
+               }
+             },
+             {
+                 xtype: 'button',
+                 id: 'outPutConfirmNo',
+                 text: '同意しない',
+                 baseCls : "colorBtn",
+                 listeners: {
+                   click: function(){
+                     //window.location = "/";
+                     outPutConfirmWin.hide();
+                   }
+                 }
+               }]
+          } );
+
+  /*WebKit用改行処理*/
+  /*var userAgent = window.navigator.userAgent.toLowerCase();
+  if (userAgent.match(/webkit/i)){
+    var replacedHtml = $(".baseLayersDiv").html().replace(/<br>/g, '<p><\/p>');
+    $(".baseLayersDiv").html(replacedHtml);
+  }*/
+
+
+  addLayerWin = new Ext.Window( {
+      title:  '追加レイヤー登録',
+      id: 'addLayerWin',
+      modal:  true,
+      closable: true,
+      width:600,
+      height:450,
+      closeAction:'hide',
+      html:'',
+      margins:'0 0 0 0',
+      autoScroll:true,
+      listeners:{
+        close:function(){
+          cloaseSelectWindow();
+        }
+      },
+      autoLoad: {
+              url: "<%=add_layer_window_url(@map)%>",
+              method: "GET",
+              text: "読み込み中...",
+              timeout: 60
+          }
+     } );
+
+});
+
+
+

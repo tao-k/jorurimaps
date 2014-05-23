@@ -1,0 +1,170 @@
+<%
+
+  wms_url = Application.config(:wms_gateway_url, "localhost")
+  title_map = @map || pref_portal_map_list[0]
+%>
+<div id="header">
+<div id="headerContainer" class="printHeader">
+<div id="headerBody">
+<div class="piece">
+<div class="rightMenu">
+<%=image_tag(map_icon_uri(title_map))%>
+<h1><%=safe{title_map.title}-%></h1>
+<span class="department"><%=safe{title_map.department}-%></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="main">
+
+<div id="wrapper">
+
+<div id="content" class="<%=@content_class%>">
+<div id="contentContainer">
+<div id="contentBody">
+  <div id="mapContainer">
+  <div id="mapShow" style="height: 650px;"></div>
+  </div>
+</div>
+<!-- end #contentContainer --></div>
+<!-- end #content --></div>
+</div>
+<div id="footer">
+<div id="footerContainer">
+<div id="footerHeader"></div>
+<div id="footerBody">
+<div class="copyright">
+  <%=show_site_settings[:copyright]%>
+</div>
+</div>
+<div id="footerFooter"></div>
+</div>
+</div>
+
+<script type="text/javascript">
+
+(function($) {
+
+var panel1, panel2, osm, slider, map, map2;
+var settings = {};
+
+Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+var myproj =new OpenLayers.Projection("EPSG:4326");
+
+
+<%
+ wms_url = Application.config(:wms_gateway_url, "localhost")
+%>
+
+/* mapサーバ */
+var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+/* overlays layers container */
+var overlays = new Object();
+
+/* select action container */
+var selectControls = new Object();
+
+
+
+var Rule = OpenLayers.Rule;
+var Filter = OpenLayers.Filter;
+var kindFilters = new Object();
+var kind_filter_xmls = new Object();
+var kindLayerFilters = new Object();
+var listPop = new Object();
+var layerStyles = new Object();
+var legendPositionLeft, drawPositionLeft, measurePositionLeft;
+var legendPositionTop, drawPositionTop, measurePositionTop;
+var helpPanel, linkPanel, printPanel;
+var mapPermalink;
+var baseLayers= new Object();
+
+
+initMap();
+
+
+function initMap() {
+
+
+ var zoom = 18;
+ var option1 = {
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+      numZoomLevels: 20,
+      maxResolution: 'auto',
+            controls : [
+                        new OpenLayers.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        })/*,
+                        new OpenLayers.Control.LayerSwitcher({'ascending':false})*/
+
+                        ]
+        };
+
+
+  map = new OpenLayers.Map("mapShow",option1);
+
+  initBaseLayer(map);
+  initMapSettings(map);
+
+  initWMSLayer(map);
+  //初期レイヤー設定
+  <%@layers.each do |layer|
+  next if layer == "vector"-%>
+
+    overlays['<%=layer%>'].setVisibility(true);
+
+  <%end unless @layers.blank?-%>
+}
+
+
+
+function initMapSettings(m) {
+  settings['initCenterLonLet'] = new OpenLayers.LonLat(<%= @init_map[:center_lon] %>, <%= @init_map[:center_lat] %>)
+      .transform(
+        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+        m.getProjectionObject() // to Spherical Mercator Projection
+      );
+  settings['initMapZoom'] = <%= @init_map[:zoomlevel] %>;
+  m.setCenter (settings['initCenterLonLet'], settings['initMapZoom']);
+
+  //コントロール設定
+  //地図切り替え
+
+    m.addControl(new OpenLayers.Control.Scale());
+    m.addControl(new OpenLayers.Control.ScaleLine());
+    //m.addControl(new OpenLayers.Control.MousePosition());
+    //m.addControl(new OpenLayers.Control.PanZoomBar());
+    //m.addControl(new OpenLayers.Control.Permalink());
+    //m.addControl(new OpenLayers.Control.ArgParser());
+    m.addControl(new OpenLayers.Control.Attribution());
+    //m.addControl(new OpenLayers.Control.LayerSwitcher());
+
+}
+<%= render :partial =>  'base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
+<%= render :partial =>  'open_layer_list', :locals=>{:vector_layer_list =>@vector_layer_list,:wms_url => wms_url}    %>
+<%= render :partial =>  'select_feature', :locals=>{:map_code =>params[:code]}   rescue nil %>
+
+
+function map1MoveListener(evt){
+  map2.events.unregister("moveend", map2, map2MoveListener);
+  map2.setCenter(map.getCenter());
+  map2.zoomTo(map.getZoom());
+  map2.events.register("moveend", map2, map2MoveListener);
+}
+
+function map2MoveListener(evt){
+  map.events.unregister("moveend", map, map1MoveListener);
+  map.setCenter(map2.getCenter());
+  map.zoomTo(map2.getZoom());
+  map.events.register("moveend", map, map1MoveListener);
+}
+
+
+})(jQuery);
+</script>

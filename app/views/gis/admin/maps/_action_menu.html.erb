@@ -1,0 +1,19 @@
+<span class="actionMenu">
+<% case params[:action] %>
+<% when 'index' %>
+  <%= button_to '新規登録', {:action => :new}, :method => :get%>
+<% when 'show' %>
+  <%= button_to '戻る', {:action => :index}, :method => :get%>
+  <%= button_to '編集', {:action => :edit} , :method => :get if @item.editable?%>
+  <%= button_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？' if @item.deletable?%>
+  <%if @item.web_state == "internal"%>
+  <%= button_to '公開承認', url_for({:controller=>"gis/admin/maps/recognizers",:action => :new, :map_id => @item.id}) , :method => :get if @item.editable? && @item.publishable %>
+  <%elsif @item.web_state == "recognize"%>
+  <%=recognize_link(@item, Site.user)%>
+  <%elsif @item.web_state == "recognized"%>
+  <%= button_to '公開する', url_for({:controller=>"gis/admin/maps/recognizers",:action => :publish, :map_id => @item.id}) , :method => :get if @item.editable? && @item.publishable %>
+  <%end%>
+  <%= button_to '地図表示設定', url_for({:controller=>"gis/admin/maps/configs",:action => :new, :map_id => @item.id}) , :method => :get if @item.editable? && @item.is_portal %>
+  <%= button_to '埋め込みURL発行', url_for({:controller=>"gis/admin/maps/externals",:action => :index, :map_id => @item.id}) , :method => :get if @item.web_state == "public" && @item.is_portal %>
+<% end %>
+</span>

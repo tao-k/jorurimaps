@@ -1,0 +1,15 @@
+
+<div id="menu">
+<div id="menuContainer">
+<div id="menuBody">
+<%case @action
+when "index"%>
+  <%= render :partial =>  'gis/public/fronts/index_menu' rescue nil %>
+<%else%>
+  <%= render :partial =>  'gis/public/fronts/other_menu' rescue nil %>
+<%end%>
+
+<!-- /menuBody --></div>
+  <%= render_show_cache("link_banner_#{@category}", '/gis/public/common/link_banner',{:kind=>"top", :category=>"top"}) %>
+<!-- end #menuContainer --></div>
+<!-- end #menu --></div>

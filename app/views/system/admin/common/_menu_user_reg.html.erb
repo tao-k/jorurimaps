@@ -1,0 +1,5 @@
+<div class="tabMenu">
+<%= link_to 'アカウント登録',  {:controller => 'system/admin/user_account_regs', :company_id => Core.user.company.id}, :class => current_class(current, :user_account_regs) -%>
+<%= link_to 'Yahoo一括登録',   {:controller => 'system/admin/user_account_yahoo_regs', :company_id => Core.user.company.id}, :class => current_class(current, :user_account_yahoo_regs) -%>
+<%= link_to '登録状況照会',    {:controller => 'system/admin/user_account_states', :company_id => Core.user.company.id}, :class => current_class(current, :user_account_states) -%>
+</div>

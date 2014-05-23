@@ -1,0 +1,67 @@
+
+<!-- header -->
+<div id="header">
+<div id="headerContainer">
+  <!-- hedaerBody -->
+  <div id="headerBody">
+    <div id="commonHeader" class="piece">
+    <div class="pieceContainer">
+    <div class="pieceBody">
+
+        <!-- logo -->
+        <div class="logo">
+          <h1>
+            <a href="/">
+              <%=show_site_settings[:title]%>
+            </a>
+          </h1>
+        </div>
+        <!-- /logo -->
+
+        <!-- toogle-menu -->
+        <div class="site-header-toogle">
+          <div id="toogle-menu">
+            <a href="#">メニュー</a>
+          </div>
+        </div>
+        <!-- /toogle-menu -->
+
+        <!-- menu -->
+        <div class="menu">
+          <div class="lowerMenu">
+
+            <form id="cse-search-box" action="/search/index.html">
+              <span class="searchContainer">
+                <input type="hidden" name="cx" value="<%=show_site_settings[:custom_search_engine_id]%>" />
+                <input name="cof" value="FORID:10" type="hidden">
+                <input type="hidden" name="ie" value="UTF-8" />
+                <input type="hidden" name="ref" value="<%=CGI.escape(Core.uri)%>">
+                <input type="text" value="" title="" class="text" id="search-box" size="20" name="q" />
+              </span>
+            <input type="submit" align="top" id="search-button" value="検索" name="sa" />
+            <script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=ja"></script>
+          </form>
+          </div>
+          </div>
+        <!-- /menu -->
+
+    </div>
+    </div>
+    </div>
+  </div>
+  <!-- /headerBody -->
+
+  <!-- navi -->
+  <div id="navi">
+    <div id="naviContainer">
+      <ul class="naviMenu">
+        <%header_menu_piece_list.each do |menu|%>
+        <li class="<%=menu[:class]%>"><%=link_to menu[:title], menu[:url], :class=>current_class(@category, menu[:class])%></li>
+        <%end%>
+      </ul>
+    </div>
+  </div>
+  <!-- /navi -->
+<!-- end #headerContainer --></div>
+<!-- end #header --></div>
+<!-- /header -->

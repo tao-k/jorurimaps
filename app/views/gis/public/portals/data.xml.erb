@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<items>
+  <item>
+    <lat><%=safe{@item.lat}%></lat>
+    <lng><%=safe{@item.lng}%></lng>
+    <name><%=@item.name%></name>
+    <address><%=@item.address%></address>
+    <% column_config = @item.layer.get_option_columns
+       show_fld_conf = @item.layer.show_config
+       column_config.each do |column|
+       next if column[1].blank?
+       next if show_fld_conf.index(column[0]).blank? %>
+    <free_columns>
+     <key><%= column[1] %></key>
+     <value><%= @item[column[0].to_sym] %></value>
+    </free_columns>
+    <%end  if column_config%>
+    <%public_photos = @item.get_public_photos(10)
+    public_photos.each_with_index do |photo, i|
+    if i == 0-%>
+    <photo<%=i%>_path><%=photo.thumbnail_public_photo_path%></photo<%=i%>_path>
+    <photo<%=i%>_full_path><%=photo.public_photo_path%></photo<%=i%>_full_path>
+    <photo<%=i%>_original_path><%=photo.public_original_photo_path%></photo<%=i%>_original_path>
+    <%else-%>
+    <other_photo<%=i%>_path><%=photo.public_photo_path%></other_photo<%=i%>_path>
+    <other_photo<%=i%>_original_path><%=photo.public_original_photo_path%></other_photo<%=i%>_original_path>
+    <%end-%>
+    <photo<%=i%>_caption><%=photo.public_caption(@layer_title)%></photo<%=i%>_caption>
+    <%end unless public_photos.blank?%>
+    <%if @item_map%><show_path><%=@item.show_path(@item_map)%></show_path><%end%>
+  </item>
+</items>
+

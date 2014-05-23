@@ -1,0 +1,54 @@
+<div class="piece AdminSetting AdminGroups">
+  <div class="pieceBody">
+    <%= render :partial => 'navi_list' %>
+    <%= render :partial => 'switching' %>
+    <%= form_tag '', :method => :get, :class => 'search' do %>
+    <table>
+      <tr>
+        <td>
+          LDAP<%= filter_select_tag :ldap, 'system_users_ldaps', params, :default => :all %>
+          状態<%= filter_select_tag :state, 'system_states', params, :default => :enabled %>
+    </td>
+        <td class="submitters">
+          <%= submit_tag '検索',     :name => :search %>
+        </td>
+      </tr>
+    </table>
+    <% end %>
+
+
+    <% if @items.blank? %>
+      <div class="notice">表示する項目はありません。</div>
+    <% else %>
+    <table class="index">
+      <tbody>
+        <tr>
+          <th>展開</th>
+          <th>詳細</th>
+          <th>グループID</th>
+          <th>グループ名</th>
+          <th>メールアドレス</th>
+          <th>適用開始日</th>
+          <th>適用終了日</th>
+          <th>LDAP同期</th>
+          <th>状態</th>
+        </tr>
+        <% for item in @items %>
+        <tr class="<%= cycle '', 'cycle' %>">
+          <td><%= link_to '展開', url_for({:action=>:index, :parent=>item.id}) %></td>
+          <td class="showLink"><%= link_to '詳細', url_for({:action=>:show, :id=>item.id, :parent=>@parent.id}) %></td>
+          <td><%= item.code %></td>
+          <td><%= item.name %></td>
+          <td><%= item.email %></td>
+          <td><%= safe{item.start_at.strftime("%Y-%m-%d %H:%M")} %></td>
+          <td><%= safe{item.ed_at.strftime("%Y-%m-%d %H:%M")} %></td>
+          <td><%= System::UsersGroup.ldap_show(item.ldap) %></td>
+          <td><%= System::UsersGroup.state_show(item.state) %></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= paginate @items %>
+    <% end %>
+  </div>
+</div>

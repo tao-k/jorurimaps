@@ -1,0 +1,28 @@
+<div class="drawFeatureTool">
+  <div id="measureOptions">
+    <ul id="controlToggle">
+        <li>
+            <input type="radio" name="measureType" value="none" id="noneMeasureToggle" checked="checked" class="toggleMeasureControl" />
+            <label for="noneMeasureToggle">計測しない</label>
+        </li>
+        <li>
+            <input type="radio" name="measureType" value="measure_point" id="pointMeasureToggle" class="toggleMeasureControl" />
+            <label for="pointMeasureToggle">座標</label>
+        </li>
+        <li>
+            <input type="radio" name="measureType" value="line" id="lineMeasureToggle" class="toggleMeasureControl" />
+            <label for="lineMeasureToggle">距離</label>
+        </li>
+        <li>
+            <input type="radio" name="measureType" value="polygon" id="polygonMeasureToggle" class="toggleMeasureControl" />
+            <label for="polygonMeasureToggle">面積</label>
+        </li>
+    </ul>
+    <div id="output">
+
+    </div>
+    <div id="outputPointDiv" style="display : none;">
+      <span>座標（緯度,経度）：<%= text_field_tag :measure_output, "", :id=>"outputPoint", :style=>"width : 280px;"%></span>
+    </div>
+  </div>
+</div>

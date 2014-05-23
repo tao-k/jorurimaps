@@ -1,0 +1,14 @@
+<%= form_tag '', :method => :get, :class => 'search' do %>
+<table>
+  <tr>
+    <th>権限名・権限コード</th>
+    <td><%= text_field_tag :s_keyword, params[:s_keyword], :size => 30 %></td>
+    <th>表示行数</th>
+    <td><%= select_tag :limit, options_for_select(limit_options, params[:limit]) %></td>
+    <td class="submitters">
+      <%= submit_tag '検索',     :name => :search %>
+      <%= submit_tag 'リセット', :name => :reset %>
+    </td>
+  </tr>
+</table>
+<% end %>

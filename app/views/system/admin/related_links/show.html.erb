@@ -1,0 +1,26 @@
+
+
+<table class="show">
+  <tr>
+    <th><%= @item.locale(:web_state) %></th>
+    <td><%= @item.web_state_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:title) %></th>
+    <td><%= @item.title %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:url) %></th>
+    <td><%= @item.url %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:sort_no) %></th>
+    <td><%=h @item.sort_no.to_s %></td>
+  </tr><tr>
+    <th><%= @item.locale(:parent_category_id) %></th>
+    <td>
+      <%= @item.parent_category_show %>
+    </td>
+  </tr>
+</table>
+<%= render :partial => 'system/admin/common/operator'%>
