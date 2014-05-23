@@ -16,6 +16,10 @@
     <td><%=select_area_code_form(f,@item.area_code)%></td>
   </tr>
   <tr>
+    <th><%= @item.locale(:address) %><%= required %></th>
+    <td><%= f.text_field :address, :class => 'title', :style => "width: 200px;"%></td>
+  </tr>
+  <tr>
     <th><%= @item.locale(:icon_kind) %><%= required %></th>
     <td><span id="show_icon"><%=safe{image_tag(@item.icon.file_uri)}%></span><%=f.select(:icon_id, options_for_select(icon_options, :selected=>@item.icon_id))%></td>
   </tr>
