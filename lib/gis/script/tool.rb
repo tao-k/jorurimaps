@@ -167,7 +167,7 @@ class Gis::Script::Tool
               data.delete(:id)
               for num in 1..50 do
                 column_sym = "input_fld_#{num}".to_sym
-                data[column_sym] = nil
+                data[column_sym] = nil unless data[column_sym]
               end
             else
               item = Gis::LayerDatum.new
@@ -278,7 +278,7 @@ class Gis::Script::Tool
               data.delete(:id)
               for num in 1..50 do
                 column_sym = "input_fld_#{num}".to_sym
-                data[column_sym] = nil
+                data[column_sym] = nil unless data[column_sym]
               end
             else
               item = Gis::LayerDatum.new
