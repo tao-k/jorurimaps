@@ -49,6 +49,8 @@ MAP
     NAME "vector_layer"
     CONNECTION "user=joruri dbname=joruri_maps host=127.0.0.1"
     DATA "g from gis_layer_data using srid=4326"
+#    FILTER "deleted_at is null"
+#    MAXSCALE 10000
     DUMP TRUE
     METADATA
         "wfs_srs"         "EPSG:4326"

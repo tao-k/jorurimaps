@@ -49,7 +49,7 @@ MAP
    CLASS
       NAME 'areas'
      STYLE
-       COLOR ##point_color##
+       ##point_color##
        SYMBOL 'circle'
        SIZE 6
      END
@@ -59,8 +59,8 @@ MAP
         ANGLE AUTO
         FONT gothic
         TYPE truetype
-        SIZE 8
-        POSITION AUTO
+        SIZE ##label_size##
+        POSITION ##label_position##
         PARTIALS FALSE
         MINFEATURESIZE 40
       END

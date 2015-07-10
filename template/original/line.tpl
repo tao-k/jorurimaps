@@ -48,10 +48,8 @@ MAP
 
    CLASS
       NAME 'areas'
-      COLOR ##outline_color##
       STYLE
-        COLOR ##outline_color##
-        OUTLINECOLOR ##outline_color##
+        ##outline_color##
         WIDTH ##width##
       END
       LABEL
@@ -60,7 +58,7 @@ MAP
         ANGLE AUTO
         FONT gothic
         TYPE truetype
-        SIZE 8
+        SIZE ##label_size##
         POSITION AUTO
         PARTIALS FALSE
         MINFEATURESIZE 40
