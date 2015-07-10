@@ -11,6 +11,15 @@
   </div>
 </div>
 </div>
+<div class="body" id="folderConfirmMessage" style="display: none;">
+  <h4>ご利用上の注意</h4>
+  <div id="folderConfirmWinMessage"></div>
+<div id="folderBtnContainer">
+  <div>
+  <a href="#closeFolderMessage" id="closeFolderMessage" class="mapFuncBtn">OK</a>
+  </div>
+</div>
+</div>
 <div id="layerMenu">
 <%= render :partial =>  'tools' rescue nil %>
 <span id="openCount" style="display: none;">0</span>
@@ -81,7 +90,85 @@
     $("#dropdownLayer").hide();
     $("#dropdownBase").hide();
   });
+  $("#closeFolderMessage").click(function (e) {
+    e.preventDefault();
+    $("#folderConfirmMessage").hide();
+    $("#canvas").show();
+    $(".dropdown").css("display", "inline");
+    $("#confirmShow").show();
+    if($("#openCount").text()=="0"){
+      $("#tab2").show();
+      $("#openCount").html("1");
+    }
 
+    if($($("#tabLink1").attr("href")).css("display")=="none"){
+      $("#tabLink1").removeClass("current");
+    }else{
+      $("#tabLink2").addClass("current");
+    }
+    if($($("#tabLink2").attr("href")).css("display")=="none"){
+      $("#tabLink2").removeClass("current");
+    }else{
+      $("#tabLink2").addClass("current");
+    }
+    $("#legendShowBtn").show();
+    var targetOffset = $("body").offset().top;
+    $('html,body').animate({ scrollTop: targetOffset }, 'fast');
+    $("#legendPanel_set").hide();
+    $(".explanatory").show();
+
+    $("#dropdownLayer").addClass("dropdown");
+    $("#dropdownBase").addClass("dropdown");
+    $("#dropdownLayer").show();
+    $("#dropdownBase").show();
+    $("#popupText").show();
+    $("#tab2").show();
+    $("#openCount").html("1");
+  });
+
+  $(document).on("click", ".folderMessage", function(e){
+    e.preventDefault();
+    var id = $(this).attr("id");
+    var title =$(this).text();
+    var folderId = id.replace(/folder/, "").replace(/_\d*/,"");
+    var request_uri = "/<%=@map.code%>/" + folderId + '/folder_remark';
+    $.ajax({
+            url   :request_uri,
+            type: 'get',
+            method: 'get',
+            dataType: 'html',
+            success:function(result){
+              if(result){
+                 showFolderConfirm();
+                 $("#folderConfirmWinMessage").html("");
+                 result = '<div class="info"><div class="scroll">' + result + '</div></div>';
+                 $("#folderConfirmWinMessage").html(result);
+                 $("#folderConfirmWinMessage .info").jScrollPane();
+              }
+            },
+            failure:function(result,opt){
+                alert("フォルダ注意書きの取得に失敗しました。");
+            }
+        });
+  });
+
+  function showFolderConfirm() {
+    $("#folderConfirmMessage").show();
+    $(".dropdown").hide();
+    $(".tanPanel").hide();
+    //$("#canvas").hide();
+    $("#legendPanel_set").hide();
+    $("#confirmShow").hide();
+    $("#legendShowBtn").hide();
+    $("#legendPanel_set").hide();
+    var targetOffset = $("body").offset().top;
+    $(".explanatory").hide();
+    $('html,body').animate({ scrollTop: targetOffset }, 'fast');
+    $("#dropdownLayer").removeClass("dropdown");
+    $("#dropdownBase").removeClass("dropdown");
+    $("#dropdownLayer").hide();
+    $("#dropdownBase").hide();
+  }
   $("#legendShowBtn").click(function (e) {
     $("#legendPanel_set").toggle();
     if($("#legendPanel_set").css("display")=="none"){

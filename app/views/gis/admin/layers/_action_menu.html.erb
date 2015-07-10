@@ -9,5 +9,6 @@
   <%= button_to '削除', {:action => :destroy}, :method => :delete, :confirm => '削除してよろしいですか？' if @item.deletable?%>
   <%= button_to 'レイヤーデータ登録', url_for({:controller=>"gis/admin/layers/data",:action => :index, :layer_id => @item.id}), :method => :get if @item.is_readable? && @item.editable_kind%>
   <%= button_to 'レイヤー描画設定', url_for({:controller=>"gis/admin/layers/legends",:action => :index, :layer_id => @item.id}), :method => :get if @item.is_readable? && @item.draw_editable_kind %>
+  <%= button_to 'レイヤーデータ管理', url_for({:controller=>"gis/admin/layers/import_data",:action => :index, :layer_id => @item.id}), :method => :get if @item.is_readable? && @item.kind == "file"%>
 <% end %>
 </span>

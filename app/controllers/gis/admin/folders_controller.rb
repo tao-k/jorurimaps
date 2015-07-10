@@ -46,6 +46,7 @@ class Gis::Admin::FoldersController < Gis::Controller::Admin::Base
     return http_error(404) if @item.blank?
     return authentication_error(403) unless @item.editable?
     @a_layers = @item.get_assortments_layers(params)
+    @item.set_tmp_id
   end
 
 
@@ -55,6 +56,7 @@ class Gis::Admin::FoldersController < Gis::Controller::Admin::Base
       :web_state    => "all"
     })
     @a_layers = @item.get_assortments_layers(params)
+    @item.set_tmp_id
   end
 
   def create

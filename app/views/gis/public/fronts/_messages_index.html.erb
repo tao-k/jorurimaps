@@ -1,17 +1,18 @@
 
 
-      <%unless short_messages.blank?%>
-      <!-- info -->
-      <div id="info">
-      <div id="infoWrapper">
-        <div class="left heightLine-group1">お知らせ</div>
-        <div class="right heightLine-group1">
-          <% short_messages.each_with_index do |msg, ind|
-           next if msg.blank?%>
-            <%= msg.html_safe %>
-          <% end%>
-        </div>
-      </div>
-      </div>
-      <!-- /info -->
-      <% end%>
+<%unless short_messages.blank?%>
+<div id="info" class="piece">
+  <div class="pieceContainer">
+    <div class="pieceHeader"><h2>お知らせ</h2></div>
+    <div class="pieceBody">
+      <% short_messages.each_with_index do |msg, ind|
+         next if msg.blank?%>
+          <div class="info"><%= msg.html_safe %></div>
+        <% end%>
+    </div>
+  </div>
+</div>
+<% end%>
+
+
+

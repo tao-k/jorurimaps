@@ -6,7 +6,7 @@ class Gis::Admin::FrontsController < Gis::Controller::Admin::Base
 
   def initialize_scaffold
     Page.title = "地図情報データベース"
-    @js = ["/javascripts/main.js","http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp"]
+    @js = ["/javascripts/main.js",Gis.google_api_url]
   end
 
   def index

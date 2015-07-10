@@ -211,13 +211,41 @@ div#OpenLayers.Control.PanZoomBar_79_panup {
   height: 18px !important;
 
 }
-
+.layerSet .folderMessage {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-image: url(/_common/themes/gis/images/ic/ic-folder_supplement.png);
+  background-repeat: no-repeat;
+  text-indent: -9999px;
+}
 
 /*=============================================================
  タブレット・スマホ向けスタイル
 =============================================================*/
 @media only screen and (max-width: 799px) {
 
+.layerSet .folderMessage {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin-top: -4px;
+  background-image: url(/_common/themes/gis/images/ic/ic-folder_supplement.png);
+  background-repeat: no-repeat;
+  text-indent: -9999px;
+}
+.layerSet .folderMessage:after {
+  content: ".";
+  position: absolute;
+  top: 0;
+  left: -8px;
+  display: block;
+  width: 1px;
+  background: #C2C2C2;
+}
 
 /*------------------------------------------------
  content

@@ -1,6 +1,10 @@
 # -*- encoding: utf-8 -*-
 class Gis
 
+  def self.google_api_url
+    Application.config(:google_api_url, "http://maps.google.com/maps/api/js?v=3&gl=JP&sensor=false&language=ja&region=jp")
+  end
+
   def self.defalut_position
     lat = Application.config(:lat, 34.065705)
     lng = Application.config(:lng, 134.5589)

@@ -12,17 +12,19 @@ class Gis::Map < ActiveRecord::Base
   belongs_to :admin_user, :class_name => "System::User"
 
   validates :code,              :presence => true
+  validates :title,             :presence => true
 
 
   validates_uniqueness_of :code, :scope => [:deleted_at]
 
   has_many :maps_assortments, :foreign_key => :map_id,  :class_name => 'Gis::MapsAssortment', :order => 'sort_no', :dependent => :destroy
   has_many :assortments, :through => :maps_assortments, :order => 'gis_maps_assortments.sort_no'
-
+  has_many :maps_relations, :foreign_key => :map_id,  :class_name => 'Gis::MapsRelation', :order => 'sort_no', :dependent => :destroy
+  has_many :relations, :through => :maps_relations, :order => 'gis_maps_relations.sort_no'
   has_many :maps_layers, :foreign_key => :map_id,  :class_name => 'Gis::MapsLayer', :dependent => :destroy
   has_many :layers, :through => :maps_layers, :order => 'gis_maps_layers.sort_no'
 
-  has_many :maps_stacks, :foreign_key => :map_id,  :class_name => 'Gis::MapsLayer'
+  has_many :maps_stacks, :foreign_key => :map_id,  :class_name => 'Gis::MapsLayer', :dependent => :destroy
   has_many :stacks, :through => :maps_stacks, :order => 'gis_maps_layers.layer_order desc'
 
   has_many :portals_recognizers, :foreign_key => :portal_id,  :class_name => 'Gis::MapsRecognizer', :dependent => :destroy
@@ -203,6 +205,23 @@ class Gis::Map < ActiveRecord::Base
 
     return self
   end
+  def get_maps_relations(params)
+    if params[:relation]
+      par_item = params[:relation]
+      items = []
+      par_item[:_relation_id].each_with_index{|p_item, n|
+        i = p_item[0]
+        items << Gis::MapsRelation.new({
+                 :map_id => self.id,
+                 :relation_id => par_item[:_relation_id]["#{i}"],
+                 :sort_no => par_item[:_sort_no]["#{i}"]
+               })
+      }
+      return items
+    else
+      return self.maps_relations
+    end
+  end
 
 
   def get_maps_assortments(params)
@@ -242,6 +261,69 @@ class Gis::Map < ActiveRecord::Base
     end
   end
 
+  def save_relations(par_item)
+    ma = []
+    no_del = []
+    maps_relations.each do |maps_relation|
+      ma << maps_relation
+    end unless maps_relations.blank?
+    if ma.blank? || par_item[:_rid].blank?
+      par_item[:_relation_id].each_with_index{|p_item, n|
+         i = p_item[0]
+        next if par_item[:_relation_id]["#{i}"].blank?
+        dup_item = Gis::MapsRelation.find(:first, :conditions=>["map_id = ? AND relation_id = ?", self.id, par_item[:_relation_id]["#{i}"]])
+        if dup_item.blank?
+          new_item = Gis::MapsRelation.create({
+               :map_id => self.id,
+               :relation_id => par_item[:_relation_id]["#{i}"],
+               :sort_no => par_item[:_sort_no]["#{i}"]
+             })
+        end
+      }
+    else
+      par_item[:_relation_id].each_with_index{|p_item, n|
+      i = p_item[0]
+      if par_item[:_rid]["#{i}"].blank?
+        create_ok = false
+        create_ok = true if par_item[:_destroy].blank?
+        create_ok = true if par_item[:_destroy] && par_item[:_destroy]["#{i}"].blank?
+        create_ok = false if par_item[:_relation_id]["#{i}"].blank?
+        if create_ok
+          new_item = Gis::MapsRelation.create({
+             :map_id => self.id,
+             :relation_id => par_item[:_relation_id]["#{i}"],
+             :sort_no => par_item[:_sort_no]["#{i}"]
+           })
+        end
+      else
+        ma_item = nil
+        ma.each{|x|
+           ma_item = x if x.rid == par_item[:_rid]["#{i}"].to_i
+        }
+         if ma_item
+           if par_item[:_destroy] && par_item[:_destroy]["#{i}"]
+             #
+           elsif par_item[:_relation_id]["#{i}"].blank?
+             #
+           else
+             ma_item.sort_no = par_item[:_sort_no]["#{i}"]
+             ma_item.save
+             no_del << par_item[:_rid]["#{i}"].to_i
+           end
+         else
+           if par_item[:_destroy] && par_item[:_destroy]["#{i}"].blank?  && !par_item[:_relation_id]["#{i}"].blank?
+             new_item = Gis::MapsRelation.create({
+               :map_id => self.id,
+               :relation_id => par_item[:_relation_id]["#{i}"],
+               :sort_no => par_item[:_sort_no]["#{i}"]
+             })
+           end
+         end
+      end
+      }
+      ma.each{|a| a.destroy if no_del.index(a.rid).blank?}
+    end
+  end
 
 
 
@@ -494,12 +576,13 @@ class Gis::Map < ActiveRecord::Base
     end
   end
 
-  def save_with_rels(assort_item, layer_item, upload_item,icon_deltete,thumb_upload_file, thumb_delete,selected_users, mode = :create)
+  def save_with_rels(assort_item, layer_item, upload_item,icon_deltete,thumb_upload_file, thumb_delete,relation_items, mode = :create)
     if self.valid?
       self.sort_no = get_max_sort_no if self.sort_no.blank?
       self.save
       self.save_assortments(assort_item)
       self.save_layers(layer_item)
+      self.save_relations(relation_items)
       self.save_files
       self.save_icon(upload_item,icon_deltete)
       self.save_thumb(thumb_upload_file, thumb_delete)

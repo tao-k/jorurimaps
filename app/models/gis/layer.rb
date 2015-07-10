@@ -15,11 +15,13 @@ class Gis::Layer < ActiveRecord::Base
   has_many :maps_layers, :foreign_key => :layer_id,  :class_name => 'Gis::MapsLayer', :dependent => :destroy
   has_many :maps, :through => :maps_layers,:source => :map, :order => 'gis_maps_layers.updated_at'
 
-  has_one :layer_file,  :class_name => 'Gis::LayerFile'
-  has_one :column_config,  :class_name => 'Gis::LayerDataColumn'
+  has_one :layer_file,  :class_name => 'Gis::LayerFile', :dependent => :destroy
+  has_one :column_config,  :class_name => 'Gis::LayerDataColumn', :dependent => :destroy
   has_one :draw_config,  :class_name => 'Gis::LayerDrawConfig'
 
   has_many :layers_managers, :foreign_key => :layer_id,  :class_name => 'Gis::LayersManager'
+  has_many :layer_data , :foreign_key => :layer_id,  :class_name => 'Gis::LayerDatum', :dependent => :destroy
+
   has_many :manager_groups, :through => :layers_managers,:source => :group, :class_name => 'System::Group'
   has_many :editable_groups, :through => :layers_managers,:source => :group, :class_name => 'System::Group', :conditions => ['gis_layers_managers.role_kind = ?', 'editor']
   has_many :available_groups, :through => :layers_managers,:source => :group, :class_name => 'System::Group', :conditions => ['gis_layers_managers.role_kind = ?', 'user']
@@ -159,6 +161,7 @@ class Gis::Layer < ActiveRecord::Base
 
   def is_slideshow_state
     return nil if self.is_slideshow.blank?
+    return nil if self.is_slideshow.to_i == 0
     return "利用する"
   end
 
@@ -519,7 +522,6 @@ class Gis::Layer < ActiveRecord::Base
       when 's_keyword'
         search_keyword v,:title
       when 'p_group_id'
-        dump v.to_i
         if v.to_i == 1
         condition = Condition.new()
         condition.and do |cond|

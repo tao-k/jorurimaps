@@ -94,7 +94,7 @@ var layerPanel,leftTabs,mapToolPanel,addLayerWin,markers;
 
 var measureControls;
 var confirmWin;
-
+var lastOnLayer;
 
 
 $(document).on('click', ".mapTitle", function(e){
@@ -171,7 +171,7 @@ $(document).on("click", ".layerTitle", function(e){
 
   prevLayer = null;
 
-
+var tooltip;
 $(document).on("change", ".featureLayer", function(e){
   var id = $(this).attr("id");
   var overlayId = $("#"+id).val();
@@ -186,8 +186,11 @@ $(document).on("change", ".featureLayer", function(e){
     if (check_class && check_class.match(/showSlideCheck/)){
       showSlider(overlayId);
     }
+    Ext.getCmp('layerOpacitySlider').setLayer(overlays[overlayId]);
+    Ext.getCmp('sliderLabel').setTooltip("対象レイヤー：" + overlays[overlayId].name);
   }else{
     overlays[overlayId].setVisibility(false);
+    Ext.getCmp('sliderLabel').setTooltip("透過度を変更");
   }
 
   loadLegends(overlayId, value);
@@ -474,6 +477,9 @@ function initMapObj(m, opts) {
   next if layer == "vector"-%>
   if(overlays['<%=layer%>']){
   overlays['<%=layer%>'].setVisibility(true);
+  loadLegends('<%=layer%>', true);
+  loadOutPutForm('<%=layer%>', true);
+  lastOnLayer = '<%=layer%>';
   }
 
   <%end unless @layers.blank?-%>
@@ -754,6 +760,12 @@ $(document).on('click', "#fillColorBtn", function(e){
   fillSelectWindow.show();
 });
 
+$(document).on('click', '#dualOpen', function(e){
+
+  var mapLinkUrl = "/<%=@map.code%>/dual";;
+  mapLinkUrl += createParams();
+  window.open(mapLinkUrl, "dualMap","resizable=no,scrollbars=yes");
+});
 var measureWindow;
 function readyForMeasure(){
   setMeasureControl();
@@ -903,6 +915,7 @@ function readyForDraw(){
 <%= render :partial =>  'gis/public/portals/show_slider_js', :locals=>{:layer_state =>"public"}  rescue nil %>
 <%= render :partial =>  'gis/public/portals/geocode_form'  rescue nil %>
 <%= render :partial =>  'gis/public/portals/draw_js'  rescue nil %>
+<%= render :partial =>  'gis/public/portals/folder_remark_js', :locals=>{:is_public =>true}  rescue nil %>
 <%case @portal%>
 <%when "portal1"%>
 <%= render :partial =>  'portal1_js', :locals=>{:vector_layer_list =>vector_layer_list,:wms_url => wms_url}  rescue nil %>

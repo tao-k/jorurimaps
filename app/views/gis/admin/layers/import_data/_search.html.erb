@@ -1,0 +1,11 @@
+<%= form_tag '', :method => :get, :class => 'search' do %>
+<table>
+  <tr>
+    <td colspan="2"><%= text_field_tag :s_keyword, params[:s_keyword], :size => 50 %></td>
+    <td class="submitters" colspan="2">
+      <%= submit_tag '検索',     :name => :search %>
+      <%= submit_tag 'リセット', :name => :reset %>
+    </td>
+  </tr>
+</table>
+<% end %>

@@ -7,7 +7,7 @@ class Gis::Admin::Layers::DataController < Gis::Controller::Admin::Base
   layout :switch_layout
 
   def initialize_scaffold
-    @js = ["http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp"]
+    @js = [Gis.google_api_url]
     @css = [
       "/_common/themes/gis/css/map.css",
       "/_common/js/ExtJs/resources/css/ext-all.css",

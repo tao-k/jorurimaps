@@ -46,6 +46,7 @@ ja:
         deleted_group: 削除者所属
         assortments: フォルダ
         layers: レイヤー
+        relations: 関連地図
         sort_no: 並び順
         map_legend: 凡例
         upload: アイコン
@@ -147,6 +148,9 @@ ja:
         deleted_user: 削除者
         deleted_group: 削除者所属
         layers: レイヤー
+        body: フォルダ注意書き
+        is_display_message: 注意書き表示
+        display_message: 地図画面でフォルダ注意書きを表示する
       gis/layer_datum:
         area_code: 市町村
         state: 状態
@@ -328,7 +332,7 @@ ja:
         base_layer: 背景地図
         options: 表示オプション
         view_select: 初期表示位置
-      gis/layer_import_data:
+      gis/layer_import_datum:
         area_code: 市町村
         state: 状態
         web_state: 公開状況
@@ -438,6 +442,8 @@ ja:
         deleted_group: 削除者所属
         base: 基本設定
         draw: 描画設定
+        label_position: ラベル表示位置
+        label_size: ラベルのサイズ
       gis/layer_legend:
         layer_id: レイヤー
         geometry_type: 地理情報タイプ
@@ -574,6 +580,14 @@ ja:
         update: 編集
     gis/admin/layers/legends:
       title: レイヤー描画設定
+      action:
+        show: 詳細
+        new: 新規登録
+        create: 新規登録
+        edit: 編集
+        update: 編集
+    gis/admin/layers/import_data:
+      title: レイヤーデータ管理
       action:
         show: 詳細
         new: 新規登録

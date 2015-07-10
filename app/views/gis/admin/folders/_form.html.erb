@@ -1,3 +1,4 @@
+<%= init_tiny_mce %>
 <table class="show">
   <tr>
     <th><%= @item.locale(:web_state) %></th>
@@ -7,7 +8,16 @@
     <th><%= @item.locale(:title) %><%= required %></th>
     <td><%= f.text_field :title, :class => 'string title' %></td>
   </tr>
+  <tr>
+    <th><%= @item.locale(:is_display_message) %></th>
+    <td><%=f.check_box(:is_display_message, {}, 1,0)%><label for="item_is_display_message"><%=@item.locale(:display_message)%></label></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:body) %></th>
+    <td><%= f.text_area :body, :class => 'string body mceEditor' %></td>
+  </tr>
 </table>
+  <%=render(:partial => 'system/admin/social_updates/attach_files/form', :locals => {:f => f, :item => @item})%>
 
 <%= render :partial => 'gis/admin/common/users_field_form', :locals => {:f => f} %>
 <%= render :partial => 'gis/admin/common/form_layer', :locals => {:f => f} %>

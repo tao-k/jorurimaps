@@ -4,8 +4,7 @@
 <div class="piece">
 <div class="rightMenu">
     <%if @map%>
-    <%=image_tag(map_icon_uri(@map))%>
-  <h1><%=safe{@map.title}-%></h1>
+  <h1><%=image_tag(map_icon_uri(@map))%><%=safe{@map.title}-%></h1>
   <span class="department"><%=safe{@map.department}-%></span>
    <%end%>
 </div>
@@ -20,6 +19,7 @@
   </div>
 </div>
 <div  style="display: none;">
+<div id="folderConfirmWinMessage"></div>
 <div id="outPutFormDiv"></div>
 </div>
 <div id="outPutConfirmWinMessage">
@@ -30,15 +30,4 @@
 </div>
 <div id="legendPanel_set"></div>
 </div>
-<div id="footer">
-<div id="footerContainer">
-<div id="footerHeader"></div>
-<div id="footerBody">
-<div class="copyright">
-  <span><%=show_site_settings[:copyright]%></span>
-  <a target="_blank" href="http://joruri.org"><img src="/_common/themes/gis/images/bn_pb_jorurimap.png" /></a>
-</div>
-</div>
-<div id="footerFooter"></div>
-</div>
-</div>
+<%= render :partial => 'layouts/public/gis/map_footer'  rescue nil%>

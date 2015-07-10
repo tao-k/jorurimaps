@@ -27,7 +27,7 @@ if item.kind =~ %r(webtis)
 <%else%>
   baseLayers['<%=item.code%>'] = new OpenLayers.Layer.WMS(
       "<%=item.title%>",
-      "<%=item.url%>",
+      "<%=safe{item.url.html_safe}%>",
        {format: "image/png"},
        {isBaseLayer: true,visibility: false,layerName:"<%=item.code%>"});
 <%end-%>

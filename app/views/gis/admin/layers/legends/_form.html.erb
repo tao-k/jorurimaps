@@ -1,9 +1,9 @@
-
+<%= f.hidden_field :geometry_type %>
 <h2><%=@item.locale(:base)%></h2>
 <table class="show">
   <tr id="kindTr">
     <th><%= @item.locale(:geometry_type) %></th>
-    <td><%= f.select :geometry_type, @item.geometry_type_select %></td>
+    <td><%= @item.geometry_type_show %></td>
   </tr>
   <tr>
     <th><%= @item.locale(:label_column) %></th>
@@ -13,17 +13,31 @@
     <th><%= @item.locale(:label_color) %></th>
     <td><%= f.text_field :label_color, :class=>"colorPicker" %></td>
   </tr>
+  <tr id="labelPosition">
+    <th><%= @item.locale(:label_position) %></th>
+    <td><%= f.select :label_position, @item.label_position_select %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:label_size) %></th>
+    <td><%= f.select :label_size, @item.label_size_select %></td>
+  </tr>
 </table>
 
 <h2><%=@item.locale(:draw)%></h2>
 <table class="show">
   <tr id="point">
     <th><%= @item.locale(:point_color) %></th>
-    <td><%= f.text_field :point_color, :class=>"colorPicker" %></td>
+    <td>
+      <%= f.text_field :point_color, :class=>"colorPicker" %>
+      <%= f.check_box :point_fill, fill_check(@item.point_fill), 0, 1 %> <label for="item_point_fill">表示しない</label>
+    </td>
   </tr>
   <tr id="line1">
     <th><%= @item.locale(:line_color) %></th>
-    <td><%= f.text_field :line_color, :class=>"colorPicker" %></td>
+    <td>
+      <%= f.text_field :line_color, :class=>"colorPicker" %>
+      <%= f.check_box :line_fill, fill_check(@item.line_fill), 0, 1 %> <label for="item_line_fill">表示しない</label>
+    </td>
   </tr>
   <tr id="line2">
     <th><%= @item.locale(:line_width) %></th>
@@ -31,7 +45,10 @@
   </tr>
   <tr id="polygon">
     <th><%= @item.locale(:polygon_color) %></th>
-    <td><%= f.text_field :polygon_color, :class=>"colorPicker" %></td>
+    <td>
+      <%= f.text_field :polygon_color, :class=>"colorPicker" %>
+      <%= f.check_box :polygon_fill, fill_check(@item.polygon_fill), 0, 1 %> <label for="item_polygon_fill">表示しない</label>
+    </td>
   </tr>
 </table>
 <script type="text/javascript">
@@ -39,8 +56,8 @@
 (function($) {
   $(document).ready(function() {
     var palletColor = [
-      ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)", /*"rgb(153, 153, 153)","rgb(183, 183, 183)",*/
-      "rgb(204, 204, 204)", "rgb(217, 217, 217)", /*"rgb(239, 239, 239)", "rgb(243, 243, 243)",*/ "rgb(255, 255, 255)"],
+      ["rgb(0, 0, 0)", "rgb(67, 67, 67)", "rgb(102, 102, 102)",
+      "rgb(204, 204, 204)", "rgb(217, 217, 217)", "rgb(255, 255, 255)"],
       ["rgb(152, 0, 0)", "rgb(255, 0, 0)", "rgb(255, 153, 0)", "rgb(255, 255, 0)", "rgb(0, 255, 0)",
       "rgb(0, 255, 255)", "rgb(74, 134, 232)", "rgb(0, 0, 255)", "rgb(153, 0, 255)", "rgb(255, 0, 255)"],
       ["rgb(230, 184, 175)", "rgb(244, 204, 204)", "rgb(252, 229, 205)", "rgb(255, 242, 204)", "rgb(217, 234, 211)",
@@ -51,8 +68,6 @@
       "rgb(118, 165, 175)", "rgb(109, 158, 235)", "rgb(111, 168, 220)", "rgb(142, 124, 195)", "rgb(194, 123, 160)",
       "rgb(166, 28, 0)", "rgb(204, 0, 0)", "rgb(230, 145, 56)", "rgb(241, 194, 50)", "rgb(106, 168, 79)",
       "rgb(69, 129, 142)", "rgb(60, 120, 216)", "rgb(61, 133, 198)", "rgb(103, 78, 167)", "rgb(166, 77, 121)",
-      /*"rgb(133, 32, 12)", "rgb(153, 0, 0)", "rgb(180, 95, 6)", "rgb(191, 144, 0)", "rgb(56, 118, 29)",
-      "rgb(19, 79, 92)", "rgb(17, 85, 204)", "rgb(11, 83, 148)", "rgb(53, 28, 117)", "rgb(116, 27, 71)",*/
       "rgb(91, 15, 0)", "rgb(102, 0, 0)", "rgb(120, 63, 4)", "rgb(127, 96, 0)", "rgb(39, 78, 19)",
       "rgb(12, 52, 61)", "rgb(28, 69, 135)", "rgb(7, 55, 99)", "rgb(32, 18, 77)", "rgb(76, 17, 48)"]
       ]
@@ -109,16 +124,19 @@
         $("#line1").hide();
         $("#line2").hide();
         $("#polygon").hide();
+        $("#labelPosition").show();
       }else if (kind == "line"){
         $("#point").hide();
         $("#line1").show();
         $("#line2").show();
         $("#polygon").hide();
+        $("#labelPosition").hide();
       }else{
         $("#point").hide();
         $("#line1").show();
         $("#line2").show();
         $("#polygon").show();
+        $("#labelPosition").hide();
       }
     }
 

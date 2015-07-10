@@ -17,6 +17,15 @@
 </div>
 </div>
 <%=link_to "再検索する", "/#{@map.code}/#{@qs}", :class=>"backToTOp"%>
+<div class="body" id="folderConfirmMessage" style="display: none;">
+  <h4>ご利用上の注意</h4>
+  <div id="folderConfirmWinMessage"></div>
+<div id="folderBtnContainer">
+  <div>
+  <a href="#closeFolderMessage" id="closeFolderMessage" class="mapFuncBtn">OK</a>
+  </div>
+</div>
+</div>
 <div id="layerMenu">
 <%= render :partial =>  'layer' rescue nil %>
 </div>
@@ -28,6 +37,38 @@
 
 //<![CDATA[
 (function($) {
+
+  $("#closeFolderMessage").click(function (e) {
+    e.preventDefault();
+    $("#folderConfirmMessage").hide();
+  });
+
+  $(document).on("click", ".folderMessage", function(e){
+    e.preventDefault();
+    var id = $(this).attr("id");
+    var title =$(this).text();
+    var folderId = id.replace(/folder/, "").replace(/_\d*/,"");
+    var request_uri = "/<%=@map.code%>/" + folderId + '/folder_remark';
+    $.ajax({
+            url   :request_uri,
+            type: 'get',
+            method: 'get',
+            dataType: 'html',
+            success:function(result){
+              if(result){
+                 $("#folderConfirmMessage").show();
+                 $("#folderConfirmWinMessage").html("");
+                 result = '<div class="info"><div class="scroll">' + result + '</div></div>';
+                 $("#folderConfirmWinMessage").html(result);
+                 $("#folderConfirmWinMessage .info").jScrollPane();
+              }
+            },
+            failure:function(result,opt){
+                alert("フォルダ注意書きの取得に失敗しました。");
+            }
+        });
+  });
+
 
   $("#legendShowBtn").click(function (e) {
     $("#legendPanel_set").toggle();

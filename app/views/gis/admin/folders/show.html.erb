@@ -1,3 +1,4 @@
+<%= init_tiny_mce :readonly => true %>
 <table class="show"><tr>
   <tr>
     <th><%= @item.locale(:web_state) %></th>
@@ -6,7 +7,16 @@
   <tr>
     <th><%= @item.locale(:title) %><%=required("")%></th>
     <td><%= @item.title %></td>
-  </tr><tr>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:is_display_message) %></th>
+    <td><%=@item.locale(:display_message) if @item.is_display_message == 1%></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:body) %></th>
+    <td><%= text_area_tag 'body', @item.body, :class => 'mceEditor', :style => 'width:100%' %></td>
+  </tr>
+  <tr>
     <th><%= @item.locale(:user_kind) %></th>
     <td><%= @item.user_kind_show %></td>
   </tr>

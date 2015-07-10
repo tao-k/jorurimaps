@@ -65,10 +65,7 @@ class Gis::Admin::DemosController < Gis::Controller::Admin::Base
   end
 
 
-  def extjs
-    @map = Gis::Map.where(:code=>params[:id]).first
-    return http_error(404) if @map.blank?
-    Page.title = "#{@map.title}"
+  def get_js_params
     @vector_layer_list = []
     @init_map = {:center_lon => Gis.defalut_position[:lng], :center_lat => Gis.defalut_position[:lat], :zoomlevel => Gis.defalut_position[:zoom] }
 
@@ -79,7 +76,7 @@ class Gis::Admin::DemosController < Gis::Controller::Admin::Base
     @baselayer = "gmap"
      if @map.web_state != "public"
        @baselayer = "webtis_monotone"
-       @init_map[:zoomlevel] = 9
+       @init_map[:zoomlevel] = 7
      end
     unless map_config.blank?
       @init_map[:center_lon] = map_config.lng if map_config.lng
@@ -95,19 +92,55 @@ class Gis::Admin::DemosController < Gis::Controller::Admin::Base
     @init_map[:center_lat] = params[:lat] unless params[:lat].blank?
     @init_map[:zoomlevel] = params[:zoom] if params[:zoom] =~ /[0-9]+/ unless params[:zoom].blank?
     @layers = params[:layers].split(",") unless params[:layers].blank?
+    @layers = @layers.uniq if !@layers.blank?
     @portal = params[:portal].blank? ? "portal1" : params[:portal]
     @baselayer = params[:baselayer] unless params[:baselayer].blank?
   end
 
+  def extjs
+    @map = Gis::Map.where(:code=>params[:id]).first
+    return http_error(404) if @map.blank?
+
+    Page.title = "#{@map.title}"
+
+    get_js_params
+  end
+
   def dual_js
-    @init_map = {:center_lon => Gis.defalut_position[:lng], :center_lat => Gis.defalut_position[:lat], :zoomlevel => Gis.defalut_position[:zoom] }
+    @map = Gis::Map.where(:code=>params[:id]).first
+    return http_error(404) if @map.blank?
+
+    Page.title = "#{@map.title}"
+
+    get_js_params
+  end
+
+  def get_js
+
+      @js   = [
+              "/javascripts/jquery.min.js",
+              "/javascripts/jquery-ui.js",
+               "/_common/js/proj4js/lib/proj4js-combined.js",   # must
+               "/openlayers/OpenLayers.js",                    # must
+               "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
+               "/_common/js/ExtJs/ext-all.js",                 # must
+               "/_common/js/GeoExt/script/GeoExt.js",          # must
+               Gis.google_api_url,
+               "/openlayers/lib/OpenLayers/Lang/ja.js",
+               "/_common/js/scroll/js/jquery.mousewheel.min.js",
+               "/_common/js/scroll/js/jquery.smoothdivscroll-1.3-min.js",
+               "/_common/js/lightbox/js/lightbox.js",
+               "/_common/js/lightbox/js/modernizr.custom.js",
+               "/_common/js/scroll/js/imagesloaded.pkgd.min.js"
+              ]
 
   end
 
   def portal2
     # 地図 リッチUI表示
     @layers = params[:layers]
-      @css = [
+    get_js
+    @css = [
               "/_common/js/ExtJs/resources/css/ext-all.css",   # must
               "/_common/js/ExtJs/resources/css/xtheme-access.css",  # ExtJs custom css
               "/_common/js/ExtJs/resources/css/xtheme-gray.css",     # ExtJs custom css
@@ -119,24 +152,6 @@ class Gis::Admin::DemosController < Gis::Controller::Admin::Base
               "/_common/js/scroll/css/smoothDivScroll.css",
               "/_common/js/lightbox/css/lightbox.css"
              ]
-      @js   = [
-              "/javascripts/jquery.min.js",
-              "/javascripts/jquery-ui.js",
-               "/_common/js/proj4js/lib/proj4js-combined.js",   # must
-               "/openlayers/OpenLayers.js",                    # must
-               "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
-               "/_common/js/ExtJs/ext-all.js",                 # must
-               "/_common/js/GeoExt/script/GeoExt.js",          # must
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
-               "/openlayers/lib/OpenLayers/Lang/ja.js",
-               "/_common/js/scroll/js/jquery.mousewheel.min.js",
-               "/_common/js/scroll/js/jquery.smoothdivscroll-1.3-min.js",
-               "/_common/js/lightbox/js/lightbox.js",
-               "/_common/js/lightbox/js/modernizr.custom.js",
-               "/_common/js/scroll/js/imagesloaded.pkgd.min.js"
-              ]
-
-    # コントローラ経由でJSファイルを生成する
     @dynamic_js = [
                 {:controller=> 'gis/admin/demos', :action => 'extjs', :id=>@map.code }
               ]
@@ -145,30 +160,34 @@ class Gis::Admin::DemosController < Gis::Controller::Admin::Base
 
   def dual
     # 地図 リッチUI表示
-
+    @map = Gis::Map.where(:code=>params[:id]).first
+    return http_error(404) if @map.blank?
+    Page.title = "#{@map.title}"
+    @layers = params[:layers]
+    get_js
     @css = [
             "/_common/js/ExtJs/resources/css/ext-all.css",   # must
             "/_common/js/ExtJs/resources/css/xtheme-access.css",  # ExtJs custom css
             "/_common/js/ExtJs/resources/css/xtheme-gray.css",     # ExtJs custom css
             "/_common/js/ExtJs/resources/css/xtheme-gray.css",     # ExtJs custom css
             "/_common/js/ExtJs/resources/css/yourtheme.css",       # my custom css
-            "/_common/themes/gis/css/map.css"
+              "/_common/themes/gis/css/map.css",
+              "/_common/themes/gis/css/portal2.css",
+              "/layout/gis/public.css",
+              "/_common/js/scroll/css/smoothDivScroll.css",
+              "/_common/js/lightbox/css/lightbox.css"
            ]
-    @js   = [
-             "/_common/js/proj4js/lib/proj4js-combined.js",   # must
-             "/openlayers/OpenLayers.js",                    # must
-             "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
-             "/_common/js/ExtJs/ext-all.js",                 # must
-             "/_common/js/GeoExt/script/GeoExt.js",          # must
-             "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp"
-            ]
-
     @dynamic_js = [
                 {:controller=> 'gis/admin/demos', :action => 'dual_js' }
               ]
 
   end
 
+  def folder_remark
+    @item = Gis::Assortment.where(:id=>params[:id]).first
+    return http_error(404) if @item.blank?
+    return http_error(404) if @item.web_state == "closed"
+  end
 
 
   def data
@@ -243,6 +262,8 @@ private
   def switch_layout
 
     case params[:action].to_s
+    when 'folder_remark'
+      "admin/gis/plain"
     when 'show'
       if @map.portal_kind == 1
         "admin/gis/template/portal1"
@@ -252,7 +273,13 @@ private
         "admin/gis/template/doc"
       end
     when 'dual'
-      "admin/template/dual_map"
+      if @map.portal_kind == 1
+        "admin/gis/template/portal1"
+      elsif @map.portal_kind == 2
+        "admin/template/demo_map"
+      elsif @map.portal_kind == 3 || @map.portal_kind == 4
+        "admin/gis/template/doc"
+      end
     when 'layer'
       "admin/gis/plain"
     when 'legend'

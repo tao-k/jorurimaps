@@ -15,15 +15,20 @@ gis:
   mapfile_vector_layer: vector_layer
   #承認メール送信者設定
   recognize_sender: "JoruriMaps <joruri-maps@loalhost>"
+  #外部へのジオコーディングリクエストを行うかどうか
+  extra_geocoding: off
   #デフォルトの緯度経度
   lng: 134.5589
   lat: 34.065705
-  zoom: 10
+  zoom: 8
   #ホームページ設定
   public_title: ジョールリ市
   association_name: ジョールリ市
   copyright: "Copyright©2014　ジョールリ市統合型Web GIS All Rights Reserved. "
   custom_search_engine_id: ""
+  #google api URL
+  google_api_url: "http://maps.google.com/maps/api/js?v=3&gl=JP&sensor=false&language=ja&region=jp"
+
 sys:
   # ログイン画面フッター文字
   login_footer: ''

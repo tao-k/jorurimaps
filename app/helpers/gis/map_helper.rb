@@ -118,13 +118,25 @@ module Gis::MapHelper
       1,2,"enabled","public","internal","recognize","recognized"], :order=>:sort_no)
   end
 
-  def pref_portal_map_list(map=nil)
+  def pref_portal_map_list(map=nil,is_public=true)
     if map
-      items = Gis::Map.find(:all, :conditions=>["(portal_kind = ? or portal_kind = ?) and state = ? and code != ? and web_state = ? ",1,2,"enabled", map.code, "public"], :order=>:sort_no)
+      #items =
       portal_item = [map]
-      items =portal_item.concat(items)
+      relations = map.relations
+      items = []
+      relations.each{|item|
+        next if item.web_state == "closed"
+        if is_public
+          items << item if item.web_state == "public"
+        else
+          items << item
+        end
+      } if relations
+      ret = portal_item.concat(items)
+      return ret
     else
-      items = Gis::Map.find(:all, :conditions=>["(portal_kind = ? or portal_kind = ?) and state = ? and web_state = ?",1,2,"enabled","public"], :order=>:sort_no)
+      ret = Gis::Map.find(:all, :conditions=>["(portal_kind = ? or portal_kind = ?) and state = ? and web_state = ?",1,2,"enabled","public"], :order=>:sort_no)
+      return ret
     end
   end
 

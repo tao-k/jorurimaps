@@ -26,6 +26,7 @@ portal_maps.each_with_index{|item, i|
     %>
     <div id="title<%=i%>-<%=n%>" class="title<%=i%> layerTitleLink" style="margin-left: 10px;">
       <a  class="layerTitle" href="#" id="titleLink<%=i%>-<%=n%>"><%=folder.title%></a>
+      <%=link_to folder.title, "#", :class=>"folderMessage", :id=>"folder#{folder.id}_#{n}" if folder.is_display_message == 1%>
     </div>
     <div class="layerBody body<%=i%>" id="body<%=i%>-<%=n%>"  style="margin-left: 20px; display: none;">
       <%layers = get_layers_from_item(folder,"all")

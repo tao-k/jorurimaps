@@ -18,7 +18,7 @@ class System::Admin::RoleNamePrivsController < System::Controller::Admin::Base
     order = "system_role_names.sort_no, system_priv_names.sort_no"
 
     if @role_id != '0'
-      @items = item.find(:all, :conditions=>"role_id = #{@role_id}", :joins=>[:priv, :role], :order => order)
+      @items = item.find(:all, :conditions=>["role_id = ?", @role_id.to_i], :joins=>[:priv, :role], :order => order)
     else
       @items = item.find(:all, :joins=>[:priv, :role], :order => order)
     end

@@ -11,6 +11,7 @@ module Gis::Script::Import::Shape
     upload_path = upload_shape_directory
     FileUtils.rm_rf(upload_shape_directory)
     filepath = ""
+    current_file_name = Time.now.to_i
     Zip::Archive.open(zip_upload_path) do |ar|
       dir_name = []
       ar.each_with_index do |zf, n|
@@ -24,7 +25,7 @@ module Gis::Script::Import::Shape
               end
             end
             extname = File.extname(entry_name).downcase
-            file_name = "#{Time.now.to_i}#{extname}"
+            file_name = "#{current_file_name}#{extname}"
             file_upload_path = "#{upload_path}#{file_name}"
             mkdir_for_file(file_upload_path)
             File.delete(file_upload_path) if File.exist?(file_upload_path)
@@ -50,13 +51,23 @@ module Gis::Script::Import::Shape
           dump "レコード数が#{limit}件以上のため終了"
           return false
         end
+
+        layer_geometry_type = nil
         file.each do |record|
           geometry_type = record.geometry.as_text.gsub(/\(.*\)/,"")
-          #if geometry_type =~ /POINT/
-          #  model = Gis::LayerDatum
-          #else
-            model = Gis::LayerImportDatum
-          #end
+          unless layer_geometry_type
+            layer_geometry_type = case geometry_type
+            when /POINT/
+              "point"
+            when /LINE/
+              "line"
+            when /POLYGON/
+              "polygon"
+            else
+              "point"
+            end
+          end
+          model = Gis::LayerImportDatum
           new_item = model.new
           new_item.layer_id = file_layer.id
           fields = record.attributes.keys if fields.blank?
@@ -71,21 +82,29 @@ module Gis::Script::Import::Shape
           end
           new_item.save(:validate=>false)
           #正常に動作しないので後から挿入
+          geom_as_text = record.geometry.as_text
+          if geom_as_text.match(/(\d*.\d* \d*.\d* )(\d*.\d* \d*.\d*)(,)?/)
+            geom_as_text = geom_as_text.gsub(/(\d*.\d* \d*.\d* )(\d*.\d* \d*.\d*)(,)?/,'\1\3')
+          else
+            #geom_as_text = record.geometry.as_text
+          end
           if file_layer.srid
             begin
-              model.update_all("g = ST_Transform(ST_GeomFromText('#{record.geometry.as_text}', #{file_layer.srid}), 4326)", "rid = #{new_item.rid}")
+              model.update_all("g = ST_Transform(ST_GeomFromText('#{geom_as_text}', #{file_layer.srid}), 4326)", "rid = #{new_item.rid}")
               if geometry_type =~ /POINT/
                 model.update_all("lng = ST_X(g)", "rid = #{new_item.rid}")
                 model.update_all("lat = ST_Y(g)", "rid = #{new_item.rid}")
               end
             rescue=>e
               dump e
-              model.update_all("g = ST_GeomFromText('#{record.geometry.as_text}',  4326)", "rid = #{new_item.rid}")
+              #model.update_all("g = ST_GeomFromText('#{record.geometry.as_text}',  4326)", "rid = #{new_item.rid}")
             end
           else
-            model.update_all("g = ST_GeomFromText('#{record.geometry.as_text}',  4326)", "rid = #{new_item.rid}")
+            model.update_all("g = ST_GeomFromText('#{geom_as_text}',  4326)", "rid = #{new_item.rid}")
           end
         end
+        #地理情報タイプを設定する
+        file_layer.update_column("geometry_type" , layer_geometry_type) if layer_geometry_type
         #カラム名を設定する
         column_setting = Gis::LayerDataColumn.where(:layer_id => file_layer.id).first || Gis::LayerDataColumn.new
         column_setting.layer_id = file_layer.id

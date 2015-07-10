@@ -1,0 +1,159 @@
+<%#=link_to "▲閉じる", "javascript:void(0);", :id=>"toggleMapBtn"%><br />
+<%= content_for :header do %>
+<style>
+#canvas .olControlAttribution {
+  font-size:13px;
+  bottom:3px;
+}
+</style>
+<% end %>
+
+<%= javascript_include_tag "/openlayers/OpenLayers.js" %>
+<%#= javascript_include_tag "/_common/js/proj4js/lib/proj4js-combined.js" %>
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+    $("#toggleMapBtn").click(function(){
+      var text = $("#toggleMapBtn").html();
+      if(text=="▼開く"){
+        $("#toggleMapBtn").html("▲閉じる");
+        $("#canvas").css('display', '');
+      }else{
+        $("#toggleMapBtn").html("▼開く");
+        $("#canvas").css('display', 'none');
+      }
+    })
+  $(function() {
+    var options = {
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection:  new OpenLayers.Projection("EPSG:4326"),
+      units: "m",
+      numZoomLevels: 20,
+      maxResolution: 156543.0339,
+      controls : [
+        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.ScaleLine(),
+        new OpenLayers.Control.ArgParser(),
+        new OpenLayers.Control.Attribution()
+      ]
+    };
+
+
+    var map = new OpenLayers.Map("canvas", options);
+    var gmap = new OpenLayers.Layer.Google("グーグルマップ", {visibility: false});
+    map.addLayer(gmap);
+
+    drawLayer  = new OpenLayers.Layer.Vector("描画領域",
+    {
+      visibility: true,
+      group: "others",
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection:new OpenLayers.Projection("EPSG:900913"),
+     }
+    );
+
+    drawLayer.events.register('afterfeaturemodified', drawLayer, setDrawKml);
+    map.addLayer(drawLayer);
+    setCenter();
+    setControls();
+    setGeometry();
+
+
+
+    function setCenter() {
+      var centerLon = <%= @item.lng.presence || 134.551448 %>;
+      var centerLat = <%= @item.lat.presence || 34.070933 %>;
+      var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+      map.setCenter(centerLonLat, 11);
+    }
+    function setGeometry() {
+      var srtKml = $("#kmlTxt").text();
+       if(srtKml){
+         //addFeatures = GetFeaturesFromKMLString(srtKml);
+         addFeatures = GetFeaturesFromWKTString(srtKml);
+         drawLayer.addFeatures(addFeatures);
+         drawLayer.redraw();
+         setDrawKml();
+       }
+    }
+    var controls;
+    function setControls(){
+       controls = {
+                modify: new OpenLayers.Control.ModifyFeature(drawLayer)
+            };
+      for(var key in controls) {
+            map.addControl(controls[key]);
+            controls[key].activate();
+            controls[key].createVertices = true;
+        }
+    }
+
+  function GetFeaturesFromKMLString (strKML) {
+      var format = new OpenLayers.Format.KML({
+          'extractStyles':false,
+          'internalProjection': map.baseLayer.projection,
+          'externalProjection': new OpenLayers.Projection("EPSG:4326")
+      });
+      return format.read(strKML);
+  };
+
+  function GetFeaturesFromWKTString (strWKT) {
+      var format = new OpenLayers.Format.WKT(
+        {
+          'extractStyles':true,
+          'internalProjection': map.baseLayer.projection,
+          'externalProjection': new OpenLayers.Projection("EPSG:4326")
+          });
+      return format.read(strWKT);
+  };
+    //http://mapabc.wikidot.com/openlayers:ref-openlayers-format
+
+    function setDrawKml(){
+      //externalProjection readの引数或いはwriteの出力の座標定義
+      //internalProjection readの戻り値或いはwriteの引数の座標定義
+        var wktFormat= new OpenLayers.Format.WKT(
+        {
+          'extractStyles':true,
+          'internalProjection': map.baseLayer.projection,
+          'externalProjection': new OpenLayers.Projection("EPSG:4326")
+          });
+          var features;
+          if (drawLayer){
+            if (drawLayer.features.length <= 1){
+              features = drawLayer.features[0];
+            }else{
+              features = drawLayer.features;
+            }
+          }else{
+            features = [];
+          }
+        var wktText = wktFormat.write(features);
+        $("#kml_geom").val(wktText);
+    }
+    $('#itemForm').on('submit', function(e) {
+      setDrawKml();
+      return true;
+    });
+   })
+})(jQuery);
+//]]>
+</script>
+
+<div id="canvas" style="width: 100%; height: 560px;"></div>
+<div id="kmlTxt" style="display: none;"><%=safe{@item.g.as_text}%></div>
+<%= hidden_field_tag :kml_geom , "", :id=>"kml_geom"%>
+<script type="text/javascript">
+  //<![CDATA[
+  (function($) {
+    $(document).ready(function(){
+      //$("#canvas").css('display', 'none');
+    })
+  })(jQuery);
+  //]]>
+</script>

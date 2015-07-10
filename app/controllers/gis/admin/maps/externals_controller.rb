@@ -15,7 +15,7 @@ class Gis::Admin::Maps::ExternalsController< System::Controller::Admin::Base
               "/javascripts/jquery.min.js",
               "/javascripts/jquery-ui.js",
                "/openlayers/OpenLayers.js",                    # must
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
+               Gis.google_api_url,
                "/openlayers/lib/OpenLayers/Lang/ja.js"
               ]
     @css = [

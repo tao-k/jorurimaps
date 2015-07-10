@@ -12,7 +12,7 @@ $(document).on("submit", "#geoCodingForm",function(e){
         var addrList = "";
         $("#geocodeResult").html("検索結果：" + results.length +"件<br />");
         for(var i=0; i < results.length; i++){
-          addrList += '<a href="#'+ results[i].geometry.location.k + ','+ results[i].geometry.location.A  + '" class="geoCodeMark">'+ results[i].address_components[0].long_name + '<a><br />';
+          addrList += '<a href="#'+ results[i].geometry.location.k + ','+ results[i].geometry.location.B  + '" class="geoCodeMark">'+ results[i].address_components[0].long_name + '<a><br />';
         }
         $("#geocodeResultList").html(addrList);
       } else {

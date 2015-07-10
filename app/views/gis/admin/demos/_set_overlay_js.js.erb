@@ -1,0 +1,162 @@
+
+function addOverlayers(layer_code, kind,layer_id, mapfile,title,layers,url,opacity_level,resultID,external){
+
+  if(overlays[layer_code]){
+    return ;
+  }
+  if(external==true && (kind != "kml" || kind != "gpx")){
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      url,
+       {
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: opacity_level,
+         layerName: title,
+         layers: layers
+        }
+   );
+    map.addLayer(overlays[layer_code]);
+    overlays[layer_code].setVisibility(true);
+    return;
+  }
+
+
+  if(kind=="gpx"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.GPX()
+      }),
+      style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: opacity_level},
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: false,
+    });
+  }else if(kind=="kml"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.KML({extractStyles: true,extractAttributes: true})
+      }),
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: false,
+    });
+  }else if(kind=="vector"){
+    kindFilters[layer_code] = new OpenLayers.Filter.Logical({
+      type: OpenLayers.Filter.Logical.AND,
+      filters: [
+    new Filter.Comparison({
+                    type: "==",
+                    property: "state",
+                    value: "enabled"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "web_state",
+                    value: "public"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "layer_id",
+                    value: layer_id
+              })
+
+               ]
+               });
+
+    kind_filter_xmls[layer_code] = new OpenLayers.Format.XML();
+    kindLayerFilters[layer_code] = kind_filter_xmls[layer_code].write(new OpenLayers.Format.Filter().write(kindFilters[layer_code]));
+    if(resultID){
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: true,
+                strategies: [new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.Filter({filter: resultIdsFilder, active: true})],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+    }else{
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: true,
+                strategies: [new OpenLayers.Strategy.Fixed()],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+     }
+  }else{
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      mapserverUrl,
+       {
+       map:"gis_mapfiles/" + mapfile, //mapfileの場所指定
+       layers: layers,  //取得するレイヤー
+       version: '1.1.1', //サービスのバージョン
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: opacity_level,
+         layerName: title
+        }
+   );
+  }
+}
+

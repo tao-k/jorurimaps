@@ -48,8 +48,7 @@ class Gis::Admin::BackgroundMapsController < Gis::Controller::Admin::Base
   def destroy
     @item = Gis::BackgroundMap.new.find(params[:id])
     _destroy @item do
-      cache_item = Gis::BackgroundMap.new
-      cache_item.cache_clear
+      @item.cache_clear
     end
   end
 end

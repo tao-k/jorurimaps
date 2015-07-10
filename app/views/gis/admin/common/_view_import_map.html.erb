@@ -1,0 +1,95 @@
+<%= content_for :header do %>
+<style>
+#canvas .olControlAttribution {
+  font-size:13px;
+  bottom:3px;
+}
+</style>
+<% end %>
+
+<script type="text/javascript" src="/openlayers/OpenLayers.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+  $(function() {
+    var options = {
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection: new OpenLayers.Projection("EPSG:4326"),
+      units: "m",
+      numZoomLevels: 20,
+      maxResolution: 156543.0339,
+      controls : [
+        new OpenLayers.Control.LayerSwitcher({'ascending':false}),
+        new OpenLayers.Control.MousePosition(),
+        new OpenLayers.Control.Navigation(),
+        new OpenLayers.Control.PanZoomBar(),
+        new OpenLayers.Control.ScaleLine(),
+        new OpenLayers.Control.ArgParser(),
+        new OpenLayers.Control.Attribution()
+      ]
+    };
+
+
+    var map = new OpenLayers.Map("canvas", options);
+    var gmap = new OpenLayers.Layer.Google("グーグルマップ", {visibility: false});
+    map.addLayer(gmap);
+
+    map.addLayer(gmap);
+
+    drawLayer  = new OpenLayers.Layer.Vector("描画領域",
+    {
+      visibility: true,
+      group: "others",
+      projection: new OpenLayers.Projection("EPSG:900913"),
+      displayProjection: new OpenLayers.Projection("EPSG:4326")
+     }
+    );
+
+    //drawLayer.events.register('afterfeaturemodified', drawLayer, setDrawKml);
+    map.addLayer(drawLayer);
+    setCenter();
+    setGeometry();
+
+    function setCenter() {
+      var centerLon = <%= @item.lng.presence || 134.551448 %>;
+      var centerLat = <%= @item.lat.presence || 34.070933 %>;
+      var centerLonLat = new OpenLayers.LonLat(centerLon, centerLat).transform(
+        new OpenLayers.Projection("EPSG:4326"),
+        new OpenLayers.Projection("EPSG:900913")
+      );
+      map.setCenter(centerLonLat, 11);
+    }
+    function setGeometry() {
+      var srtKml = $("#kmlTxt").text();
+       if(srtKml){
+         addFeatures = GetFeaturesFromKMLString(srtKml);
+         drawLayer.addFeatures(addFeatures);
+         drawLayer.redraw();
+       }
+    }
+
+  function GetFeaturesFromKMLString (strKML) {
+      var format = new OpenLayers.Format.KML({
+          'extractStyles':true,
+          'internalProjection': map.baseLayer.projection,
+          'externalProjection': new OpenLayers.Projection("EPSG:4326")
+      });
+      return format.read(strKML);
+  };
+
+  function GetFeaturesFromGPXString (strGPX) {
+      var format = new OpenLayers.Format.GPX({
+          'internalProjection': map.baseLayer.projection,
+          'externalProjection': new OpenLayers.Projection("EPSG:4326")
+      });
+      return format.read(strGPX);
+  }
+
+  });
+
+})(jQuery);
+//]]>
+</script>
+<div id="kmlTxt" style="display: none;"><%=safe{@item.kml_text}%></div>
+<div id="canvas" style="width: 100%; height: 560px;"></div>

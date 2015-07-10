@@ -1,0 +1,99 @@
+
+<h2><%= @item.locale(:relations) %></h2>
+<table class="index">
+  <tr><td><a href="#" id="changeMapDisp">開く▼</a></td></tr>
+  <tr style="display: none;" id="mapRelationTable"><td>
+  <div>
+  <table class="index" id="relationOptions">
+    <tr>
+      <th style="width: 250px;">個別地図</th>
+      <th>並び順</th>
+      <th>削除</th>
+    </tr>
+    <%if @a_relations.blank?%>
+      <tr>
+        <td>
+
+          <%= select_tag "relation[_relation_id][0]",  grouped_options_for_select(map_grouped_options, nil,"　　　") %>
+        </td>
+        <td>
+          <%= text_field_tag "relation[_sort_no][0]", "", :size=>3 %>
+        </td>
+        <td></td>
+      </tr>
+    <%else%>
+      <%@a_relations.each_with_index{|m_relation, n|
+        checked = false
+        checked = true if params[:relation][:_destroy][m_relation.id.to_s.to_sym] if params[:relation][:_destroy] if params[:relation]
+      %>
+        <tr>
+          <td>
+            <%= hidden_field_tag "relation[_rid][#{n}]", m_relation.rid%>
+            <%= select_tag "relation[_relation_id][#{n}]",  grouped_options_for_select(map_grouped_options, m_relation.relation_id,"　　　") %>
+          </td>
+          <td>
+            <%= text_field_tag "relation[_sort_no][#{n}]", m_relation.sort_no, :size=>3  %>
+          </td>
+          <td>
+            <%= check_box_tag "relation[_destroy][#{n}]", 1, checked  %>
+            <label for="<%="relation__destroy_0"%>">削除する</label>
+          </td>
+        </tr>
+      <%}%>
+    <%end%>
+  </table>
+  <%= tag :input, :type => :button, :value => '＋', :id => 'addrelation' %><br />
+  </div>
+
+  </td></tr>
+</table>
+
+<script type="text/javascript">
+//<![CDATA[
+(function($) {
+
+  $(function() {
+    $('#addrelation').click(function(e) {
+      addTableLastRow($('#relationOptions'));
+    });
+    var num = 0;
+    function addTableLastRow(table) {
+      num = $('#relationOptions tr').length;
+      var clone = table.find('tr:last').clone();
+      clone.find('input, label, select, textarea').each(function() {
+        var keys = ['id', 'name', 'for', 'type'];
+        for (var i=0; i<keys.length; i++) {
+          var key = keys[i];
+          var value = $(this).attr(key);
+          if (key == "type"){
+            if (value == "hidden"){
+              $(this).remove();
+            }
+          }else{
+            if (value) {
+              $(this).attr(key, value.replace(/\d+/, num));
+            }
+            if($(this).attr("type")!="checkbox"){
+              $(this).val('');
+            }
+          }
+
+        }
+      });
+      table.append(clone);
+    }
+  });
+
+  $("#changeMapDisp").click(function(e) {
+    e.preventDefault();
+    if ($(this).text() == "開く▼"){
+      $(this).text("▲閉じる");
+    }else{
+      $(this).text("開く▼");
+    }
+    $("#mapRelationTable").toggle();
+  });
+
+})(jQuery);
+//]]>
+</script>

@@ -57,6 +57,7 @@ class Gis::Mapfile < ActiveRecord::Base
   def send_mapfile
     mkdir_for_file(file_path)
     begin
+      File.delete(file_path) if File.exist?(file_path)
       File.open(file_path, 'wb') { |f| f.write(body) }
     rescue => e
       dump e

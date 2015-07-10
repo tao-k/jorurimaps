@@ -16,11 +16,11 @@ JoruriMaps::Application.routes.draw do
           :controller => "demos",
           :path => "demos" do
             collection do
-              get :view, :get_nearby_offices, :map, :bbox, :get_bbox, :layer, :map_simple, :mapjs, :draw, :feature_edit, :dual, :dual_js, :measure, :base_layer, :import
+              get :view, :get_nearby_offices, :map, :bbox, :get_bbox, :layer, :map_simple, :mapjs, :draw, :feature_edit, :measure, :base_layer, :import
               post :export, :import
             end
             member do
-              get :feature, :download_kml, :data, :extjs, :slider
+              get :feature, :download_kml, :data, :extjs, :slider, :dual, :dual_js, :folder_remark
               post :legend
             end
             resources :docs, :controller => 'demos/docs'
@@ -100,6 +100,7 @@ JoruriMaps::Application.routes.draw do
             get :user_fields
           end
           resources :legend_files, :controller => 'layers/legend_files'
+          resources :import_data, :controller => 'layers/import_data'
           resources :data, :controller => 'layers/data' do
             collection do
               get :csv_put, :get_center, :csv_up
@@ -132,6 +133,8 @@ JoruriMaps::Application.routes.draw do
   match ":code/layer(.:format)"                         => "gis/public/portals#layer"
   match ":code/layer_portal1(.:format)"                 => "gis/public/portals#layer_portal1"
   match ":code/extjs(.:format)"                         => "gis/public/portals#extjs"
+  match ":code/dual(.:format)"                         => "gis/public/portals#dual"
+  match ":code/dual_js(.:format)"                         => "gis/public/portals#dual_js"
   match ":code/extjs_portal1(.:format)"                 => "gis/public/portals#extjs_portal1"
   match ":code/draw(.:format)"                          => "gis/public/portals#draw"
   match ":code/measure(.:format)"                       => "gis/public/portals#measure"
@@ -147,6 +150,7 @@ JoruriMaps::Application.routes.draw do
   match ":code/feature_edit(.:format)"                => "gis/public/portals#feature_edit"
   match ":code/external(.:format)"                    => "gis/public/portals#external"
   match ":code/:id/slider(.:format)"                    => "gis/public/portals#slider"
+  match ":code/:id/folder_remark(.:format)"            => "gis/public/portals#folder_remark"
 
   ## Indivisual Portal
 

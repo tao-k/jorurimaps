@@ -1,0 +1,15 @@
+<h2><%= @item.locale(:relations) %></h2>
+<%if @relations.blank?%>
+<%=div_notice("関連地図は登録されていません。")%>
+<%else%>
+<table class="index">
+  <tr>
+    <th style="width: ;">タイトル</th>
+  </tr>
+  <% for item in @relations %>
+  <tr <%= cycle '', 'class=cycle' %>>
+    <td><%= item.title %></td>
+  </tr>
+  <% end %>
+</table>
+<%end%>

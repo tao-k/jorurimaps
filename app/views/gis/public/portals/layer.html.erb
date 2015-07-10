@@ -2,7 +2,7 @@
 <div class="layerSet">
 
 <%
-portal_maps = [@map]
+portal_maps = pref_portal_map_list(@map)
 portal_maps.each_with_index{|item, i|
   map_class = "other"
   list_display = "display: none;"
@@ -27,6 +27,7 @@ portal_maps.each_with_index{|item, i|
     <div id="title<%=i%>-<%=n%>" class="title<%=i%> layerTitleLink<%=body_class%>" style="<%=list_display%>">
       <input class="allCheck" id="allCheck<%=i%>-<%=n%>" name="allCheck" type="checkbox" value="1" />
       <a  class="layerTitle" href="#" id="titleLink<%=i%>-<%=n%>"><%=folder.title%></a>
+      <%=link_to folder.title, "#", :class=>"folderMessage", :id=>"folder#{folder.id}_#{n}" if folder.is_display_message == 1%>
     </div>
     <div class="layerBody body<%=i%>" id="body<%=i%>-<%=n%>" style="<%=list_display%>">
       <%layers = get_layers_from_item(folder,"all")

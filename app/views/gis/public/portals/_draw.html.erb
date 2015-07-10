@@ -58,7 +58,7 @@ checked = true if i == 0
 </div>
 <%= form_for :item, :url => url_for({:action => :import}), :html => {:multipart => true, :id=>"importForm"}, :remote => true do |f|%>
 
-<%= f.file_field :file%>
+<%= f.file_field :file%><br />
 <%=f.submit :value=>"送信"%>
 <% end %>
 <br />

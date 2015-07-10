@@ -13,17 +13,37 @@
     <th><%= @item.locale(:label_color) %></th>
     <td><span style="color: <%=@item.label_color%>">■</span></td>
   </tr>
+  <tr id="labelPosition">
+    <th><%= @item.locale(:label_position) %></th>
+    <td><%= @item.label_position_show %></td>
+  </tr>
+  <tr>
+    <th><%= @item.locale(:label_size) %></th>
+    <td><%=@item.label_size_show%></td>
+  </tr>
 </table>
 
 <h2><%=@item.locale(:draw)%></h2>
 <table class="show">
   <tr id="point">
     <th><%= @item.locale(:point_color) %></th>
-    <td><span style="color: <%=@item.point_color%>">■</span></td>
+    <td>
+      <%if @item.point_fill == 1%>
+      <span style="color: <%=@item.point_color%>">■</span>
+      <%else%>
+      <span>表示しない</span>
+      <%end%>
+    </td>
   </tr>
   <tr id="line1">
     <th><%= @item.locale(:line_color) %></th>
-    <td><span style="color: <%=@item.line_color%>">■</span></td>
+    <td>
+      <%if @item.line_fill == 1%>
+      <span style="color: <%=@item.line_color%>">■</span>
+      <%else%>
+      <span>表示しない</span>
+      <%end%>
+    </td></td>
   </tr>
   <tr id="line2">
     <th><%= @item.locale(:line_width) %></th>
@@ -31,7 +51,13 @@
   </tr>
   <tr id="polygon">
     <th><%= @item.locale(:polygon_color) %></th>
-    <td><span style="color: <%=@item.polygon_color%>">■</span></td>
+    <td>
+      <%if @item.polygon_fill == 1%>
+      <span style="color: <%=@item.polygon_color%>">■</span>
+      <%else%>
+      <span>表示しない</span>
+      <%end%>
+    </td></td>
   </tr>
 </table>
 <script type="text/javascript">
@@ -46,16 +72,19 @@
         $("#line1").hide();
         $("#line2").hide();
         $("#polygon").hide();
+        $("#labelPosition").show();
       }else if (kind == "line"){
         $("#point").hide();
         $("#line1").show();
         $("#line2").show();
         $("#polygon").hide();
+        $("#labelPosition").hide();
       }else{
         $("#point").hide();
         $("#line1").show();
         $("#line2").show();
         $("#polygon").show();
+        $("#labelPosition").hide();
       }
     }
 

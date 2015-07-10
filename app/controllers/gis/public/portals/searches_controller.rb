@@ -18,7 +18,7 @@ class Gis::Public::Portals::SearchesController < Gis::Controller::Public::Base
     bbox_set = bbox.split(/,/)
     layer_item = Gis::LayerDatum.new
     layer_item.and :rid, ids
-    layer_item.and "sql", "g && ST_SetSRID(ST_MakeBox2D(ST_Point(#{bbox_set[0]}, #{bbox_set[1]}),ST_Point(#{bbox_set[2]} ,#{bbox_set[3]})), 4326)"
+    layer_item.and "sql", "g && ST_SetSRID(ST_MakeBox2D(ST_Point(#{bbox_set[0].to_f}, #{bbox_set[1].to_f}),ST_Point(#{bbox_set[2].to_f} ,#{bbox_set[3].to_f})), 4326)"
     item_count = layer_item.count(:all)
     respond_to do |format|
       format.text { render :text=>item_count }
@@ -88,7 +88,7 @@ class Gis::Public::Portals::SearchesController < Gis::Controller::Public::Base
                "/_common/js/jquery/jquery-ui.min.js",
                "/_common/js/jquery/color_picker/jquery.colorPicker.min.js",
                "/_common/js/flipsnap.min.js",
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
+               Gis.google_api_url,
                "/_common/themes/gis/css/portal1/js/toogle-menu.js"
               ]
     else
@@ -109,7 +109,7 @@ class Gis::Public::Portals::SearchesController < Gis::Controller::Public::Base
                "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
                "/_common/js/ExtJs/ext-all.js",                 # must
                "/_common/js/GeoExt/script/GeoExt.js",          # must
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
+               Gis.google_api_url,
                "/openlayers/lib/OpenLayers/Lang/ja.js",
                "/_common/js/lightbox/js/lightbox.js",
                "/_common/js/lightbox/js/modernizr.custom.js",

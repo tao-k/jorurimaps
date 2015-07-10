@@ -2,23 +2,42 @@
 (function($) {
 
 var panel1, panel2, osm, slider, map, map2;
-var settings = {};
 
+/* layer switcher */
+var layerSwitcher = null;
+
+/* base layers container */
+var baseLayers = new Object();
+
+/* overlays layers container */
+var overlays = new Object();
+
+/* select action container */
+var selectControls = new Object();
+var settings = {};
+var layerStyles = new Object();
+var Rule = OpenLayers.Rule;
+var Filter = OpenLayers.Filter;
+var kindFilters = new Object();
+var kind_filter_xmls = new Object();
+var kindLayerFilters = new Object();
+Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+var myproj =new OpenLayers.Projection("EPSG:4326");
 <%
- wms_url = Application.config(:wms_gateway_url, "localhost")
+ wms_url = Application.config(:wms_gateway_url_internal, "localhost")
 %>
 
 /* mapサーバ */
 var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
 
 Ext.onReady(function() {
-  var zoom = 18;
+  var zoom = 20;
  var option1 = {
             projection: new OpenLayers.Projection("EPSG:900913"),
             displayProjection: new OpenLayers.Projection("EPSG:4326"),
             units: "m",
             numZoomLevels: zoom,
-            maxResolution: 156543.0339,
+            maxResolution: "auto",
             controls : [
                         new OpenLayers.Control.Navigation({
                             dragPanOptions: {
@@ -35,7 +54,7 @@ Ext.onReady(function() {
             displayProjection: new OpenLayers.Projection("EPSG:4326"),
             units: "m",
             numZoomLevels: zoom,
-            maxResolution: 156543.0339,
+            maxResolution: "auto",
             controls : [
                         new OpenLayers.Control.Navigation({
                             dragPanOptions: {
@@ -46,10 +65,7 @@ Ext.onReady(function() {
 
                         ]
         };
-
   map = new OpenLayers.Map('map', option1);
-
-  osm = new OpenLayers.Layer.OSM("オープンストリートマップ");
 
 
 
@@ -59,7 +75,6 @@ Ext.onReady(function() {
   layout: "fit",
   //region: "west",
   region: "center",
-  layers: [osm],
   map: map,
   //flex: 0.4
   flex: 1
@@ -68,19 +83,19 @@ Ext.onReady(function() {
 
 // var option2 = option;
  map2 = new OpenLayers.Map('map2', option2);
- //map2 = map.clone();
- var osm2 = new OpenLayers.Layer.OSM("オープンストリートマップ");
+
 
 
  panel2 = new GeoExt.MapPanel({
   title: "Map 2",
   layout: "fit",
   region: "east",
-  layers: [osm2],
   map: map2,
   //flex: 0.4
   width: "50%"
  });
+
+
 
   new Ext.Viewport({
     layout:'border',
@@ -104,30 +119,43 @@ Ext.onReady(function() {
         collapseMode: "mini",
         split:true,
         autoHeight:false
-      })
+      }),
+      new Ext.Panel({
+          header: false,
+          contentEl: 'footer',
+          margins:'0 0 0 0',
+          region:'south',
+          collapsible:true,
+          collapseMode: "mini",
+          split:true,
+          autoHeight:true
+        })
 
     ]
- });
-  initMapSettings(map);
-  initMapSettings(map2);
-  initBaseLayer(map);
-  initWMSLayer(map);
-  initBaseLayer(map2);
-  initWMSLayer(map2);
+     });
+  initBaseLayer(map, "map1");
+  initWMSLayer(map, "map1");
+  initWFSLayer(map, "map1");
+  initBaseLayer(map2, "map2");
+  initWMSLayer(map2, "map2");
+  initWFSLayer(map2, "map2");
+  initMapSettings(map, "map1");
+  initMapSettings(map2,"map2");
   map.events.register("moveend", map, map1MoveListener);
   map2.events.register("moveend", map2, map2MoveListener);
 
+
 });
 
-
-function initMapSettings(m) {
-  settings['initCenterLonLet'] = new OpenLayers.LonLat(<%= @init_map[:center_lon] %>, <%= @init_map[:center_lat] %>)
+function initMapSettings(m,map_code) {
+  settings['initCenterLonLat_' + map_code] = new OpenLayers.LonLat(<%= @init_map[:center_lon] %>, <%= @init_map[:center_lat] %>)
       .transform(
         new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
         m.getProjectionObject() // to Spherical Mercator Projection
       );
-  settings['initMapZoom'] = <%= @init_map[:zoomlevel] %>;
-  m.setCenter (settings['initCenterLonLet'], settings['initMapZoom']);
+  settings['initMapZoom_' + map_code] = <%= @init_map[:zoomlevel] %>;
+
+  m.setCenter (settings['initCenterLonLat_' + map_code], settings['initMapZoom_' + map_code]);
 
   //コントロール設定
   //地図切り替え
@@ -140,106 +168,347 @@ function initMapSettings(m) {
     m.addControl(new OpenLayers.Control.ArgParser());
     m.addControl(new OpenLayers.Control.Attribution());
     m.addControl(new OpenLayers.Control.LayerSwitcher());
+  <%@layers.each do |layer|
+  next if layer == "vector"-%>
+  if (overlays['<%=layer%>_map1']){
+    overlays['<%=layer%>_map1'].setVisibility(true);
+  }
+  if (overlays['<%=layer%>_map2']){
+    overlays['<%=layer%>_map2'].setVisibility(true);
+  }
+  <%end unless @layers.blank?-%>
+}
+
+
+
+
+/**
+ * ベースレイヤーセット
+ */
+function initBaseLayer(m, map_code) {
+
+var base;
+<%for item in base_layers(@map)
+  if item.kind =~ %r(webtis)
+  next if item.webtis_v4_code.blank?
+-%>
+
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.XYZ("<%=item.title%>",
+  "http://cyberjapandata.gsi.go.jp/xyz/<%=item.webtis_v4_code%>/${z}/${x}/${y}.<%=item.webtis_v4_extname%>", {
+    attribution: "<a href='http://portal.cyberjapan.jp/help/termsofuse.html' target='_blank'>国土地理院</a>",
+    maxZoomLevel: 18
+  });
+<%elsif item.kind == "osm"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.OSM("<%=item.title%>");
+<%elsif item.kind == "gmap"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google("<%=item.title%>", {visibility: false});
+<%elsif item.kind == "gsat"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google( "<%=item.title%>", {type: google.maps.MapTypeId.SATELLITE});
+<%elsif item.kind == "g_hybrid"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google("<%=item.title%>",{type: google.maps.MapTypeId.HYBRID});
+<%elsif item.kind == "g_physcal"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google( "<%=item.title%>",{type: google.maps.MapTypeId.TERRAIN});
+<%else%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.WMS(
+      "<%=item.title%>",
+      "<%=item.url%>",
+       {format: "image/png"},
+       {isBaseLayer: true,visibility: false,layerName:"<%=item.code%>"});
+<%end-%>
+<%if @baselayer && @baselayer == item.code%>
+base = baseLayers['<%=item.code%>_' + map_code];
+if(map_code=="map1"){
+  currentBaseLayer1 = baseLayers['<%=item.code%>_' + map_code];
+}else{
+  currentBaseLayer2 = baseLayers['<%=item.code%>_' + map_code];
+}
+<%end%>
+m.addLayer(baseLayers['<%=item.code%>_' + map_code]);
+<%end-%>
+if(base){
+  m.setBaseLayer(base);
 
 }
 
-<%= render :partial =>  'base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
-
-
-function initWMSLayer(m) {
-
-   var overlays = new Object();
-   overlays['schoolarea'] = new OpenLayers.Layer.WMS(
-            "小学校区",
-            mapserverUrl,  //mapserverurl
-             {
-         map:"mapfiles/overlays_wms.map", //mapfileの場所指定
-         layers: 'school_area',  //取得するレイヤー
-         version: '1.1.1', //サービスのバージョン
-         format: "image/png" //取得するファイル形式
-         },
-             {
-         isBaseLayer: false,
-         transparent: true,
-         visibility: false,
-         opacity: 1.0,
-          layerName:"ext_schoolarea",
-         group: "kokudosuchi"
-          }
-         );
-         m.addLayer(overlays['schoolarea']);
-
-
-   overlays['landslide'] = new OpenLayers.Layer.WMS(
-            "土砂災害",
-            mapserverUrl,  //mapserverurl
-             {
-         map:"mapfiles/overlays_wms.map", //mapfileの場所指定
-         layers: 'landslide',  //取得するレイヤー
-         version: '1.1.1', //サービスのバージョン
-         format: "image/png" //取得するファイル形式
-         },
-             {
-         isBaseLayer: false,
-         transparent: true,
-         visibility: false,
-         opacity: 0.5,
-     layerName:"ext_landslide",
-     group: "kokudosuchi"
-          }
-         );
-         m.addLayer(overlays['landslide']);
-
-    var matsushigeKitajimaLayers = ["kitajima_division","matsushige-kitajima_division","matsushige_division"]
-
-    var urban_planning_layers = [
-      {name: "池田都市計画区域",mapfile: "urban_planning_ikeda",layers: "ikeda_division",layerName: "ext_urban_planning_ikeda",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "日和佐都市計画区域",mapfile: "urban_planning_hiwasa",layers: "hiwasa_division",layerName: "ext_urban_planning_hiwasa",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "徳島東部都市計画区域（阿南）",mapfile: "urban_planning_tokushima_higashi",layers: "anan_division",layerName: "ext_urban_planning_anan",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "徳島東部都市計画区域（鴨島）",mapfile: "urban_planning_tokushima_higashi",layers: "kamojima_division",layerName: "ext_urban_planning_kamojima",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "徳島東部都市計画区域（石井）",mapfile: "urban_planning_tokushima_higashi",layers: "ishii_division",layerName: "ext_urban_planning_ishii",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "徳島東部都市計画区域（松茂・北島）",mapfile: "urban_planning_tokushima_higashi",layers: matsushigeKitajimaLayers,layerName: "ext_urban_planning_kitajima",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "徳島東部都市計画区域（小松島）",mapfile: "urban_planning_tokushima_higashi",layers: "komatsushima_division",layerName: "ext_urban_planning_komatsushima",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "徳島東部都市計画区域（徳島市）",mapfile: "urban_planning_tokushima_higashi",layers: "tokushima_division",layerName: "ext_urban_planning_tokushima",group: "toshikeikaku-kuiki", opacity: 0.8},
-      {name: "都市計画道路：日和佐",mapfile: "urban_planning_road",layers: "hiwasa",layerName: "ext_urban_planning_road_hiwasa",group: "toshikeikaku-douro", opacity: 0.8},
-      {name: "都市計画道路：牟岐",mapfile: "urban_planning_road",layers: "mugi",layerName: "ext_urban_planning_road_mugi",group: "toshikeikaku-douro", opacity: 0.8},
-      {name: "都市計画道路：貞光",mapfile: "urban_planning_road",layers: "sadamitsu",layerName: "ext_urban_planning_road_sadamitsu",group: "toshikeikaku-douro", opacity: 0.8},
-      {name: "都市計画道路：徳島東部",mapfile: "urban_planning_road",layers: "tokushimahigashi",layerName: "ext_urban_planning_road_tokushimahigashi",group: "toshikeikaku-douro", opacity: 0.8},
-      {name: "浸水予想：江川",mapfile: "urban_planning_river",layers: "egawa",layerName: "ext_urban_planning_river_egawa",group: "river-shinsui", opacity: 0.8},
-      {name: "浸水予想：江川（外水のみ）",mapfile: "urban_planning_river",layers: "egawa_gaisui",layerName: "ext_urban_planning_river_egawa_gaisui",group: "river-shinsui", opacity: 0.8},
-      {name: "浸水予想：ほたる川",mapfile: "urban_planning_river",layers: "hotarugawa",layerName: "ext_urban_planning_river_hotarugawa",group: "river-shinsui", opacity: 0.8},
-      {name: "浸水予想：ほたる川（外水のみ）",mapfile: "urban_planning_river",layers: "hotarugawa_gaisui",layerName: "ext_urban_planning_river_hotarugawa_gaisui",group: "river-shinsui", opacity: 0.8},
-      {name: "浸水予想：園瀬川",mapfile: "urban_planning_river",layers: "sonosegawa",layerName: "ext_urban_planning_river_sonosegawa",group: "river-shinsui", opacity: 0.8},
-      {name: "浸水予想：飯尾川",mapfile: "urban_planning_river",layers: "ino_region",layerName: "ext_urban_planning_river_ino",group: "river-shinsui", opacity: 0.8},
-      {name: "浸水予想：桑野川",mapfile: "urban_planning_river",layers: "kuwanogawa_region",layerName: "ext_urban_planning_river_kuwano",group: "river-shinsui", opacity: 0.8},
-      {name: "浸水予想：宍喰川",mapfile: "urban_planning_river",layers: "shishikuigawa_region",layerName: "ext_urban_planning_river_shishikui",group: "river-shinsui", opacity: 0.8}
-    ]
-
-    for(var i = 0; i < urban_planning_layers.length; i++){
-      overlays[urban_planning_layers[i].layerName] = new OpenLayers.Layer.WMS(
-            urban_planning_layers[i].name,
-            mapserverUrl,
-             {
-             map:"mapfiles/" + urban_planning_layers[i].mapfile +".map", //mapfileの場所指定
-             layers: urban_planning_layers[i].layers,  //取得するレイヤー
-             version: '1.1.1', //サービスのバージョン
-             format: "image/png" //取得するファイル形式
-             },
-             {
-         isBaseLayer: false,
-         transparent: true,
-         visibility: false,
-         opacity: urban_planning_layers[i].opacity,
-         layerName: urban_planning_layers[i].layerName,
-         group: urban_planning_layers[i].group
-          }
-         );
-         m.addLayer(overlays[urban_planning_layers[i].layerName]);
-    }
-
-
-
 }
+
+
+/**
+ *  VM環境WMS呼び出し
+ */
+function initWMSLayer(m, map_code) {
+
+  layerStyles['vector_layer'] = new OpenLayers.Style({
+        pointRadius: 10,
+        strokeWidth: 3,
+        strokeOpacity: 0.7,
+        strokeColor: "navy",
+        fillColor: "yellow",
+        fillOpacity: 1
+      }
+      <%icons = icon_select
+      if  icons%>
+      , {rules: [
+      <%icons.each_with_index{|icon, i|-%>
+
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "icon_id",
+                      value: "<%=icon.id%>"
+                  }),
+                symbolizer: {
+                    externalGraphic: "<%=icon.file_uri%>",
+                    graphicWidth: <%=icon.width%>,
+                    graphicHeight: <%=icon.height%>,
+                    graphicXOffset: -<%=icon.offset_x%>,
+                    graphicYOffset: -<%=icon.offset_y%>
+                       }})<%= icons.length - 1 == i ? nil : ',' -%>
+       <%}-%>]}
+       <%end-%>);
+
+
+<%
+map_list = pref_portal_map_list(@map,false)
+layer_list = []
+map_list.each do |map|
+  folders = map.assortments
+    folders.each do |folder|
+      layers = get_layers_from_item(folder,"internal",true)
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end unless folders.blank?
+   layers = get_layers_from_item(map,"internal",true)
+    if layers
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end
+end unless map_list.blank?
+
+layer_list.each do |item|
+  if item.kind == "file" || item.kind == "raster" || item.kind ==  "vector"
+    next if item.mapfile.blank?
+    layer_names = item.mapfile_layer_name.split(/,/)
+    if layer_names.size <= 1-%>
+    var layers = "<%=item.mapfile_layer_name%>";
+    <%else%>
+    var layers = [];
+    <%layer_names.each do |name|-%>
+      layers.push("<%=name%>");
+    <%
+      end
+    end
+  end
+if item.is_internal == 0%>
+addOverlayers("<%=item.code%>_"+ map_code, "<%=item.kind%>","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.url%>",<%=item.opacity_level%>,true,true);
+<%
+next
+end
+if item.kind == "file" || item.kind == "raster"
+-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "<%=item.kind=%>","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,false,false);
+<%elsif item.kind ==  "vector"
+  @vector_layer_list << item.code if !@vector_layer_list.index(item.code).blank?-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "vector","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,false,false);
+<%elsif item.kind == "kml"-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "kml","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>,false,false);
+<%elsif item.kind == "gpx"-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "gpx","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>,false,false);
+<%else
+  next
+end-%>
+m.addLayer(overlays["<%=item.code%>_"+ map_code]);
+<%end unless layer_list.blank?-%>
+}
+
+
+function addOverlayers(layer_code, kind,layer_id, mapfile,title,layers,url,opacity_level,resultID,external){
+
+  if(overlays[layer_code]){
+    return ;
+  }
+  if(external==true && (kind != "kml" || kind != "gpx")){
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      url,
+       {
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: opacity_level,
+         layerName: title,
+         layers: layers
+        }
+   );
+    return;
+  }
+
+
+  if(kind=="gpx"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.GPX()
+      }),
+      style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: opacity_level},
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: false,
+    });
+  }else if(kind=="kml"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.KML({extractStyles: true,extractAttributes: true})
+      }),
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: false,
+    });
+  }else if(kind=="vector"){
+    kindFilters[layer_code] = new OpenLayers.Filter.Logical({
+      type: OpenLayers.Filter.Logical.AND,
+      filters: [
+    new Filter.Comparison({
+                    type: "==",
+                    property: "state",
+                    value: "enabled"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "web_state",
+                    value: "public"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "layer_id",
+                    value: layer_id
+              })
+
+               ]
+               });
+
+    kind_filter_xmls[layer_code] = new OpenLayers.Format.XML();
+    kindLayerFilters[layer_code] = kind_filter_xmls[layer_code].write(new OpenLayers.Format.Filter().write(kindFilters[layer_code]));
+    if(resultID){
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: false,
+                strategies: [new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.Filter({filter: resultIdsFilder, active: true})],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+    }else{
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: false,
+                strategies: [new OpenLayers.Strategy.Fixed()],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+     }
+  }else{
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      mapserverUrl,
+       {
+       map:"gis_mapfiles/" + mapfile, //mapfileの場所指定
+       layers: layers,  //取得するレイヤー
+       version: '1.1.1', //サービスのバージョン
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: opacity_level,
+         layerName: title
+        }
+   );
+  }
+}
+
+
+
+
+function initWFSLayer(m,map_code){
+
+  <%
+  @vector_layer_list.each do |layer|
+  next unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?
+  -%>
+  overlays['<%=layer%>_' + map_code].setVisibility(false);
+
+  <%end if !@vector_layer_list.blank? && @map.portal_kind == 2-%>
+
+
+    /*
+    selectControls['demo' + map_code] = new OpenLayers.Control.SelectFeature(
+      [
+      <%@vector_layer_list.each_with_index do |layer, i|-%>
+      overlays['<%=layer%>_' + map_code]<%if i == @vector_layer_list.length - 1 %>,<%end%>
+      <% end unless @vector_layer_list.blank?-%>
+      ],
+       {onSelect: onAedFeatureSelect, onUnselect: onFeatureUnselect});
+       m.addControl(selectControls['demo' + map_code]);
+       selectControls['demo' + map_code].activate();*/
+}
+
 
 function map1MoveListener(evt){
   map2.events.unregister("moveend", map2, map2MoveListener);

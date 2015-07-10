@@ -35,7 +35,7 @@ function initWMSLayer() {
 
 
 <%
-map_list = [@map]
+map_list = pref_portal_map_list(@map,false)
 layer_list = []
 map_list.each do |map|
   folders = map.assortments
@@ -180,7 +180,8 @@ Ext.onReady(function() {
         width: 100,
         plugins: new GeoExt.LayerOpacitySliderTip({template: '<div>透過度: {opacity}%</div>'})
      };
-  var sliderLabel = {id: 'sliderLabel', text:'透過度：'}
+  var sliderLabel = {id: 'sliderLabel', text:'透過度：'};
+  var dualLabel = {id: 'dualOpen', text:'2画面表示'};
   var align = "->" ;
   var messageUse = {text: "<%=safe{@map.title}%>のご利用上の注意", handler: desplayDialog}
   mapPanel = new GeoExt.MapPanel({
@@ -191,7 +192,7 @@ Ext.onReady(function() {
     map:    map,
     zoom: settings['initMapZoom'],
     tbar: [areaSelector, toolbarItems],
-    bbar: [sliderLabel, layerSlider,align,messageUse]
+    bbar: [sliderLabel, layerSlider,dualLabel,align,messageUse]
   });
 
 
@@ -369,6 +370,10 @@ outPutConfirmWin = new Ext.Window( {
               timeout: 60
           }
      } );
+    if(lastOnLayer && overlays[lastOnLayer]){
+      Ext.getCmp('layerOpacitySlider').setLayer(overlays[lastOnLayer]);
+      Ext.getCmp('sliderLabel').setTooltip("対象レイヤー：" + overlays[lastOnLayer].name);
+    }
 
 
 });

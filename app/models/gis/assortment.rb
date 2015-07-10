@@ -13,13 +13,22 @@ class Gis::Assortment < ActiveRecord::Base
   has_many :assortments_layers, :foreign_key => :assortment_id,  :class_name => 'Gis::AssortmentsLayer', :order => 'sort_no', :dependent => :destroy
   has_many :layers, :through => :assortments_layers, :order => 'gis_assortments_layers.sort_no'
 
-  has_many :assortments_stacks, :foreign_key => :assortment_id,  :class_name => 'Gis::AssortmentsLayer', :order => 'sort_no'
+  has_many :assortments_stacks, :foreign_key => :assortment_id,  :class_name => 'Gis::AssortmentsLayer', :order => 'sort_no', :dependent => :destroy
   has_many :stacks, :through => :assortments_stacks, :order => 'gis_assortments_layers.layer_order desc'
 
   has_many :maps_assortments, :foreign_key => :assortment_id,  :class_name => 'Gis::MapsAssortment', :dependent => :destroy
   has_many :maps, :through => :maps_assortments,:source => :map, :order => 'gis_maps_assortments.sort_no'
 
   validates :title,              :presence => true
+
+
+  def set_tmp_id
+    if tmp_id.blank?
+      tmp_seq = Util::Sequencer.next_id('folders_file', :md5 => true)
+      self.tmp_id = tmp_seq.to_s
+    end
+  end
+
 
   def user_kind_select
     [["個別ユーザ管理",1],["所属管理",2]]
@@ -47,6 +56,10 @@ class Gis::Assortment < ActiveRecord::Base
     Rails.cache.delete "folder_layer_list_#{self.id}_internal_normal"
     Rails.cache.delete "folder_layer_list_#{self.id}_all_stack"
     Rails.cache.delete "folder_layer_list_#{self.id}_internal_stack"
+    #assorment_maps = self.maps
+    #assorment_maps.each do |a_map|
+    #  a_map.cache_clear
+    #end
   end
 
   def user_kind_show

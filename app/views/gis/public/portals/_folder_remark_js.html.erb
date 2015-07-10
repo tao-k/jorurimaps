@@ -1,0 +1,49 @@
+$(document).on("click", ".folderMessage", function(e){
+  e.preventDefault();
+  var id = $(this).attr("id");
+  var title =$(this).text();
+  var folderId = id.replace(/folder/, "").replace(/_\d*/,"");
+  <%if is_public-%>
+  var request_uri = getBaseUrl() + "/" + folderId + '/folder_remark';
+  <%else-%>
+  var request_uri = "<%=url_for({:controller=>"gis/admin/demos",:action=>:index})%>/" + folderId + "/folder_remark";
+  <%end-%>
+  $.ajax({
+          url   :request_uri,
+          type: 'get',
+          method: 'get',
+          dataType: 'html',
+          success:function(result){
+            if(result){
+             $("#folderConfirmWinMessage").html(result);
+              folderConfirmWin.show();
+            }
+          },
+          failure:function(result,opt){
+              alert("フォルダ注意書きの取得に失敗しました。");
+          }
+      });
+});
+var folderConfirmWin  = new Ext.Window( {
+           title:  "ご利用上の注意",
+           id: 'folderConfirmWindow',
+           contentEl: 'folderConfirmWinMessage',
+           modal:  true,
+           closable: false,
+           buttons: [{
+               xtype: 'button',
+               id: 'folderConfirmOk',
+               text: 'OK',
+               baseCls : "colorBtn",
+               listeners: {
+                 click: onWindowClose
+               }
+             }]
+          } );
+
+function onWindowClose(t){
+    //Ext.getCmp('folderConfirmWindow').destroy(); //Destroying the button
+    //t.destroy();  //Remove this statement.
+    folderConfirmWin.hide();
+    return true;
+}

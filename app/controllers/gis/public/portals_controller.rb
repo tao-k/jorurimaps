@@ -12,7 +12,7 @@ class Gis::Public::PortalsController < Gis::Controller::Public::Base
     Page.title = "#{@map.title}"
     @js = [
       "/javascripts/main.js",
-      "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp"
+      Gis.google_api_url
       ]
     @system_cities = System::City.find(:all, :order=>:sort_no)
   end
@@ -54,6 +54,8 @@ private
         "public/gis/template/map_base"
       when 'portal2'
         "public/gis/template/map_base"
+      when 'dual'
+        "public/gis/template/map_base"
       when 'layer'
         "public/gis/template/plain"
       when 'draw'
@@ -65,6 +67,8 @@ private
       when 'feature_edit'
         "public/gis/template/plain"
       when 'legend'
+        "public/gis/template/plain"
+      when 'folder_remark'
         "public/gis/template/plain"
       when 'import_form'
         "public/gis/template/plain"
@@ -100,6 +104,8 @@ private
       when 'feature_edit'
         "public/gis/template/plain"
       when 'legend'
+        "public/gis/template/plain"
+      when 'folder_remark'
         "public/gis/template/plain"
       when 'import_form'
         "public/gis/template/plain"

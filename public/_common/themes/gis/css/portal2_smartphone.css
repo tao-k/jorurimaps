@@ -557,10 +557,12 @@ main
     margin: 0;
     padding: 0;
 }
-#confirmMessage .scroll {
+#confirmMessage .scroll ,
+#folderConfirmMessage #folderConfirmWinMessage .info .scroll {
   paddin: 0 10px;
 }
-#confirmMessage .info {
+#confirmMessage .info ,
+#folderConfirmWinMessage .info {
   position: relative;
   width: auto !important;
   height: 295px;
@@ -569,18 +571,23 @@ main
   overflow: scroll;
   -webkit-overflow-scrolling:touch
 }
-#confirmMessage .info p {
+#confirmMessage .info p ,
+#folderConfirmWinMessage .info p {
   word-break: break-all;
   word-wrap: break-word;
 }
-#confirmMessage .info hr {
+#confirmMessage .info hr ,
+#folderConfirmWinMessage .info hr {
   display: none;
 }
 #confirmMessage h2,
-#confirmMessage h3 {
+#confirmMessage h3 ,
+#folderConfirmMessage h2,
+#folderConfirmMessage h3 {
   margin: 5px 0 5px 0;
 }
-#confirmMessage h4 {
+#confirmMessage h4 ,
+#folderConfirmMessage h4 {
 /*
   position: relative;
   top: -10px;
@@ -600,7 +607,8 @@ main
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebebeb', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-8 */
   font-size: 130%;
 }
-#confirmMessage a {
+#confirmMessage a ,
+#folderConfirmMessage a {
   display: inline-block;
   padding: 6px 10px;
   background: #ffffff; /* Old browsers */
@@ -618,10 +626,12 @@ main
   color: #333;
   font-weight: bold;
 }
-#confirmMessage a:hover {
+#confirmMessage a:hover ,
+#folderConfirmMessage a:hover {
   background: #FFF;
 }
-#confirmMessage #btnContainer {
+#confirmMessage #btnContainer ,
+#folderConfirmMessage #folderBtnContainer {
   padding: 15px 0;
   background: #ebebeb; /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */
@@ -635,7 +645,8 @@ main
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebebeb', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-8 */
   text-align: center;
 }
-#confirmMessage a#closeMessage {
+#confirmMessage a#closeMessage ,
+#folderConfirmMessage a#closeFolderMessage {
   margin-right: 5px;
 }
 #canvas {

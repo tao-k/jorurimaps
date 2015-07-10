@@ -8,7 +8,7 @@ class Gis::Public::ToolsController < Gis::Controller::Public::Base
 
     @js = [
       "/javascripts/main.js",
-      "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp"
+      Gis.google_api_url
       ]
 
   end
@@ -23,7 +23,7 @@ class Gis::Public::ToolsController < Gis::Controller::Public::Base
       cond.or :portal_kind , 2
     end
     item.and condition
-    item.and "sql", "id != #{params[:exclude_id]}" unless params[:exclude_id].blank?
+    item.and "sql", "id != #{params[:exclude_id].to_i}" unless params[:exclude_id].blank?
     @items = item.find(:all)
   end
 

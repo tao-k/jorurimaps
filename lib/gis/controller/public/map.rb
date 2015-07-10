@@ -19,7 +19,7 @@ module Gis::Controller::Public::Map
                "/_common/js/proj4js/lib/proj4js-combined.js",   # must
                "/openlayers/OpenLayers.js",                    # must
                "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
+               Gis.google_api_url,
                "/openlayers/lib/OpenLayers/Lang/ja.js"
               ]
     @width = params[:width].to_i == 0 ? 650 : params[:width].to_i
@@ -61,7 +61,7 @@ module Gis::Controller::Public::Map
                "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
                "/_common/js/ExtJs/ext-all.js",                 # must
                "/_common/js/GeoExt/script/GeoExt.js",          # must
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
+               Gis.google_api_url,
                "/openlayers/lib/OpenLayers/Lang/ja.js"
               ]
 
@@ -88,7 +88,11 @@ module Gis::Controller::Public::Map
   def measure
     #
   end
-
+  def folder_remark
+    @item = Gis::Assortment.where(:id=>params[:id]).first
+    return http_error(404) if @item.blank?
+    return http_error(404) if @item.web_state == "closed"
+  end
 
   def legend
     @item = Gis::Layer.where(:code=>params[:id]).first
@@ -96,8 +100,25 @@ module Gis::Controller::Public::Map
   end
 
 
-
   def extjs
+    @map = Gis::Map.where(:code=>params[:code], :web_state => "public").first
+    return http_error(404) if @map.blank?
+
+    Page.title = "#{@map.title}"
+
+    get_js_params
+  end
+  def dual_js
+    @map = Gis::Map.where(:code=>params[:code], :web_state => "public").first
+    return http_error(404) if @map.blank?
+
+    Page.title = "#{@map.title}"
+
+    get_js_params
+   #@init_map[:zoomlevel] =  @init_map[:zoomlevel].to_i + 10 if params[:baselayer] && params[:baselayer] == "webtis_blank"
+
+  end
+  def get_js_params
     @init_map = {:center_lon => Gis.defalut_position[:lng], :center_lat => Gis.defalut_position[:lat], :zoomlevel => Gis.defalut_position[:zoom] }
 
     map_config = @map.config
@@ -134,6 +155,44 @@ module Gis::Controller::Public::Map
     @search_configs = Misc::SearchColumn.get_index_cache(@map)
   end
 
+  def dual
+    @css = [
+              "/_common/js/ExtJs/resources/css/ext-all.css",   # must
+              "/_common/js/ExtJs/resources/css/xtheme-access.css",  # ExtJs custom css
+              "/_common/js/ExtJs/resources/css/xtheme-gray.css",     # ExtJs custom css
+              "/_common/js/ExtJs/resources/css/xtheme-gray.css",     # ExtJs custom css
+              "/_common/js/ExtJs/resources/css/yourtheme.css",       # my custom css
+              "/_common/themes/gis/css/map.css",
+              "/_common/themes/gis/css/portal2.css",
+              "/layout/gis/public.css",
+              "/_common/js/scroll/css/smoothDivScroll.css",
+              "/_common/js/lightbox/css/lightbox.css"#,
+              #"/_common/js/lightbox/css/screen.css"*/
+             ]
+      @js   = [
+               "/_common/js/proj4js/lib/proj4js-combined.js",   # must
+               #"/openlayers/OpenLayers.js",                    # must
+               "/openlayers/OpenLayers.js",                    # must
+               "/_common/js/webtis/webtis_next.js",            # must
+               "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
+               "/_common/js/ExtJs/ext-all.js",                 # must
+               "/_common/js/GeoExt/script/GeoExt.js",          # must
+               Gis.google_api_url,
+               "/openlayers/lib/OpenLayers/Lang/ja.js",
+               "/_common/js/scroll/js/jquery.mousewheel.min.js",
+               "/_common/js/scroll/js/jquery.smoothdivscroll-1.3-min.js",
+               "/_common/js/lightbox/js/lightbox.js",
+               "/_common/js/lightbox/js/modernizr.custom.js",
+               "/_common/js/scroll/js/imagesloaded.pkgd.min.js"
+              ]
+    @portal = "portal2"
+
+    @dynamic_js = [
+                {:controller=> 'gis/public/portals', :action => 'dual_js', :lon=>params[:lon], :lat=>params[:lat], :zoom=>params[:zoom], :portal=>"portal2" , :code=>@map.code, :baselayer => params[:baselayer]}
+              ]
+  end
+
+
   def portal2
     # 地図 リッチUI表示
     if request.smart_phone?
@@ -150,7 +209,7 @@ module Gis::Controller::Public::Map
                "/_common/js/jquery/jquery-ui.min.js",
                "/_common/js/jquery/color_picker/jquery.colorPicker.min.js",
                "/_common/js/flipsnap.min.js",
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
+               Gis.google_api_url,
                "/_common/js/jquery.jscrollpane.min.js"
               ]
     else
@@ -172,7 +231,7 @@ module Gis::Controller::Public::Map
                "/_common/js/ExtJs/adapter/ext/ext-base.js",    # must
                "/_common/js/ExtJs/ext-all.js",                 # must
                "/_common/js/GeoExt/script/GeoExt.js",          # must
-               "http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp",
+               Gis.google_api_url,
                "/openlayers/lib/OpenLayers/Lang/ja.js",
                "/_common/js/scroll/js/jquery.mousewheel.min.js",
                "/_common/js/scroll/js/jquery.smoothdivscroll-1.3-min.js",

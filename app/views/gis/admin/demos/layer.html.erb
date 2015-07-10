@@ -2,25 +2,32 @@
 <div class="layerSet">
 
 <%
-
+portal_maps = pref_portal_map_list(@map,false)
+portal_maps.each_with_index{|item, i|
+  map_class = "other"
+  list_display = "display: none;"
+  title_class = ""
+  body_class = ""
+  if i == 0
    map_class = "current"
    list_display = ""
    title_class = " open"
    body_class = " open"
-   i= 0
+  end
 
 %>
 <div class="<%=map_class%>">
-    <a href="#map<%=@map.id%>" class="mapTitle<%=title_class%>" id="mapTitle<%=i%>"><%=@map.title%></a><br />
+    <a href="#map<%=item.id%>" class="mapTitle<%=title_class%>" id="mapTitle<%=i%>"><%=item.title%></a><br />
     <%
     last_index = nil
-    folders = @map.assortments
+    folders = get_folders_from_item(item, "internal")
     folders.each_with_index{|folder, n|
       last_index = n
     %>
     <div id="title<%=i%>-<%=n%>" class="title<%=i%> layerTitleLink<%=body_class%>" style="<%=list_display%>">
       <input class="allCheck" id="allCheck<%=i%>-<%=n%>" name="allCheck" type="checkbox" value="1" />
       <a  class="layerTitle" href="#" id="titleLink<%=i%>-<%=n%>"><%=folder.title%></a>
+      <%=link_to folder.title, "#", :class=>"folderMessage", :id=>"folder#{folder.id}_#{n}" if folder.is_display_message == 1%>
     </div>
     <div class="layerBody body<%=i%>" id="body<%=i%>-<%=n%>" style="<%=list_display%>">
       <%layers = get_layers_from_item(folder,"internal")
@@ -37,7 +44,7 @@
     last_index = last_index.blank? ? 0 : last_index + 1
     %>
 
-    <%layers = get_layers_from_item(@map,"internal")
+    <%layers = get_layers_from_item(item,"internal")
     if layers%>
     <div id="title<%=i%>-<%=last_index%>" class="title<%=i%> layerTitleLayer body<%=i%>" style="<%=list_display%>">
     <%layers.each_with_index{|layer, n|
@@ -51,6 +58,7 @@
 
     <%end%>
 </div>
+<%} unless portal_maps.blank?%>
 <div class="additionalLayer">
 
 

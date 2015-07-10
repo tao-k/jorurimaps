@@ -1,5 +1,10 @@
 # encoding: utf-8
 module Gis::FormHelper
+  def fill_check(checked_value)
+    return {:checked => false} if checked_value == 1 || checked_value.blank?
+    return {:checked => true}
+  end
+
   def map_area_options(options={:include_blank=>true})
     if options[:include_blank]
       ret = [["すべて",0]]
@@ -198,6 +203,64 @@ module Gis::FormHelper
       end
       ret[group_s_name] = new_array
     end unless layer_items.blank?
+    return ret
+  end
+
+  def map_select(options)
+    if Core.user.has_auth?(:manager)
+      items = Gis::Map.find(:all, :include=>[:admin_group], :order=>"system_groups.code")
+    else
+      item = Gis::Map.new
+      group_condition  = Condition.new()
+      group_condition.or do |cond|
+        cond.or "sql", "(user_kind = 2 and admin_group_id = #{Core.user_group.id})"
+        cond.or "sql", "(user_kind = 1 and admin_user_id = #{Core.user.id})"
+      end
+      web_state = Condition.new()
+      web_state.or do |web_cond|
+        web_cond.or :web_state, "public"
+        web_cond.or do |internal_web|
+          internal_web.and group_condition
+          internal_web.and :web_state, ["internal","recognize","recognized"]
+        end
+      end
+      item.and web_state
+      if options[:all]
+        #全種別のマップを表示
+      else
+        #レイヤーを保持するマップのみ表示
+        item.and :portal_kind, [1,2]
+      end
+      items = item.find(:all, :include=>[:admin_group], :order=>"system_groups.sort_no, system_groups.code")
+    end
+    return items
+  end
+  def map_grouped_options(options={})
+    ret = {}
+    portal_items = map_select(options)
+    group_s_name = ""
+    new_array = []
+    portal_items.each_with_index do |portal, i|
+      if portal.admin_group
+        portal_group_name = "#{portal.admin_group.code}#{portal.admin_group.name}"
+      else
+        portal_group_name = "000000所属不明"
+      end
+      if group_s_name.blank?
+        group_s_name = portal_group_name
+        new_array = []
+        new_array << [portal.title, portal.id]
+      else
+        if group_s_name != portal_group_name
+          new_array = []
+          new_array << [portal.title, portal.id]
+          group_s_name = portal_group_name
+        else
+          new_array << [portal.title, portal.id]
+        end
+      end
+      ret[group_s_name] = new_array
+    end unless portal_items.blank?
     return ret
   end
 

@@ -22,6 +22,43 @@
   height: auto;
   max-width: 950px;
 }
+/*------InfoWrapper---*/
+#info:after {
+  content: "";
+  clear: both;
+  display: table;
+  height: 0;
+}
+#info {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 20px 20px 15px 30px;
+  border: 1px solid #ADADAD;
+  background-color: #fff;
+  box-shadow: 0px 5px 3px -3px #C2C2C2;
+}
+#info .pieceHeader:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 10px;
+  height: 58px;
+  background-color: #DDDDE1;
+}
+#info .pieceHeader {
+  float: left;
+}
+#info .pieceHeader h2 {
+  color: #1B487A;
+  font-size: 160%;
+  font-weight: bold;
+}
+#info .pieceBody {
+  padding: 6px 0 0 25px;
+  overflow: hidden;
+}
 
 /*----- docInfo -----*/
 #docInfo:after {

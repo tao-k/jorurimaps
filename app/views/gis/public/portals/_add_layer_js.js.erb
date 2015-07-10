@@ -273,6 +273,12 @@ function setLayerTabAdded(){
       selectControls['demo'].setLayer(selectControlLayers);
       selectControls['demo'].activate();
     }
+    <% if @map.portal_kind == 1%>
+    map.addLayer(overlays[layer_code]);
+    overlays[layer_code].setVisibility(true);
+    <%end%>
+    Ext.getCmp('layerOpacitySlider').setLayer(overlays[layer_code]);
+    Ext.getCmp('sliderLabel').setTooltip("対象レイヤー：" + overlays[layer_code].name);
   }
   var leftCount = 5 -  $("#selectedLayers input.featureLayer").length;
   $("#addLayerCount").html(leftCount);

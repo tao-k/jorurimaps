@@ -46,12 +46,19 @@ class Gis::Admin::Layers::LegendsController < Gis::Controller::Admin::Base
   end
 
   def new
-    @item = Gis::LayerDrawConfig.where(:layer_id => @layer.id).first || Gis::LayerDrawConfig.new({:layer_id => @layer.id})
+    new_config = {
+      :layer_id => @layer.id, :label_color => "rgb(0, 0, 0)",:point_color=>"rgb(0, 0, 0)",
+      :line_color => "rgb(0, 0, 0)",:polygon_color=>"rgb(0, 0, 0)", :label_size => 8
+      }
+    @item = Gis::LayerDrawConfig.where(:layer_id => @layer.id).first || Gis::LayerDrawConfig.new(new_config)
     @show_config = Gis::LayerDataColumn.where(:id => params[:id]).first
+    @item.geometry_type = @layer.geometry_type if @item.geometry_type.blank?
+
   end
 
   def edit
     @item = Gis::LayerDrawConfig.where(:layer_id => @layer.id).first
+    @item.geometry_type = @layer.geometry_type if @item.geometry_type.blank?
     return http_error(404) if @item.blank?
     return authentication_error(403) unless @layer.editable?
   end

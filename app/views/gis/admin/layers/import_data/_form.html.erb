@@ -1,0 +1,15 @@
+<table class="show">
+  <% column_config = @layer.get_option_columns
+    column_config.each do |column|
+    next if column[1].blank? %>
+  <tr>
+    <th><%= column[1] %></th>
+    <td><%= f.text_area column[0].to_sym, :class => 'title', :style => "width: 300px; height: 80px;"%></td>
+  </tr>
+  <%end  if column_config%>
+</table>
+
+<table class="show">
+  <th><%= @item.locale(:g) %></th>
+  <td><%= render :partial => 'gis/admin/common/form_import_map', :locals=>{:f=>f} %></td>
+</table>

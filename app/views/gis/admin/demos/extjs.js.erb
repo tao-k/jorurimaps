@@ -149,7 +149,7 @@ $(document).on("click", ".layerTitle", function(e){
   });
 
   prevLayer = null;
-
+  var tooltip;
 
 $(document).on("change", ".featureLayer", function(e){
   var id = $(this).attr("id");
@@ -159,14 +159,16 @@ $(document).on("change", ".featureLayer", function(e){
     return;
   }
   if(value==true){
-    Ext.getCmp('layerOpacitySlider').setLayer(overlays[overlayId]);
     overlays[overlayId].setVisibility(true);
     check_class = $(this).attr("class");
     if (check_class && check_class.match(/showSlideCheck/)){
       showSlider(overlayId);
     }
+    Ext.getCmp('layerOpacitySlider').setLayer(overlays[overlayId]);
+    Ext.getCmp('sliderLabel').setTooltip("対象レイヤー：" + overlays[overlayId].name);
   }else{
     overlays[overlayId].setVisibility(false);
+    Ext.getCmp('sliderLabel').setTooltip("透過度を変更");
   }
 
   loadLegends(overlayId, value);
@@ -633,10 +635,13 @@ function initMapObj(m, opts) {
   next if layer == "vector"-%>
   if (overlays['<%=layer%>']){
     overlays['<%=layer%>'].setVisibility(true);
+    loadLegends('<%=layer%>', true);
+    lastOnLayer = '<%=layer%>';
   }
 
   <%end unless @layers.blank?-%>
 }
+var lastOnLayer ;
 
 
 var featureInfoPop;
@@ -903,6 +908,12 @@ $(document).on('click', "#fillColorBtn", function(e){
   fillSelectWindow.show();
 });
 
+$(document).on('click', '#dualOpen', function(e){
+
+  var mapLinkUrl = "<%= url_for({:controller=>"gis/admin/demos", :action=>:dual, :id=>@map.code})%>";;
+  mapLinkUrl += createParams();
+  window.open(mapLinkUrl, "dualMap","resizable=no,scrollbars=yes");
+});
 var measureWindow;
 function readyForMeasure(){
   setMeasureControl();
@@ -1222,6 +1233,7 @@ function addOverlayers(layer_code, kind,layer_id, mapfile,title,layers,url,opaci
   <%= render :partial =>  'gis/public/portals/getpoint_js'   rescue nil %>
   <%= render :partial =>  'gis/public/portals/geocode_form'  rescue nil %>
   <%= render :partial =>  'gis/public/portals/show_slider_js', :locals=>{:layer_state =>"internal"}  rescue nil %>
+  <%= render :partial =>  'gis/public/portals/folder_remark_js', :locals=>{:is_public =>false}  rescue nil %>
   <%= render :partial =>  'portal1_js' if @map.portal_kind == 1%>
   <%= render :partial =>  'portal2_js' if @map.portal_kind == 2%>
   <%= render :partial =>  'gis/public/portals/draw_js'  rescue nil %>

@@ -86,7 +86,7 @@
             </tr>
           <%num = n
           } unless @photos.blank?
-          num = num == 0 ? 0 : num + 1-%>
+          num += 1-%>
         <tr>
           <td>
             <%=file_field_tag "photo[upload][#{num}]"%>

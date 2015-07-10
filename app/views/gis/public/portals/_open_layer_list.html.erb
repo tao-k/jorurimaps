@@ -35,7 +35,7 @@ function initWMSLayer() {
 
 
 <%
-map_list = [@map]
+map_list = pref_portal_map_list(@map)
 layer_list = []
 map_list.each do |map|
   folders = get_folders_from_item(map, "all")

@@ -30,7 +30,7 @@
       next if photo.public_photo_path.blank?
       lightbox_caption = %Q(<a onclick="window.open('#{photo.public_original_photo_path}')" href="javascript:void(0);">#{photo.public_caption}</a>)
       -%>
-    <%=link_to image_tag(photo.thumbnail_public_photo_path), photo.public_photo_path, :name=>lightbox_caption, :alt=>photo.public_caption, :title=>photo.public_caption, :target => :_blank, :rel => "lightbox[item]"%>
+    <%=link_to image_tag(photo.thumbnail_public_photo_path), photo.public_photo_path, :title=>lightbox_caption, :alt=>photo.public_caption, :target => :_blank, :rel => "lightbox[item]"%>
     <photo<%=i%>_path><%=%></photo<%=i%>_path>
     <%end unless public_photos.blank?%>
     </td>
@@ -43,7 +43,7 @@
 
 <script type="text/javascript" src="/openlayers/OpenLayers.js"></script>
 <script type="text/javascript" src="/_common/js/proj4js/lib/proj4js-combined.js"></script>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?gl=JP&sensor=false&language=ja&region=jp"></script>
+<script type="text/javascript" src=Gis.google_api_url></script>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -108,7 +108,7 @@ var overlays = new Object();
     setCenter();
   });
 
-<%= render :partial =>  '/gis/public/portals/base_layers', :locals=>{:base_layer_items =>base_layers, :base_layer_setting => @baselayer}  rescue nil  %>
+<%= render :partial =>  '/gis/public/portals/base_layers', :locals=>{:base_layer_items =>base_layers(@map), :base_layer_setting => @baselayer}  rescue nil  %>
 function initWMSLayer() {
 
   layerStyles['vector_layer'] = new OpenLayers.Style({
@@ -159,17 +159,17 @@ function initWMSLayer() {
 
 
 <%
-map_list = [@map]
+map_list = pref_portal_map_list(@map)
 layer_list = []
 map_list.each do |map|
-  folders = get_folders_from_item(map, "all")
+  folders = get_folders_from_item(map, web_state)
     folders.each do |folder|
-      layers = get_layers_from_item(folder,"all")
+      layers = get_layers_from_item(folder,web_state)
       layers.each do |layer|
         layer_list << layer
       end unless layers.blank?
     end unless folders.blank?
-   layers = get_layers_from_item(map,"all")
+   layers = get_layers_from_item(map,web_state)
     if layers
       layers.each do |layer|
         layer_list << layer

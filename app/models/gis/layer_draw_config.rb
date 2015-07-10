@@ -40,16 +40,53 @@ class Gis::LayerDrawConfig <  ActiveRecord::Base
   end
 
   def replace_list
-    [
+    ret = [
       ["##layer_name##", self.layer.code],
       ["##layer_id##", self.layer_id],
       ["##label_item##", self.label_item],
-      ["##color##", color_transform(self.polygon_color)],
       ["##width##", self.line_width],
       ["##label_color##", color_transform(self.label_color)],
-      ["##point_color##", color_transform(self.point_color)],
-      ["##outline_color##", color_transform(self.line_color)]
+      ["##label_size##",self.label_size]
     ]
+    case self.geometry_type
+    when "point"
+      if self.point_fill == 0
+        ret <<  ["##point_color##", nil]
+      else
+        ret <<  ["##point_color##", %Q(COLOR #{color_transform(self.point_color)})]
+      end
+      ret <<  ["##label_position##", self.label_position]
+    when "line"
+       if self.line_fill == 0
+         ret << ["##color##", nil]
+         ret << ["##outline_color##", nil]
+       else
+         ret << ["##color##", %Q(COLOR #{color_transform(self.line_color)})]
+         ret << ["##outline_color##", %Q(OUTLINECOLOR #{color_transform(self.line_color)})]
+       end
+    when "polygon"
+      if self.line_fill == 0
+        ret << ["##outline_color##", nil]
+      else
+        ret << ["##outline_color##", %Q(OUTLINECOLOR  #{color_transform(self.line_color)})]
+      end
+      if self.polygon_fill == 0
+        ret << ["##color##", nil]
+      else
+        ret << ["##color##", %Q(COLOR #{color_transform(self.polygon_color)})]
+      end
+
+    end
+    return ret
+  end
+
+  def label_size_select
+    [[4, 4],[5,5],[6,6],[7,7],[8,8],[9,9],[10,10],[11,11],[12,12],[13,13],[14,14]]
+  end
+
+  def label_size_show
+    label_size_select.each{|a| return a[0] if a[1] == label_size}
+    return nil
   end
 
   def label_item
@@ -58,7 +95,7 @@ class Gis::LayerDrawConfig <  ActiveRecord::Base
   end
 
   def color_transform(color)
-    return "255 255 255 " if color.blank?
+    return "0 0 0 " if color.blank?
     ret = color.gsub(/rgb\(/, "")
     ret = ret.gsub(/,/, "")
     ret = ret.gsub(/\)/, "")
@@ -72,6 +109,19 @@ class Gis::LayerDrawConfig <  ActiveRecord::Base
   def geometry_type_show
     geometry_type_select.each{|a| return a[0] if a[1] == geometry_type}
     return "point"
+  end
+
+  def label_position_select
+    [
+      ["自動","AUTO"],
+      ["上揃え-左寄せ","ul"],["上揃え-中央寄せ","uc"],["上揃え-右寄せ","ur"],
+      ["中央揃え-左寄せ","cl"],["中央揃え-中央寄せ","cc"],["中央揃え-右寄せ","cr"],
+      ["下揃え-左寄せ","ll"],["下揃え-中央寄せ","lc"],["下揃え-右寄せ","lr"]
+    ]
+  end
+  def label_position_show
+    label_position_select.each{|a| return a[0] if a[1] == label_position}
+    return nil
   end
 
   def label_column_select

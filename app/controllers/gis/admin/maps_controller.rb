@@ -43,6 +43,7 @@ class Gis::Admin::MapsController < Gis::Controller::Admin::Base
     @item = Gis::Map.where(:id => params[:id]).first
     return http_error(404) if @item.blank?
     @folders = @item.assortments
+    @relations = @item.relations
     @layers = @item.layers
     _show @item
   end
@@ -63,6 +64,7 @@ class Gis::Admin::MapsController < Gis::Controller::Admin::Base
     return http_error(404) if @item.blank?
     return authentication_error(403) unless @item.editable?
     @a_folders = @item.get_maps_assortments(params)
+    @a_relations = @item.get_maps_relations(params)
     @a_layers = @item.get_maps_layers(params)
     @item.set_tmp_id
   end
@@ -75,7 +77,8 @@ class Gis::Admin::MapsController < Gis::Controller::Admin::Base
     @item = Gis::Map.new(params[:item])
     @a_folders = @item.get_maps_assortments(params)
     @a_layers = @item.get_maps_layers(params)
-    if @item.save_with_rels(params[:assortment],params[:layer],upload_file, params[:icon_delete],thumb_upload_file, params[:thumb_delete]  ,:create)
+    @a_relations = @item.get_maps_relations(params)
+    if @item.save_with_rels(params[:assortment],params[:layer],upload_file, params[:icon_delete],thumb_upload_file, params[:thumb_delete],params[:relation]  ,:create)
       @item.cache_clear
       return redirect_to url_for(:action => :index)
     else
@@ -94,7 +97,7 @@ class Gis::Admin::MapsController < Gis::Controller::Admin::Base
     @item.attributes = params[:item]
     @a_folders = @item.get_maps_assortments(params)
     @a_layers = @item.get_maps_layers(params)
-    if @item.save_with_rels(params[:assortment],params[:layer], upload_file, params[:icon_delete],thumb_upload_file, params[:thumb_delete] , :update)
+    if @item.save_with_rels(params[:assortment],params[:layer], upload_file, params[:icon_delete],thumb_upload_file, params[:thumb_delete],params[:relation] , :update)
       @item.cache_clear
       return redirect_to url_for(:action => :update)
     else

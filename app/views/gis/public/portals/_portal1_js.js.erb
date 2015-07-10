@@ -53,25 +53,29 @@ function initWMSLayer() {
 
 
 <%
-map_list = [@map]
+map_list = pref_portal_map_list(@map)
 layer_list = []
-map_list.each do |map|
+map_list.each_with_index do |map, i|
+  is_portal = false
+  is_portal = true if i == 0
   folders = get_folders_from_item(map, "all")
     folders.each do |folder|
       layers = get_layers_from_item(folder,"all",true)
       layers.each do |layer|
-        layer_list << layer
+        layer_list << {:item => layer, :is_portal=>is_portal}
       end unless layers.blank?
     end unless folders.blank?
    layers = get_layers_from_item(map,"all",true)
     if layers
       layers.each do |layer|
-        layer_list << layer
+        layer_list << {:item => layer, :is_portal=>is_portal}
       end unless layers.blank?
     end
 end unless map_list.blank?
 
-layer_list.each do |item|
+layer_list.each do |l_item|
+ item = l_item[:item]
+ is_portal = l_item[:is_portal]
   if item.kind == "file" || item.kind == "raster" || item.kind ==  "vector"
     next if item.mapfile.blank?
     layer_names = item.mapfile_layer_name.split(/,/)
@@ -95,9 +99,13 @@ if item.kind == "file" || item.kind == "raster"
   addOverlayers("<%=item.code%>", "<%=item.kind=%>","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,true,false);
 <%elsif item.kind ==  "vector"
   next if !vector_layer_list.index(item.code).blank?
-  vector_layer_list << item.code -%>
+  vector_layer_list << item.code
+  if is_portal-%>
   addOverlayers("<%=item.code%>", "vector","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,true,false);
   portalLayers.push("<%=item.code%>");
+  <%else%>
+  addOverlayers("<%=item.code%>", "vector","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,false,false);
+  <%end%>
 <%elsif item.kind == "kml"-%>
   addOverlayers("<%=item.code%>", "kml","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>,true,false);
 <%elsif item.kind == "gpx"-%>
@@ -105,6 +113,14 @@ if item.kind == "file" || item.kind == "raster"
 <%else
   next
 end-%>
+<%if is_portal-%>
+overlays["<%=item.code%>"].setVisibility(true);
+loadLegends("<%=item.code%>", true);
+loadOutPutForm("<%=item.code%>", true);
+<%else%>
+overlays["<%=item.code%>"].setVisibility(false);
+<%end-%>
+map.addLayer(overlays["<%=item.code%>"]);
 <%end unless layer_list.blank?-%>
 
 
@@ -269,8 +285,6 @@ function addOverlayers(layer_code, kind,layer_id, mapfile,title,layers,url,opaci
         }
    );
   }
-  map.addLayer(overlays[layer_code]);
-  overlays[layer_code].setVisibility(true);
 }
 
 
@@ -429,7 +443,7 @@ Ext.onReady(function() {
         width: 100,
         plugins: new GeoExt.LayerOpacitySliderTip({template: '<div>透過度: {opacity}%</div>'})
      };
-  var sliderLabel = {id: 'sliderLabel', text:'透過度：'}
+  var sliderLabel = {id: 'sliderLabel', text:'透過度：', tooltip: '透過度を変更する'}
   var align = "->" ;
   //var messageUse = {text: "<%=safe{@map.title}%>のご利用上の注意", handler: desplayDialog}
   mapPanel = new GeoExt.MapPanel({
@@ -575,7 +589,10 @@ outPutConfirmWin = new Ext.Window( {
               timeout: 60
           }
      } );
-
+    if(lastOnLayer && overlays[lastOnLayer]){
+      Ext.getCmp('layerOpacitySlider').setLayer(overlays[lastOnLayer]);
+      Ext.getCmp('sliderLabel').setTooltip("対象レイヤー：" + overlays[lastOnLayer].name);
+    }
 });
 
 

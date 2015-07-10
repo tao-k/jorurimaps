@@ -6,7 +6,7 @@
 
 
 <%
-portal_maps = [@map]
+portal_maps = pref_portal_map_list(@map)
 portal_maps.each_with_index{|item, i|
   map_class = "other"
   list_display = "display: none;"
@@ -31,6 +31,7 @@ portal_maps.each_with_index{|item, i|
     <div id="title<%=i%>-<%=n%>" class="title<%=i%> layerTitleLink<%=body_class%>" style="<%=list_display%>">
       <input class="allCheck" id="allCheck<%=i%>-<%=n%>" name="allCheck" type="checkbox" value="1" />
       <a  class="layerTitle" href="#" id="titleLink<%=i%>-<%=n%>"><%=folder.title%></a>
+      <%=link_to folder.title, "#", :class=>"folderMessage", :id=>"folder#{folder.id}_#{n}" if folder.is_display_message == 1%>
     </div>
     <div class="layerBody body<%=i%>" id="body<%=i%>-<%=n%>" style="<%=list_display%>">
       <%layers = get_layers_from_item(folder,"all")
@@ -39,9 +40,11 @@ portal_maps.each_with_index{|item, i|
         checked = false
         checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?
         checked = true
+        checked = false if i != 0
       -%>
         <%=check_box_tag("feature_layer", layer.code, checked, {:id=>"#{layer.code}_#{i}_#{n}", :class=>"featureLayer layerCheck#{i}-#{n}"})%>
-        <label for="<%=i%>_<%=n%>_<%=layer.code%>"><%=layer.title%><span class="countShow">（<%=@layers_count[layer.id.to_s] || 0%>）</span></label><br />
+        <label for="<%=i%>_<%=n%>_<%=layer.code%>"><%=layer.title-%>
+      <%if i== 0-%><span class="countShow">（<%=@layers_count[layer.id.to_s] || 0%>）</span><%end-%></label><br />
       <%} unless layers.blank?-%>
       </div>
     <%} unless folders.blank?
@@ -55,9 +58,12 @@ portal_maps.each_with_index{|item, i|
         next if layer.state != "enabled"
         checked = false
         checked = true  unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?
-        checked = true-%>
+        checked = true
+        checked = false if i != 0
+        -%>
       <%=check_box_tag("feature_layer", layer.code, checked, {:id=>"#{layer.code}_#{i}_#{last_index}", :class=>"featureLayer layerCheck#{i}-#{last_index}"})%>
-      <label for="<%=i%>_<%=last_index%>_<%=layer.code%>"><%=layer.title%><span class="countShow">（<%=@layers_count[layer.id.to_s] || 0%>）</span></label><br />
+      <label for="<%=i%>_<%=last_index%>_<%=layer.code%>"><%=layer.title-%>
+      <%if i== 0-%><span class="countShow">（<%=@layers_count[layer.id.to_s] || 0%>）</span><%end-%></label><br />
     <%} unless layers.blank?%>
      </div>
 

@@ -1,0 +1,23 @@
+<%=item_pagination(@next, @prev,@current_page,@total_page,"/gis/admin/layers/import_data")%>
+<table class="show">
+  <% column_config = @layer.get_option_column_hash
+  for num in 1..50 do
+    column_sym = "input_fld_#{num}".to_sym
+    next if @item[column_sym].blank?
+    label = @item.locale(column_sym)
+    label = column_config[column_sym] if column_config && !column_config[column_sym].blank?
+  %>
+  <tr>
+    <th><%= label %></th>
+    <td><%= @item[column_sym] %></td>
+  </tr>
+  <%end%>
+</table>
+<table class="show">
+  <th><%= @item.locale(:g) %></th>
+  <td><%= render :partial => 'gis/admin/common/view_import_map' %></td>
+</table>
+
+
+<%= render :partial => 'gis/admin/layers/data/photo_show' %>
+<%= render :partial => 'gis/admin/common/operator'%>

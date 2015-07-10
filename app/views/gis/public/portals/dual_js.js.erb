@@ -1,0 +1,1626 @@
+
+(function($) {
+
+var panel1, panel2, osm, slider, map, map2;
+
+/* layer switcher */
+var layerSwitcher = null;
+
+/* base layers container */
+var baseLayers = new Object();
+
+/* overlays layers container */
+var overlays = new Object();
+
+/* select action container */
+var selectControls = new Object();
+var settings = {};
+var layerStyles = new Object();
+var Rule = OpenLayers.Rule;
+var Filter = OpenLayers.Filter;
+var kindFilters = new Object();
+var kind_filter_xmls = new Object();
+var kindLayerFilters = new Object();
+Proj4js.defs["EPSG:4326"] = "+proj=longlat +datum=WGS84 +no_defs";
+var defaultBaseLayerKind = "";
+var myproj =new OpenLayers.Projection("EPSG:4326");
+<%
+ wms_url = Application.config(:wms_gateway_url, "localhost")
+%>
+
+/* mapサーバ */
+var mapserverUrl = "http://<%= wms_url %>/cgi-bin/mapserv";
+
+Ext.onReady(function() {
+  var zoom = 20;
+ var option1 = {
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            numZoomLevels: zoom,
+            maxResolution: "auto",
+            controls : [
+                        new OpenLayers.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        })/*,
+                        new OpenLayers.Control.LayerSwitcher({'ascending':false})*/
+
+                        ]
+        };
+
+ var option2 = {
+            projection: new OpenLayers.Projection("EPSG:900913"),
+            displayProjection: new OpenLayers.Projection("EPSG:4326"),
+            units: "m",
+            numZoomLevels: zoom,
+            maxResolution: 156543.0339,
+            controls : [
+                        new OpenLayers.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        })/*,
+                        new OpenLayers.Control.LayerSwitcher({'ascending':false})*/
+
+                        ]
+        };
+
+  map = new OpenLayers.Map('map', option1);
+
+
+
+ // create a map panel with an embedded slider
+ panel1 = new GeoExt.MapPanel({
+  title: "Map 1",
+  layout: "fit",
+  //region: "west",
+  region: "center",
+  map: map,
+  //flex: 0.4
+  flex: 1
+ });
+
+
+// var option2 = option;
+ map2 = new OpenLayers.Map('map2', option2);
+
+
+
+ panel2 = new GeoExt.MapPanel({
+  title: "Map 2",
+  layout: "fit",
+  region: "east",
+  map: map2,
+  //flex: 0.4
+  width: "50%"
+ });
+
+
+
+  new Ext.Viewport({
+    layout:'border',
+    items: [
+      /*new Ext.Panel({
+      title:'CENTER',
+      html:'CENTER PANEL',
+      width:'100px',
+      region:'center',
+      flex: 0.2
+      }),*/
+      panel1,
+      panel2,
+      new Ext.Panel({
+        header: false,
+        contentEl: 'header',
+        margins:'0 0 0 0',
+        height: '55px',
+        region:'north',
+        collapsible:true,
+        collapseMode: "mini",
+        split:true,
+        autoHeight:false
+      }),
+      new Ext.Panel({
+          header: false,
+          contentEl: 'footer',
+          margins:'0 0 0 0',
+          region:'south',
+          collapsible:true,
+          collapseMode: "mini",
+          split:true,
+          autoHeight:true
+        })
+
+    ]
+     });
+  initBaseLayer(map, "map1");
+  initWMSLayer(map, "map1");
+  initWFSLayer(map, "map1");
+  initMapSettings(map, "map1");
+
+  initBaseLayer(map2, "map2");
+  initWMSLayer(map2, "map2");
+  initWFSLayer(map2, "map2");
+  initMapSettings(map2, "map2");
+
+  map.events.register("moveend", map, map1MoveListener);
+  map2.events.register("moveend", map2, map2MoveListener);
+  map.events.register("changebaselayer", map, mapBaseLayerChanged1);
+  map2.events.register("changebaselayer", map2, mapBaseLayerChanged2);
+  //initMapSettings(map, "map1");
+
+});
+
+var map1CurrentBaseLayer,map2CurrentBaseLayer;
+
+function mapBaseLayerChanged1(e) {
+  if(e.layer.CLASS_NAME=="webtis.Layer.BaseMap"){
+    if(map2.baseLayer.CLASS_NAME!="webtis.Layer.BaseMap"){
+      alert("選択した背景地図の組み合わせは選択できません。");
+      map.setBaseLayer(currentBaseLayer1);
+      return false;
+    }
+  }else{
+    if(map2.baseLayer.CLASS_NAME=="webtis.Layer.BaseMap"){
+      alert("選択した背景地図の組み合わせは選択できません。");
+      map.setBaseLayer(currentBaseLayer1);
+      return false;
+    }
+  }
+  currentBaseLayer1 = e.layer;
+}
+
+function mapBaseLayerChanged2(e) {
+  if(e.layer.CLASS_NAME=="webtis.Layer.BaseMap"){
+    if(map.baseLayer.CLASS_NAME!="webtis.Layer.BaseMap"){
+      alert("選択した背景地図の組み合わせは選択できません。");
+      map2.setBaseLayer(currentBaseLayer2);
+      return false;
+    }
+  }else{
+    if(map.baseLayer.CLASS_NAME=="webtis.Layer.BaseMap"){
+      alert("選択した背景地図の組み合わせは選択できません。");
+      map2.setBaseLayer(currentBaseLayer2);
+      return false;
+    }
+  }
+  currentBaseLayer2 = e.layer;
+}
+
+function initMapSettings(m,map_code) {
+  settings['initCenterLonLat_' + map_code] = new OpenLayers.LonLat(<%= @init_map[:center_lon] %>, <%= @init_map[:center_lat] %>)
+      .transform(
+        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+        m.getProjectionObject() // to Spherical Mercator Projection
+      );
+  settings['initMapZoom_' + map_code] = <%= @init_map[:zoomlevel] %>;
+  //if(defaultBaseLayerKind.match(/blank/)){
+  //  settings['initMapZoom_' + map_code] = settings['initMapZoom_' + map_code] + 6 ;
+  //}
+  console.log(settings['initMapZoom_' + map_code]);
+  m.setCenter(settings['initCenterLonLat_' + map_code],<%= @init_map[:zoomlevel] %>);
+  console.log(settings['initCenterLonLat_' + map_code], <%= @init_map[:zoomlevel] %>);
+  //m.zoomTo(settings['initMapZoom_' + map_code]);
+
+  //コントロール設定
+  //地図切り替え
+
+    m.addControl(new OpenLayers.Control.Scale());
+    m.addControl(new OpenLayers.Control.ScaleLine());
+    m.addControl(new OpenLayers.Control.MousePosition());
+    m.addControl(new OpenLayers.Control.PanZoomBar());
+    m.addControl(new OpenLayers.Control.Permalink());
+    m.addControl(new OpenLayers.Control.ArgParser());
+    m.addControl(new OpenLayers.Control.Attribution());
+    m.addControl(new OpenLayers.Control.LayerSwitcher());
+  <%@layers.each do |layer|
+  next if layer == "vector"-%>
+  if (overlays['<%=layer%>_map1']){
+    overlays['<%=layer%>_map1'].setVisibility(true);
+  }
+  if (overlays['<%=layer%>_map2']){
+    overlays['<%=layer%>_map2'].setVisibility(true);
+  }
+  <%end unless @layers.blank?-%>
+}
+
+
+
+/**
+ * ベースレイヤーセット
+ */
+function initBaseLayer(m, map_code) {
+
+  var webtisDataSet = {
+            5:{dataId:"JAIS"},
+            6:{dataId:"JAIS"},
+            7:{dataId:"JAIS"},
+            8:{dataId:"JAIS"},
+            9:{dataId:"BAFD1000K"},
+            10:{dataId:"BAFD1000K"},
+            11:{dataId:"BAFD1000K"},
+            12:{dataId:"BAFD200K"},
+            13:{dataId:"BAFD200K"},
+            14:{dataId:"BAFD200K"},
+            15:{dataId:"JAIS"},
+            16:{dataId:"JAIS"},
+            17:{dataId:"JAIS"},
+            18:{dataId:"JAIS"}
+          };
+
+  var webtisDataSetOrtho = {
+            0: {dataId : "TRANSPARENT"},
+            1: {dataId : "TRANSPARENT"},
+            2: { "dataId" : "std" },
+            3: { "dataId" : "std" },
+            4: { "dataId" : "std" },
+            5: { "dataId" : "std" },
+            6: { "dataId" : "std" },
+            7: { "dataId" : "std" },
+            8: { "dataId" : "std" },
+            9: { "dataId" : "std" },
+            10: { "dataId" : "std" },
+            11: { "dataId" : "std" },
+            12: { "dataId" : "std" },
+            13: { "dataId" : "std" },
+            14: { "dataId" : "std" },
+            15: { "dataId" : "ort" },
+            16: { "dataId" : "ort" },
+            17: { "dataId" : "ort" },
+            18: { "dataId" : "std" },
+            19:{dataId:"ort"},
+            20:{dataId:"ort"},
+            21:{dataId:"ort"},
+            22:{dataId:"ort"},
+            23:{dataId:"ort"},
+            24:{dataId:"ort"},
+            25:{dataId:"ort"},
+            26:{dataId:"ort"}
+          };
+  /* webtis.next */
+  var webtisNextDataSetBlank = {
+            0: {dataId : "TRANSPARENT"},
+            1: {dataId : "TRANSPARENT"},
+            2: { "dataId" : "std" },
+            3: { "dataId" : "std" },
+            4: { "dataId" : "std" },
+            5:{dataId:"blank"},
+            6:{dataId:"blank"},
+            7:{dataId:"blank"},
+            8:{dataId:"blank"},
+            9:{dataId:"blank"},
+            10:{dataId:"blank"},
+            11:{dataId:"blank"},
+            12:{dataId:"blank"},
+            13:{dataId:"blank"},
+            14:{dataId:"blank"},
+            15:{dataId:"std"},
+            16:{dataId:"std"},
+            17:{dataId:"std"},
+            18:{dataId:"std"},
+            19:{dataId:"std"},
+            20:{dataId:"std"},
+            21:{dataId:"std"},
+            22:{dataId:"std"},
+            23:{dataId:"std"},
+            24:{dataId:"std"},
+            25:{dataId:"std"},
+            26:{dataId:"std"}
+          };
+
+  var webtisNextDataSetMonotone = {
+            5:{dataId:"JAISG"},
+            6:{dataId:"JAISG"},
+            7:{dataId:"JAISG"},
+            8:{dataId:"JAISG"},
+            9:{dataId:"BAFD1000KG"},
+            10:{dataId:"BAFD1000KG"},
+            11:{dataId:"BAFD1000KG"},
+            12:{dataId:"BAFD200KG"},
+            13:{dataId:"BAFD200KG"},
+            14:{dataId:"BAFD200KG"},
+            15:{dataId:"DJBMM"},
+            16:{dataId:"DJBMM"},
+            17:{dataId:"DJBMM"},
+            18:{dataId:"FGD"}
+          };
+
+  var webtisNextDataSetColoring = {
+            5:{dataId:"JAIS2"},
+            6:{dataId:"JAIS2"},
+            7:{dataId:"JAIS2"},
+            8:{dataId:"JAIS2"},
+            9:{dataId:"BAFD1000K2"},
+            10:{dataId:"BAFD1000K2"},
+            11:{dataId:"BAFD1000K2"},
+            12:{dataId:"BAFD200K2"},
+            13:{dataId:"BAFD200K2"},
+            14:{dataId:"BAFD200K2"},
+            15:{dataId:"DJBMM"},
+            16:{dataId:"DJBMM"},
+            17:{dataId:"DJBMM"},
+            18:{dataId:"FGD"}
+          };
+var base;
+<%for item in base_layers(@map)
+if item.kind =~ %r(webtis)
+  next if item.webtis_v4_code.blank?
+  if item.kind =~ /ortho/ || item.kind =~ /blank/
+-%>
+
+  baseLayers['<%=item.code%>_' + map_code] = new webtis.Layer.BaseMap("<%=item.title%>", {
+    isBaseLayer: true,
+    dataSet:<%=webtis_dataset(item.kind)%>
+  });
+
+  <%else%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.XYZ("<%=item.title%>",
+  "http://cyberjapandata.gsi.go.jp/xyz/<%=item.webtis_v4_code%>/${z}/${x}/${y}.<%=item.webtis_v4_extname%>", {
+    attribution: "<a href='http://portal.cyberjapan.jp/help/termsofuse.html' target='_blank'>国土地理院</a>",
+    maxZoomLevel: 18
+  });
+  <%end%>
+<%elsif item.kind == "osm"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.OSM("<%=item.title%>");
+<%elsif item.kind == "gmap"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google("<%=item.title%>", {visibility: false});
+<%elsif item.kind == "gsat"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google( "<%=item.title%>", {type: google.maps.MapTypeId.SATELLITE});
+<%elsif item.kind == "g_hybrid"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google("<%=item.title%>",{type: google.maps.MapTypeId.HYBRID});
+<%elsif item.kind == "g_physcal"-%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.Google( "<%=item.title%>",{type: google.maps.MapTypeId.TERRAIN});
+<%else%>
+  baseLayers['<%=item.code%>_' + map_code] = new OpenLayers.Layer.WMS(
+      "<%=item.title%>",
+      "<%=item.url%>",
+       {format: "image/png"},
+       {isBaseLayer: true,visibility: false,layerName:"<%=item.code%>"});
+<%end-%>
+<%if @baselayer && @baselayer == item.code%>
+base = baseLayers['<%=item.code%>_' + map_code];
+if(map_code=="map1"){
+  currentBaseLayer1 = baseLayers['<%=item.code%>_' + map_code];
+}else{
+  currentBaseLayer2 = baseLayers['<%=item.code%>_' + map_code];
+}
+defaultBaseLayerKind = "<%=item.kind%>";
+<%end%>
+m.addLayer(baseLayers['<%=item.code%>_' + map_code]);
+<%end-%>
+if(base){
+  m.setBaseLayer(base);
+
+}
+
+}
+
+
+
+/**
+ *  VM環境WMS呼び出し
+ */
+function initWMSLayer(m, map_code) {
+
+  layerStyles['vector_layer'] = new OpenLayers.Style({
+        pointRadius: 10,
+        strokeWidth: 3,
+        strokeOpacity: 0.7,
+        strokeColor: "navy",
+        fillColor: "yellow",
+        fillOpacity: 1
+      }
+      <%icons = icon_select
+      if  icons%>
+      , {rules: [
+      <%icons.each_with_index{|icon, i|-%>
+
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "icon_id",
+                      value: "<%=icon.id%>"
+                  }),
+                symbolizer: {
+                    externalGraphic: "<%=icon.file_uri%>",
+                    graphicWidth: <%=icon.width%>,
+                    graphicHeight: <%=icon.height%>,
+                    graphicXOffset: -<%=icon.offset_x%>,
+                    graphicYOffset: -<%=icon.offset_y%>
+                       }})<%= icons.length - 1 == i ? nil : ',' -%>
+       <%}-%>]}
+       <%end-%>);
+
+
+<%
+map_list = pref_portal_map_list(@map)
+layer_list = []
+map_list.each do |map|
+  folders = map.assortments
+    folders.each do |folder|
+      layers = get_layers_from_item(folder,"all",true)
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end unless folders.blank?
+   layers = get_layers_from_item(map,"all",true)
+    if layers
+      layers.each do |layer|
+        layer_list << layer
+      end unless layers.blank?
+    end
+end unless map_list.blank?
+
+layer_list.each do |item|
+  if item.kind == "file" || item.kind == "raster" || item.kind ==  "vector"
+    next if item.mapfile.blank?
+    layer_names = item.mapfile_layer_name.split(/,/)
+    if layer_names.size <= 1-%>
+    var layers = "<%=item.mapfile_layer_name%>";
+    <%else%>
+    var layers = [];
+    <%layer_names.each do |name|-%>
+      layers.push("<%=name%>");
+    <%
+      end
+    end
+  end
+if item.is_internal == 0%>
+addOverlayers("<%=item.code%>_"+ map_code, "<%=item.kind%>","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.url%>",<%=item.opacity_level%>,true,true);
+<%
+next
+end
+if item.kind == "file" || item.kind == "raster"
+-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "<%=item.kind=%>","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,false,false);
+<%elsif item.kind ==  "vector"
+  @vector_layer_list << item.code if !@vector_layer_list.index(item.code).blank?-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "vector","<%=item.id%>", "<%=safe{item.mapfile.file_name}%>","<%=item.title%>",layers,null,<%=item.opacity_level%>,false,false);
+<%elsif item.kind == "kml"-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "kml","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>,false,false);
+<%elsif item.kind == "gpx"-%>
+  addOverlayers("<%=item.code%>_"+ map_code, "gpx","<%=item.id%>", null,"<%=item.title%>",null,"<%=item.layer_data_file_path%>",<%=item.opacity_level%>,false,false);
+<%else
+  next
+end-%>
+m.addLayer(overlays["<%=item.code%>_"+ map_code]);
+<%end unless layer_list.blank?-%>
+}
+
+
+function addOverlayers(layer_code, kind,layer_id, mapfile,title,layers,url,opacity_level,resultID,external){
+
+  if(overlays[layer_code]){
+    return ;
+  }
+  if(external==true && (kind != "kml" || kind != "gpx")){
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      url,
+       {
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: opacity_level,
+         layerName: title,
+         layers: layers
+        }
+   );
+    return;
+  }
+
+
+  if(kind=="gpx"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.GPX()
+      }),
+      style: {strokeColor: "red", strokeWidth: 5, strokeOpacity: opacity_level},
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: false,
+    });
+  }else if(kind=="kml"){
+    overlays[layer_code] = new OpenLayers.Layer.Vector(title, {
+      strategies: [new OpenLayers.Strategy.Fixed()],
+      protocol: new OpenLayers.Protocol.HTTP({
+        url: url,
+        format: new OpenLayers.Format.KML({extractStyles: true,extractAttributes: true})
+      }),
+      projection: new OpenLayers.Projection("EPSG:4326"),
+      isBaseLayer: false,
+       transparent: true,
+       visibility: false,
+    });
+  }else if(kind=="vector"){
+    kindFilters[layer_code] = new OpenLayers.Filter.Logical({
+      type: OpenLayers.Filter.Logical.AND,
+      filters: [
+    new Filter.Comparison({
+                    type: "==",
+                    property: "state",
+                    value: "enabled"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "web_state",
+                    value: "public"
+              }),
+    new Filter.Comparison({
+                    type: "==",
+                    property: "layer_id",
+                    value: layer_id
+              })
+
+               ]
+               });
+
+    kind_filter_xmls[layer_code] = new OpenLayers.Format.XML();
+    kindLayerFilters[layer_code] = kind_filter_xmls[layer_code].write(new OpenLayers.Format.Filter().write(kindFilters[layer_code]));
+    if(resultID){
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: false,
+                strategies: [new OpenLayers.Strategy.Fixed(),new OpenLayers.Strategy.Filter({filter: resultIdsFilder, active: true})],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+    }else{
+      overlays[layer_code] =new OpenLayers.Layer.Vector(title, {
+                styleMap: new OpenLayers.StyleMap({
+                  "default": layerStyles['vector_layer'],
+                  select: {
+                      fillColor: "red",
+                      pointRadius: 13,
+                      strokeColor: "yellow",
+                      strokeWidth: 3,
+                      graphicOpacity: 0.7
+                    }
+                }),
+                isBaseLayer: false,
+                transparent: true,
+                visibility: false,
+                strategies: [new OpenLayers.Strategy.Fixed()],
+                projection: myproj,
+                protocol: new OpenLayers.Protocol.Script({
+                    url: mapserverUrl + "?MAP=gis_mapfiles/" + mapfile,
+                    params: {
+                        service: "WFS",
+                        version: "1.1.0",
+                        srsName: "EPSG:4326",
+                        request: "GetFeature",
+                        typeName: layers,
+                        outputFormat: "json_" + layers,
+                        filter:kindLayerFilters[layer_code]
+                    },
+                    format: new OpenLayers.Format.GeoJSON()
+                })
+       });
+     }
+  }else{
+    overlays[layer_code] = new OpenLayers.Layer.WMS(
+      title,
+      mapserverUrl,
+       {
+       map:"gis_mapfiles/" + mapfile, //mapfileの場所指定
+       layers: layers,  //取得するレイヤー
+       version: '1.1.1', //サービスのバージョン
+       format: "image/png" //取得するファイル形式
+       },
+       {
+         isBaseLayer: false,
+         transparent: true,
+         visibility: false,
+         opacity: opacity_level,
+         layerName: title
+        }
+   );
+  }
+}
+
+
+
+
+function initWFSLayer(m,map_code){
+  layerStyles['ud_facility'] = new OpenLayers.Style({
+        pointRadius: 10,
+        strokeWidth: 3,
+        strokeOpacity: 0.7,
+        strokeColor: "navy",
+        fillColor: "yellow",
+        fillOpacity: 1
+      }, {
+        rules: [
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "restaurant"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_001.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "accommodation"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_002.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "welfare_facility"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_003.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "convenience_store"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_006.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "cultural_facility"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_007.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "sports_facility"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_011.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "tourism"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_004.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "public_transport"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_010.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "medical_institution"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_009.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "financial"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_008.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "government"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_005.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "large_scale_retail"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_012.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "parking_area"
+                  }),
+
+                symbolizer: {
+                    externalGraphic: "/_common/themes/gis/images/ic_faci_013.png",
+            graphicWidth: 32,
+            graphicHeight: 32,
+            graphicXOffset: -16,
+            graphicYOffset: -32
+                }
+            })
+        ]
+      });
+
+
+  kindFilters['restaurant'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "restaurant"
+             });
+
+  kind_filter_xmls['restaurant'] = new OpenLayers.Format.XML();
+  kindLayerFilters['restaurant'] = kind_filter_xmls['restaurant'].write(new OpenLayers.Format.Filter().write(kindFilters['restaurant']));
+
+  overlays['restaurant_' + map_code] =new OpenLayers.Layer.Vector("飲食店", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_restaurant",
+                      outputFormat: "json_ud_facility_restaurant",
+                      filter:kindLayerFilters['restaurant']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['restaurant_' + map_code]);
+
+
+  kindFilters['accommodation'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "accommodation"
+             });
+
+  kind_filter_xmls['accommodation'] = new OpenLayers.Format.XML();
+  kindLayerFilters['accommodation'] = kind_filter_xmls['accommodation'].write(new OpenLayers.Format.Filter().write(kindFilters['accommodation']));
+
+  overlays['accommodation_' + map_code] =new OpenLayers.Layer.Vector("宿泊施設", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_accommodation",
+                      outputFormat: "json_ud_facility_accommodation",
+                      filter:kindLayerFilters['accommodation']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['accommodation_' + map_code]);
+
+
+  kindFilters['welfare_facility'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "welfare_facility"
+             });
+
+  kind_filter_xmls['welfare_facility'] = new OpenLayers.Format.XML();
+  kindLayerFilters['welfare_facility'] = kind_filter_xmls['welfare_facility'].write(new OpenLayers.Format.Filter().write(kindFilters['welfare_facility']));
+
+  overlays['welfare_facility_' + map_code] =new OpenLayers.Layer.Vector("福祉施設", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_welfare_facility",
+                      outputFormat: "json_ud_facility_welfare_facility",
+                      filter:kindLayerFilters['welfare_facility']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['welfare_facility_' + map_code]);
+
+
+  kindFilters['convenience_store'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "convenience_store"
+             });
+
+  kind_filter_xmls['convenience_store'] = new OpenLayers.Format.XML();
+  kindLayerFilters['convenience_store'] = kind_filter_xmls['convenience_store'].write(new OpenLayers.Format.Filter().write(kindFilters['convenience_store']));
+
+  overlays['convenience_store_' + map_code] =new OpenLayers.Layer.Vector("コンビニ", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_convenience_store",
+                      outputFormat: "json_ud_facility_convenience_store",
+                      filter:kindLayerFilters['convenience_store']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['convenience_store_' + map_code]);
+
+
+  kindFilters['cultural_facility'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "cultural_facility"
+             });
+
+  kind_filter_xmls['cultural_facility'] = new OpenLayers.Format.XML();
+  kindLayerFilters['cultural_facility'] = kind_filter_xmls['cultural_facility'].write(new OpenLayers.Format.Filter().write(kindFilters['cultural_facility']));
+
+  overlays['cultural_facility_' + map_code] =new OpenLayers.Layer.Vector("文化施設", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_cultural_facility",
+                      outputFormat: "json_ud_facility_cultural_facility",
+                      filter:kindLayerFilters['cultural_facility']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['cultural_facility_' + map_code]);
+
+
+  kindFilters['sports_facility'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "sports_facility"
+             });
+
+  kind_filter_xmls['sports_facility'] = new OpenLayers.Format.XML();
+  kindLayerFilters['sports_facility'] = kind_filter_xmls['sports_facility'].write(new OpenLayers.Format.Filter().write(kindFilters['sports_facility']));
+
+  overlays['sports_facility_' + map_code] =new OpenLayers.Layer.Vector("スポーツ施設", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_sports_facility",
+                      outputFormat: "json_ud_facility_sports_facility",
+                      filter:kindLayerFilters['sports_facility']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['sports_facility_' + map_code]);
+
+
+  kindFilters['tourism'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "tourism"
+             });
+
+  kind_filter_xmls['tourism'] = new OpenLayers.Format.XML();
+  kindLayerFilters['tourism'] = kind_filter_xmls['tourism'].write(new OpenLayers.Format.Filter().write(kindFilters['tourism']));
+
+  overlays['tourism_' + map_code] =new OpenLayers.Layer.Vector("観光施設・道の駅", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_tourism",
+                      outputFormat: "json_ud_facility_tourism",
+                      filter:kindLayerFilters['tourism']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['tourism_' + map_code]);
+
+
+  kindFilters['public_transport'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "public_transport"
+             });
+
+  kind_filter_xmls['public_transport'] = new OpenLayers.Format.XML();
+  kindLayerFilters['public_transport'] = kind_filter_xmls['public_transport'].write(new OpenLayers.Format.Filter().write(kindFilters['public_transport']));
+
+  overlays['public_transport_' + map_code] =new OpenLayers.Layer.Vector("公共交通機関", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_public_transport",
+                      outputFormat: "json_ud_facility_public_transport",
+                      filter:kindLayerFilters['public_transport']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['public_transport_' + map_code]);
+
+
+  kindFilters['medical_institution'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "medical_institution"
+             });
+
+  kind_filter_xmls['medical_institution'] = new OpenLayers.Format.XML();
+  kindLayerFilters['medical_institution'] = kind_filter_xmls['medical_institution'].write(new OpenLayers.Format.Filter().write(kindFilters['medical_institution']));
+
+  overlays['medical_institution_' + map_code] =new OpenLayers.Layer.Vector("医療機関", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_medical_institution",
+                      outputFormat: "json_ud_facility_medical_institution",
+                      filter:kindLayerFilters['medical_institution']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['medical_institution_' + map_code]);
+
+
+  kindFilters['financial'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "financial"
+             });
+
+  kind_filter_xmls['financial'] = new OpenLayers.Format.XML();
+  kindLayerFilters['financial'] = kind_filter_xmls['financial'].write(new OpenLayers.Format.Filter().write(kindFilters['financial']));
+
+  overlays['financial_' + map_code] =new OpenLayers.Layer.Vector("金融機関", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_financial",
+                      outputFormat: "json_ud_facility_financial",
+                      filter:kindLayerFilters['financial']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['financial_' + map_code]);
+
+
+  kindFilters['government'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "government"
+             });
+
+  kind_filter_xmls['government'] = new OpenLayers.Format.XML();
+  kindLayerFilters['government'] = kind_filter_xmls['government'].write(new OpenLayers.Format.Filter().write(kindFilters['government']));
+
+  overlays['government_' + map_code] =new OpenLayers.Layer.Vector("官公庁・その他", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_government",
+                      outputFormat: "json_ud_facility_government",
+                      filter:kindLayerFilters['government']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['government_' + map_code]);
+
+
+  kindFilters['large_scale_retail'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "large_scale_retail"
+             });
+
+  kind_filter_xmls['large_scale_retail'] = new OpenLayers.Format.XML();
+  kindLayerFilters['large_scale_retail'] = kind_filter_xmls['large_scale_retail'].write(new OpenLayers.Format.Filter().write(kindFilters['large_scale_retail']));
+
+
+  overlays['large_scale_retail_' + map_code] =new OpenLayers.Layer.Vector("小売店（大規模小売店）", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_large_scale_retail",
+                      outputFormat: "json_ud_facility_large_scale_retail",
+                      filter:kindLayerFilters['large_scale_retail']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['large_scale_retail_' + map_code]);
+
+
+  kindFilters['parking_area'] = new Filter.Comparison({
+                  type: "==",
+                  property: "kind_code",
+                  value: "parking_area"
+             });
+
+  kind_filter_xmls['parking_area'] = new OpenLayers.Format.XML();
+  kindLayerFilters['parking_area'] = kind_filter_xmls['parking_area'].write(new OpenLayers.Format.Filter().write(kindFilters['parking_area']));
+
+  overlays['parking_area_' + map_code] =new OpenLayers.Layer.Vector("高速道路サービスエリア・パーキングエリア", {
+              styleMap: new OpenLayers.StyleMap({
+              "default": layerStyles['ud_facility'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+              }),
+              isBaseLayer: false,
+              transparent: true,
+              visibility: false,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              projection: myproj,
+              //filter:filterStrategy,
+              protocol: new OpenLayers.Protocol.Script({
+                  url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs_public.map",
+                  params: {
+                      service: "WFS",
+                      version: "1.1.0",
+                      srsName: "EPSG:4326",
+                      request: "GetFeature",
+                      typeName: "ud_map_facility_parking_area",
+                      outputFormat: "json_ud_facility_parking_area",
+                      filter:kindLayerFilters['parking_area']
+                  },
+                  format: new OpenLayers.Format.GeoJSON()
+              })
+     });
+  m.addLayer(overlays['parking_area_' + map_code]);
+
+
+  <%
+  @vector_layer_list.each do |layer|
+  next unless @visible_layers.index(layer.code).blank? if !@visible_layers.blank?
+  -%>
+  overlays['<%=layer%>_' + map_code].setVisibility(false);
+
+  <%end if !@vector_layer_list.blank? && @map.portal_kind == 2-%>
+
+
+  layerStyles['ud_elevations'] = new OpenLayers.Style({
+      pointRadius: 10,
+      strokeWidth: 3,
+      strokeOpacity: 0.7,
+      strokeColor: "navy",
+      fillColor: "#55FF00",
+      fillOpacity: 1
+    }, {
+      rules: [
+          new Rule({
+              elseFilter: true,
+              symbolizer: {
+                  externalGraphic: "/_common/themes/ud/images/yellow-dot.png",
+                  graphicWidth: 32,
+                  graphicHeight: 32,
+                  graphicXOffset: -16,
+                  graphicYOffset: -32
+              }
+          }),
+          new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "2"
+                  }),
+
+                symbolizer: {
+                  externalGraphic: "/_common/themes/ud/images/blue-dot.png",
+                  graphicWidth: 32,
+                  graphicHeight: 32,
+                  graphicXOffset: -16,
+                  graphicYOffset: -32
+                }
+           }),
+           new Rule({
+                   filter: new Filter.Comparison({
+                      type: "==",
+                      property: "kind",
+                      value: "1"
+                  }),
+
+                symbolizer: {
+                  externalGraphic: "/_common/themes/ud/images/red-dot.png",
+                  graphicWidth: 32,
+                  graphicHeight: 32,
+                  graphicXOffset: -16,
+                  graphicYOffset: -32
+                }
+           })
+      ]
+    });
+
+
+    layerStyles['ud_aed_infos'] = new OpenLayers.Style({
+      pointRadius: 10,
+      strokeWidth: 3,
+      strokeOpacity: 0.7,
+      strokeColor: "navy",
+      fillColor: "#55FF00",
+      fillOpacity: 1
+    }, {
+      rules: [
+          new Rule({
+              elseFilter: true,
+              symbolizer: {
+                  externalGraphic: "/_common/themes/ud/images/red-dot.png",
+          graphicWidth: 32,
+          graphicHeight: 32,
+          graphicXOffset: -16,
+          graphicYOffset: -32
+              }
+          })
+      ]
+    });
+
+    overlays['ud_map_elevations_' + map_code] =new OpenLayers.Layer.Vector("標高調査", {
+          styleMap: new OpenLayers.StyleMap({
+          "default": layerStyles['ud_elevations'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+          }),
+          isBaseLayer: false,
+          transparent: true,
+          <%if !@visible_layers.blank? && !@visible_layers.index('ud_map_elevations').blank?%>
+          visibility: true,
+          <%else%>
+          visibility: false,
+          <%end%>
+
+          strategies: [new OpenLayers.Strategy.Fixed()],
+          projection: myproj,
+          protocol: new OpenLayers.Protocol.Script({
+              url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs.map",
+              params: {
+                  service: "WFS",
+                  version: "1.1.0",
+                  srsName: "EPSG:4326",
+                  request: "GetFeature",
+                  typeName: "ud_map_elevations",
+                  outputFormat: "json_ud_elevations",
+              },
+              format: new OpenLayers.Format.GeoJSON()
+          })
+    });
+
+    m.addLayer(overlays['ud_map_elevations_' + map_code]);
+
+
+  overlays['ud_map_aed_infos_' + map_code] =new OpenLayers.Layer.Vector("地域避難場所等標高調査", {
+          styleMap: new OpenLayers.StyleMap({
+          "default": layerStyles['ud_aed_infos'],
+                select: {
+                    fillColor: "red",
+                    pointRadius: 13,
+                    strokeColor: "yellow",
+                    strokeWidth: 3,
+                    graphicOpacity: 0.7
+                  }
+          }),
+          isBaseLayer: false,
+          transparent: true,
+          <%if !@visible_layers.blank? && !@visible_layers.index('ud_map_aed_infos').blank?%>
+          visibility: true,
+          <%else%>
+          visibility: false,
+          <%end%>
+          strategies: [new OpenLayers.Strategy.Fixed()],
+          projection: myproj,
+          protocol: new OpenLayers.Protocol.Script({
+              url: mapserverUrl + "?MAP=gis_mapfiles/ud_wfs.map",
+              params: {
+                  service: "WFS",
+                  version: "1.1.0",
+                  srsName: "EPSG:4326",
+                  request: "GetFeature",
+                  typeName: "ud_map_aed_infos",
+                  outputFormat: "json_ud_aed_infos",
+              },
+              format: new OpenLayers.Format.GeoJSON()
+          })
+  });
+
+  m.addLayer(overlays['ud_map_aed_infos_' + map_code]);
+
+
+    /*
+    selectControls['demo' + map_code] = new OpenLayers.Control.SelectFeature(
+      [
+      <%@vector_layer_list.each do |layer|-%>
+      overlays['<%=layer%>_' + map_code],
+      <% end unless @vector_layer_list.blank?-%>
+       overlays['ud_map_elevations_' + map_code],
+       overlays['ud_map_aed_infos_' + map_code],
+       overlays['restaurant_' + map_code],
+       overlays['accommodation_' + map_code],
+       overlays['welfare_facility_' + map_code],
+       overlays['convenience_store_' + map_code],
+       overlays['cultural_facility_' + map_code],
+       overlays['sports_facility_' + map_code],
+       overlays['tourism_' + map_code],
+       overlays['public_transport_' + map_code],
+       overlays['medical_institution_' + map_code],
+       overlays['financial_' + map_code],
+       overlays['government_' + map_code],
+       overlays['large_scale_retail_' + map_code],
+       overlays['parking_area_' + map_code]
+      ],
+       {onSelect: onAedFeatureSelect, onUnselect: onFeatureUnselect});
+       m.addControl(selectControls['demo' + map_code]);
+       selectControls['demo' + map_code].activate();*/
+}
+
+
+function map1MoveListener(evt){
+  map2.events.unregister("moveend", map2, map2MoveListener);
+  map2.setCenter(map.getCenter());
+  map2.zoomTo(map.getZoom());
+  map2.events.register("moveend", map2, map2MoveListener);
+}
+
+function map2MoveListener(evt){
+  map.events.unregister("moveend", map, map1MoveListener);
+  map.setCenter(map2.getCenter());
+  map.zoomTo(map2.getZoom());
+  map.events.register("moveend", map, map1MoveListener);
+}
+
+
+})(jQuery);

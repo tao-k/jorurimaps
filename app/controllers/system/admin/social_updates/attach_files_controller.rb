@@ -5,7 +5,6 @@ class System::Admin::SocialUpdates::AttachFilesController < Gis::Controller::Adm
   layout "admin/gis/inline"
 
   def initialize_scaffold
-    dump params
     Page.title = "更新情報添付ファイル管理"
     return authentication_error(403) unless Core.user.has_auth?(:manager)
     @is_role_admin = Core.user.has_auth?(:manager)
